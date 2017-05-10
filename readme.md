@@ -1,5 +1,7 @@
 # CLINK
 
+[![Build Status](https://travis-ci.org/kevin-leptons/clink.svg?branch=master)](https://travis-ci.org/kevin-leptons/clink)
+
 HTTP APIs framework.
 
 ![gwisp logo](asset/logo-64.png)
