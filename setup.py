@@ -20,14 +20,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='clink',
-    version='0.1.0',
+    version='0.5.0',
     description='HTTP APIs Framework',
     keywords='http api framework',
     author='Kevin Leptons',
     author_email='kevin.leptons@gmail.com',
     url='https://github.com/kevin-leptons/clink',
     download_url='https://github.com/kevin-leptons/clink',
-    python_requires="==3.4,==3.5,==3.6",
+    python_requires=">=3.4",
     install_requires=[
     ],
     packages=find_packages(exclude=['tool', 'test']),

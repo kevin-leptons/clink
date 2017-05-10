@@ -1,4 +1,4 @@
-Quick start
+Quick Start
 ===========
 
 Installation
@@ -31,9 +31,11 @@ Testing
 .. code-block:: shell-session
 
     $ # start api in background
-    $ python server.py &
-    Prepare to start on http://localhost:8080
+    $ python server.py &> /dev/null &
 
     $ # test it
     $ curl localhost:8080/book/item
     {"name": "Linux Programming Interface", "author": "Michael Kerrisk"}
+
+    $ # stop api
+    $ kill %1

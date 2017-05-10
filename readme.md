@@ -66,12 +66,14 @@ httpd.serve_forever()
 
 ```bash
 $ # start server in background
-$ python server.py &
-Prepare to start on http://localhost:8080
+$ python server.py &> /dev/null &
 
 $ # test api
 $ curl localhost:8080/book/item
 {"name": "Linux Programming Interface", "author": "Michael Kerrisk"}
+
+$ # stop api
+$ kill %1
 ```
 
 # REFERENCES

@@ -21,6 +21,7 @@ def dist_pip(spec):
 
 
 def release_pip(spec):
+    clean_dist(spec)
     build_pip(spec)
     call(['twine', 'upload', path.join(spec.dist, '**')])
 
