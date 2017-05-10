@@ -1,0 +1,14 @@
+dest/
+dist/
+build/
+tmp/
+venv/
+clink.egg-info/
+run/
+__pycache__
+.cache/
+.eggs/
+*.swp
+*.swo
+*.log
+*.pyc

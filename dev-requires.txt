@@ -1,0 +1,9 @@
+pytest==3.0.5                                                                  
+pep8==1.7.0                                                                    
+flake8==3.2.1                                                                  
+Sphinx==1.5                                                                    
+sphinx-rtd-theme==0.1.9                                                        
+requests==2.12.3                                                               
+twine==1.8.1                                                                   
+click==6.6
+jsonschema==2.6.0
