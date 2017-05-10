@@ -13,13 +13,19 @@ from clink import Application, Route, Router
 
 
 def start(port=8080):
-    route = Route('book')
+    route = Route('api')
 
-    @route.get('item')
+    @route.get('info')
     def get_book_item(req, res):
         res.body = {
-            'name': 'The Linux Programing Interface',
-            'author': 'Michael Kerrisk'
+            'header': req.header,
+            'path': req.path,
+            'args': req.args,
+            'server_name': req.server_name,
+            'server_port': req.server_port,
+            'server_protocol': req.server_protocol,
+            'content_type': req.content_type,
+            'content_length': req.content_length
         }
 
     router = Router([route])

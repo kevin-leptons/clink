@@ -81,133 +81,134 @@ class HttpStatusError(Exception):
 
 # only use this error with status in 4xx, 5xx
 class HttpError(Exception):
-    def __init__(self, status, req):
+    def __init__(self, status, req, msg=None):
         self.status = status
         self.req = req
         self._msg = 'status=%i, %s %s' % (status, req.method, req.path)
+        self.msg = msg
 
     def __str__(self):
         return self._msg
 
 
 class Http400Error(HttpError):
-    def __init__(self, req):
-        super().__init__(400, req)
+    def __init__(self, req, msg=None):
+        super().__init__(400, req, msg)
 
 
 class Http401Error(HttpError):
-    def __init__(self, req):
-        super().__init__(401, req)
+    def __init__(self, req, msg=None):
+        super().__init__(401, req, msg)
 
 
 class Http402Error(HttpError):
-    def __init__(self, req):
-        super().__init__(402, req)
+    def __init__(self, req, msg=None):
+        super().__init__(402, req, msg)
 
 
 class Http403Error(HttpError):
-    def __init__(self, req):
-        super().__init__(403, req)
+    def __init__(self, req, msg=None):
+        super().__init__(403, req, msg)
 
 
 class Http404Error(HttpError):
-    def __init__(self, req):
-        super().__init__(404, req)
+    def __init__(self, req, msg=None):
+        super().__init__(404, req, msg)
 
 
 class Http405Error(HttpError):
-    def __init__(self, req):
-        super().__init__(405, req)
+    def __init__(self, req, msg=None):
+        super().__init__(405, req, msg)
 
 
 class Http406Error(HttpError):
-    def __init__(self, req):
-        super().__init__(406, req)
+    def __init__(self, req, msg=None):
+        super().__init__(406, req, msg)
 
 
 class Http407Error(HttpError):
-    def __init__(self, req):
-        super().__init__(407, req)
+    def __init__(self, req, msg=None):
+        super().__init__(407, req, msg)
 
 
 class Http408Error(HttpError):
-    def __init__(self, req):
-        super().__init__(408, req)
+    def __init__(self, req, msg=None):
+        super().__init__(408, req, msg)
 
 
 class Http409Error(HttpError):
-    def __init__(self, req):
-        super().__init__(409, req)
+    def __init__(self, req, msg=None):
+        super().__init__(409, req, msg)
 
 
 class Http410Error(HttpError):
-    def __init__(self, req):
-        super().__init__(410, req)
+    def __init__(self, req, msg=None):
+        super().__init__(410, req, msg)
 
 
 class Http411Error(HttpError):
-    def __init__(self, req):
-        super().__init__(411, req)
+    def __init__(self, req, msg=None):
+        super().__init__(411, req, msg)
 
 
 class Http412Error(HttpError):
-    def __init__(self, req):
-        super().__init__(412, req)
+    def __init__(self, req, msg=None):
+        super().__init__(412, req, msg)
 
 
 class Http413Error(HttpError):
-    def __init__(self, req):
-        super().__init__(413, req)
+    def __init__(self, req, msg=None):
+        super().__init__(413, req, msg)
 
 
 class Http414Error(HttpError):
-    def __init__(self, req):
-        super().__init__(414, req)
+    def __init__(self, req, msg=None):
+        super().__init__(414, req, msg)
 
 
 class Http415Error(HttpError):
-    def __init__(self, req):
-        super().__init__(415, req)
+    def __init__(self, req, msg=None):
+        super().__init__(415, req, msg)
 
 
 class Http416Error(HttpError):
-    def __init__(self, req):
-        super().__init__(416, req)
+    def __init__(self, req, msg=None):
+        super().__init__(416, req, msg)
 
 
 class Http417Error(HttpError):
-    def __init__(self, req):
-        super().__init__(417, req)
+    def __init__(self, req, msg=None):
+        super().__init__(417, req, msg)
 
 
 class Http500Error(HttpError):
-    def __init__(self, req):
-        super().__init__(500, req)
+    def __init__(self, req, msg=None):
+        super().__init__(500, req, msg)
 
 
 class Http501Error(HttpError):
-    def __init__(self, req):
-        super().__init__(501, req)
+    def __init__(self, req, msg=None):
+        super().__init__(501, req, msg)
 
 
 class Http502Error(HttpError):
-    def __init__(self, req):
-        super().__init__(502, req)
+    def __init__(self, req, msg=None):
+        super().__init__(502, req, msg)
 
 
 class Http503Error(HttpError):
-    def __init__(self, req):
-        super().__init__(503, req)
+    def __init__(self, req, msg=None):
+        super().__init__(503, req, msg)
 
 
 class Http504Error(HttpError):
-    def __init__(self, req):
-        super().__init__(504, req)
+    def __init__(self, req, msg=None):
+        super().__init__(504, req, msg)
 
 
 class Http505Error(HttpError):
-    def __init__(self, req):
-        super().__init__(505, req)
+    def __init__(self, req, msg=None):
+        super().__init__(505, req, msg)
 
 
 class HttpArgumentError(Exception):

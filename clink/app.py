@@ -1,75 +1,65 @@
-import json
-
-from .http_error import HttpError, HttpArgumentError, code_to_str
-from .type import Header, Request, Response
+from .http_error import code_to_str
+from .type import Request, Response
+from .recv_handler import recv_handler
+from .send_handler import send_handler
+from .req_handler import json_req_handle, form_req_handle
+from .res_handler import json_res_handle, cors_res_handle
+from .err_handler import http_err_handler
 
 
 class Application():
-    middlewares = []
+    recv_handler = staticmethod(recv_handler)  # fn(req, res, wsgi_env)
+    send_handler = staticmethod(send_handler)  # fn(req, res, wsig_send)
+
+    req_handlers = [json_req_handle, form_req_handle]  # fn(req, res)
+    res_handlers = [json_res_handle, cors_res_handle]  # fn(req, res)
+
+    err_handlers = [http_err_handler]  # fn(req, res, e)
 
     def __init__(self, router):
         self._router = router
 
-    def __call__(self, env, start_res):
+    def __call__(self, wsgi_env, wsgi_send):
+        req = Request()
+        res = Response()
+        res.status = 200
+        res.content_type = 'application/json'
+        res.header = {}
+
         try:
-            # essentital request, contains few information
-            # information will be padding during working
-            req = self._ess_req(env)
+            # receive message
+            self.recv_handler(req, res, wsgi_env)
 
-            # routing
-            req_handler = self._router.find_route_handler(req)
-            req.args = self._parse_args(env['QUERY_STRING'])
+            # perform request handlers
+            for handler in self.req_handlers:
+                handler(req, res)
 
-            # essentital Response information, contains few information
-            # information wil be padding during working
-            res_header = Header()
-            res = Response(200, res_header, None)
+            # routing and perform controller
+            ctl_handler = self._router.find_route_handler(req)
+            ctl_handler(req, res)
 
-            # execute middlewares
-            for middleware in self.middlewares:
-                middleware(req, res)
+            # perform response handlers
+            for handler in self.res_handlers:
+                handler(req, res)
 
-            # handle request
-            req_handler(req, res)
-
-            # response
-            header = [('Content-Type', 'application/json')]
-            start_res(code_to_str(res.status), header)
-            if res.body:
-                body_str = json.dumps(res.body)
-                return [body_str.encode('utf-8')]
-            else:
+            # send response
+            self.send_handler(req, res, wsgi_send)
+            if res.body is None:
                 return []
-        except HttpError as e:
-            start_res(code_to_str(e.status), [])
-            return []
-        except HttpArgumentError as e:
-            start_res(code_to_str(400), [])
-            return []
+            else:
+                return [res.body.encode('utf-8')]
 
-    def _ess_req(self, env):
-        req_method = env['REQUEST_METHOD']
-        req_path = env['PATH_INFO']
-        req_header = Header()
-        try:
-            req_body_size = int(env.get('CONTENT_LENGTH', 0))
-        except ValueError:
-            req_body_size = 0
-        req_body = None
-        if req_body_size > 0:
-            req_body = env['wsgi.input'].read(req_body_size)
-        return Request(req_method, req_path, req_header, req_body)
-
-    def _parse_args(self, arg_str):
-        args = {}
-        if len(arg_str) == 0:
-            return args
-        arg_coms = arg_str.split('&')
-        for arg_com in arg_coms:
-            arg_parts = arg_com.split('=')
-            if len(arg_parts) != 2:
-                raise HttpArgumentError(arg_str)
-            if len(arg_parts[0]) == 0 or len(arg_parts[1]) == 0:
-                raise HttpArgumentError(arg_str)
-            args[arg_parts[0]] = arg_parts[1]
-        return args
+            # header = [('Content-Type', 'application/json')]
+            # wsgi_send('200 OK', header)
+            # return ['123'.encode('utf-8')]
+        except Exception as e:
+            # if error handlers raise error, it's handlers by server
+            # which runs this application
+            for handler in self.err_handlers:
+                handler(req, res, e, wsgi_send)
+            header = [('Content-Type', 'application/json')]
+            wsgi_send(code_to_str(res.status), header)
+            if res.body is None:
+                return []
+            else:
+                return [res.body.encode('utf-8')]

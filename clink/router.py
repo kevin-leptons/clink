@@ -97,7 +97,7 @@ class Router:
                 self.add_route(path[0], path[1], path[2])
 
     def find_route_handler(self, req):
-        node = self.find_node(req.path, req.params)
+        node = self.find_node(req.path)
         if node is None:
             raise Http404Error(req)
         if req.method.lower() not in node.methods:
@@ -120,7 +120,7 @@ class Router:
             raise RouteExistError(method, path)
         node.methods[method] = handle
 
-    def find_node(self, path, params):
+    def find_node(self, path):
         node = self._root_route
         if path != _URL_SLASH:
             node_names = path.split(_URL_SLASH)

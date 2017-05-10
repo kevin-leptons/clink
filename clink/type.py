@@ -1,20 +1,28 @@
-class Header(dict):
-    pass
-
-
 class Request():
-    def __init__(self, method, path, header, body):
-        self.path = path
-        self.method = method
-        self.header = header
-        self.body = body
+    method = None
+    path = None
+    query_str = None
+    content_type = None
+    content_length = None
+    server_name = None
+    server_port = None
+    server_protocol = None
 
-        self.params = {}
-        self.args = {}
+    header = {}
+    body = None
+
+    args = {}
+
+    def __init__(self):
+        pass
 
 
 class Response():
-    def __init__(self, status, header, body):
-        self.status = status
-        self.header = header
-        self.body = body
+    status = None
+    content_type = None
+
+    header = {}
+    body = None
+
+    def __init__(self):
+        pass
