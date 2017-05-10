@@ -1,0 +1,8 @@
+language: python
+python:
+    - '3.4'
+sudo: required
+install:
+    - ./env install
+script:
+    - python ctl test

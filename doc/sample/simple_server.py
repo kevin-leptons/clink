@@ -4,14 +4,18 @@ from clink import Application, Route, Router
 ADDRESS = 'localhost'
 PORT = 8080
 
-# create route and handle
+# create route
 book_route = Route('book')
+
+
+# add request handle to route
 @book_route.get('item')
 def get_book(req, res):
     res.body = {
         'name': 'Linux Programming Interface',
         'author': 'Michael Kerrisk'
     }
+
 
 # create application
 router = Router([book_route])

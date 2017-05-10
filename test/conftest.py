@@ -20,4 +20,3 @@ def simple_server(request):
     request.addfinalizer(free)
 
     return Invoker('http://localhost:%i' % port)
-

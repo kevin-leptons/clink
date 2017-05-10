@@ -1,5 +1,3 @@
-from multiprocessing import Process
-
 def test_simple_server(simple_server):
     res_schema = {
         'body': {
