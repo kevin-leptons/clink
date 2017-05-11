@@ -1,12 +1,14 @@
 import json
 
+from .mime_type import MIME_JSON
+
 
 def json_res_handle(req, res):
-    if res.content_type != 'application/json':
+    if res.content_type != MIME_JSON:
         return
     if res.body is None:
         return
-    res.body = json.dumps(res.body)
+    res.body = json.dumps(res.body).encode('utf-8')
 
 
 def cors_res_handle(req, res):

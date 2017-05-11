@@ -7,6 +7,8 @@ class Request():
     server_name = None
     server_port = None
     server_protocol = None
+    remote_addr = None
+    remote_port = None
 
     header = {}
     body = None

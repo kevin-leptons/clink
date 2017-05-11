@@ -1,16 +1,18 @@
 import json
 
 from .http_error import HttpError, code_to_str
+from .mime_type import MIME_JSON
 
 
-def http_err_handler(req, res, e, wsgi_send):
+def http_err_handle(req, res, e):
     if not isinstance(e, HttpError):
-        return
+        return False
     res.status = e.status
     res.header = {}
-    res.content_type = 'application/json'
+    res.content_type = MIME_JSON
     res.body = json.dumps({
         'status': e.status,
         'status_name': code_to_str(e.status),
         'message': e.msg
-    })
+    }).encode('utf-8')
+    return True

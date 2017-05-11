@@ -9,9 +9,14 @@ DESCRIPTION
 '''
 
 from .http_error import HttpArgumentError, Http400Error
+from .mime_type import MIME_JSON
 
 
-def recv_handler(req, res, wsgi_env):
+def recv_handle(req, res, wsgi_env):
+    res.status = 200
+    res.content_type = MIME_JSON
+    res.header = {}
+
     req.method = wsgi_env['REQUEST_METHOD']
     req.path = wsgi_env['PATH_INFO']
     req.header = _parse_header(wsgi_env)
@@ -19,6 +24,7 @@ def recv_handler(req, res, wsgi_env):
     req.server_port = int(wsgi_env['SERVER_PORT'])
     req.server_protocol = wsgi_env['SERVER_PROTOCOL']
     req.content_type = wsgi_env['CONTENT_TYPE']
+    req.remote_addr = wsgi_env['REMOTE_ADDR']
     try:
         req.args = _parse_args(wsgi_env['QUERY_STRING'])
     except HttpArgumentError:

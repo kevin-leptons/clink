@@ -17,6 +17,7 @@ DESCRIPTION
 import os
 
 from .http_error import Http404Error, Http405Error, Http406Error
+from .mime_type import MIME_JSON
 
 _URL_SLASH = '/'
 _PARAM_CHAR = ':'
@@ -63,25 +64,25 @@ class Route():
         self.base_path = base_path
         self.specs = []
 
-    def get(self, path):
-        return self.map('get', path)
+    def get(self, path, req_type=MIME_JSON):
+        return self.map('get', path, req_type)
 
-    def post(self, path):
-        return self.map('post', path)
+    def post(self, path, req_type=MIME_JSON):
+        return self.map('post', path, req_type)
 
-    def put(self, path):
-        return self.map('put', path)
+    def put(self, path, req_type=MIME_JSON):
+        return self.map('put', path, req_type)
 
-    def patch(self, path):
-        return self.map('patch', path)
+    def patch(self, path, req_type=MIME_JSON):
+        return self.map('patch', path, req_type)
 
-    def delete(self, path):
-        return self.map('delete', path)
+    def delete(self, path, req_type=MIME_JSON):
+        return self.map('delete', path, req_type)
 
-    def option(self, path):
-        return self.map('option', path)
+    def option(self, path, req_type=MIME_JSON):
+        return self.map('option', path, req_type)
 
-    def map(self, method, path, req_type='application/json'):
+    def map(self, method, path, req_type=MIME_JSON):
         if not self.verify_path(path):
             raise RoutePathError(path)
 
@@ -109,17 +110,13 @@ class Router:
         node = self.find_node(req.path)
         if node is None:
             raise Http404Error(req)
-        for spec in node.specs:
-            method_ok = spec.method == req.method.lower()
-            type_ok = spec.req_type == req.content_type
-            if (not method_ok) and (not type_ok):
-                continue
-            if (not method_ok) and type_ok:
-                raise Http405Error(req)
-            if (not type_ok) and method_ok:
-                raise Http406Error(req)
-            return spec.handler
-        raise Http404Error(req)
+        m_ok_spec = [s for s in node.specs if s.method == req.method.lower()]
+        if len(m_ok_spec) == 0:
+            raise Http405Error(req)
+        for spec in m_ok_spec:
+            if spec.req_type == req.content_type:
+                return spec.handler
+        raise Http406Error(req)
 
     def add_route(self, spec):
         # search and add nodes
