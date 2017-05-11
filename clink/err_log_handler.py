@@ -1,24 +1,33 @@
 import logging
 from os.path import isfile
 
-from .logging import LOGFILE_MODE, LOGFILE_ERR
+from .ihandler import IErrorHandler
+from .logging import LOGFILE_MODE
 from .shell import touch
 
-if not isfile(LOGFILE_ERR):
-    touch(LOGFILE_ERR, LOGFILE_MODE)
 
-_logger = logging.getLogger('clink-error')
-_fhandler = logging.FileHandler(LOGFILE_ERR)
-_formatter = logging.Formatter('%(asctime)s$ %(message)s')
-_fhandler.setFormatter(_formatter)
-_logger.addHandler(_fhandler)
-_logger.setLevel(logging.INFO)
+class ErrorLogHandler(IErrorHandler):
+    def __init__(self, file):
+        self._file = file
 
+        if not isfile(file):
+            touch(file, LOGFILE_MODE)
 
-def log_err_handle(req, res, e):
-    msg = ' '.join([
-        str(res.status), req.remote_addr, req.method, req.path,
-        type(e).__name__
-    ])
-    _logger.info(msg)
-    return True
+        self._logger = logging.getLogger(file)
+        fhandler = logging.FileHandler(file)
+        formatter = logging.Formatter('%(asctime)s$ %(message)s')
+        fhandler.setFormatter(formatter)
+        self._logger.addHandler(fhandler)
+        self._logger.setLevel(logging.INFO)
+
+    @property
+    def file(self):
+        return self._file
+
+    def handle(self, req, res, e):
+        msg = ' '.join([
+            str(res.status), req.remote_addr, req.method, req.path,
+            type(e).__name__
+        ])
+        self._logger.info(msg)
+        return True

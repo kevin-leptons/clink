@@ -1,19 +1,29 @@
 import logging
 from os.path import isfile
 
-from .logging import LOGFILE_MODE, LOGFILE_REQ
+from .logging import LOGFILE_MODE
+from .ihandler import IHandler
 from .shell import touch
 
-if not isfile(LOGFILE_REQ):
-    touch(LOGFILE_REQ, LOGFILE_MODE)
 
-_logger = logging.getLogger('clink-request')
-_fhandler = logging.FileHandler(LOGFILE_REQ)
-_formatter = logging.Formatter('%(asctime)s$ %(message)s')
-_fhandler.setFormatter(_formatter)
-_logger.addHandler(_fhandler)
-_logger.setLevel(logging.INFO)
+class ReqLogHandler(IHandler):
+    def __init__(self, file):
+        self._file = file
+        self.logger = logging.getLogger(file)
 
+        if not isfile(file):
+            touch(file, LOGFILE_MODE)
 
-def log_req_handle(req, res):
-    _logger.info('%s %s %s' % (req.remote_addr, req.method, req.path))
+        fhandler = logging.FileHandler(file)
+        formatter = logging.Formatter('%(asctime)s$ %(message)s')
+        fhandler.setFormatter(formatter)
+        self.logger.addHandler(fhandler)
+        self.logger.setLevel(logging.INFO)
+
+    @property
+    def file(self):
+        return self._file
+
+    def handle(self, req, res):
+        msg = '%s %s %s' % (req.remote_addr, req.method, req.path)
+        self.logger.info(msg)

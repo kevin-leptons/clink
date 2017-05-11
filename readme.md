@@ -63,7 +63,7 @@ def get_book(req, res):
 
 # create application
 router = Router([book_route])
-app = Application(router)
+app = Application('book-api', router)
 
 # serve application
 print('Prepare to start on http://%s:%i' % (ADDRESS, PORT))

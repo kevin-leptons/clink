@@ -28,7 +28,7 @@ def start(port=8080):
         }
 
     router = Router([route])
-    app = Application(router)
+    app = Application('clink', router)
 
     httpd = make_server('', port, app)
     httpd.serve_forever()
