@@ -108,7 +108,7 @@ class Router:
 
     def find_route_handler(self, req):
         node = self.find_node(req.path)
-        if node is None:
+        if node is None or len(node.specs) == 0:
             raise Http404Error(req)
         m_ok_spec = [s for s in node.specs if s.method == req.method.lower()]
         if len(m_ok_spec) == 0:
