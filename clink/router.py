@@ -64,8 +64,8 @@ class Route():
         self.base_path = base_path
         self.specs = []
 
-    def get(self, path, req_type=MIME_JSON):
-        return self.map('get', path, req_type)
+    def get(self, path):
+        return self.map('get', path, None)
 
     def post(self, path, req_type=MIME_JSON):
         return self.map('post', path, req_type)
@@ -76,13 +76,13 @@ class Route():
     def patch(self, path, req_type=MIME_JSON):
         return self.map('patch', path, req_type)
 
-    def delete(self, path, req_type=MIME_JSON):
-        return self.map('delete', path, req_type)
+    def delete(self, path):
+        return self.map('delete', path, None)
 
-    def option(self, path, req_type=MIME_JSON):
-        return self.map('option', path, req_type)
+    def option(self, path):
+        return self.map('option', path, None)
 
-    def map(self, method, path, req_type=MIME_JSON):
+    def map(self, method, path, req_type):
         if not self.verify_path(path):
             raise RoutePathError(path)
 
@@ -110,10 +110,10 @@ class Router:
         node = self.find_node(req.path)
         if node is None or len(node.specs) == 0:
             raise Http404Error(req)
-        m_ok_spec = [s for s in node.specs if s.method == req.method.lower()]
-        if len(m_ok_spec) == 0:
+        m_ok_specs = [s for s in node.specs if s.method == req.method.lower()]
+        if len(m_ok_specs) == 0:
             raise Http405Error(req)
-        for spec in m_ok_spec:
+        for spec in m_ok_specs:
             if spec.req_type == req.content_type:
                 return spec.handler
         raise Http406Error(req)

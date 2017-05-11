@@ -24,7 +24,6 @@ def start(port=8080):
             'server_name': req.server_name,
             'server_port': req.server_port,
             'server_protocol': req.server_protocol,
-            'content_type': req.content_type,
             'content_length': req.content_length
         }
 

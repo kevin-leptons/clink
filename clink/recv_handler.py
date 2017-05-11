@@ -23,8 +23,9 @@ def recv_handle(req, res, wsgi_env):
     req.server_name = wsgi_env['SERVER_NAME']
     req.server_port = int(wsgi_env['SERVER_PORT'])
     req.server_protocol = wsgi_env['SERVER_PROTOCOL']
-    req.content_type = wsgi_env['CONTENT_TYPE']
     req.remote_addr = wsgi_env['REMOTE_ADDR']
+    if req.method.lower() not in ['get', 'head', 'option']:
+        req.content_type = wsgi_env['CONTENT_TYPE']
     try:
         req.args = _parse_args(wsgi_env['QUERY_STRING'])
     except HttpArgumentError:

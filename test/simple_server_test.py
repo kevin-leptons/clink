@@ -4,8 +4,7 @@ def test_simple_server(simple_server):
             'type': 'object',
             'required': [
                 'header', 'path', 'args', 'server_name',
-                'server_port', 'server_protocol', 'content_type',
-                'content_length'
+                'server_port', 'server_protocol', 'content_length'
             ],
             'properties': {
                 'header': {'type': 'object'},
@@ -14,7 +13,6 @@ def test_simple_server(simple_server):
                 'server_name': {'type': 'string'},
                 'server_port': {'type': 'number'},
                 'server_protocol': {'type': 'string'},
-                'content_type': {'type': 'string'},
                 'content_length': {'type': 'number'},
             }
         }
