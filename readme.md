@@ -10,6 +10,15 @@ Kevin Leptons <Kevin.leptons@gmail.com> <br>
 CC by 4.0 license <br>
 May, 2017 <br>
 
+# FEATURES
+
+- Routing by method, path and content type
+- Process follow a pipe with handlers
+- Handlers for logging
+- Handlers for common data such as JSON, URL ENCONDE
+- Utilities to decorate with handlers
+- Work flow with MongoDB: Processing
+
 # USAGE
 
 ## Installation
@@ -81,3 +90,5 @@ $ kill %1
 - [Clink document](http://clink.readthedocs.io/en/latest/)
 - [API](https://en.wikipedia.org/wiki/Application_programming_interface)
 - [Web API](https://en.wikipedia.org/wiki/Web_API)
+- [MongoDB](https://en.wikipedia.org/wiki/MongoDB)
+- [JSON](https://en.wikipedia.org/wiki/JSON)
