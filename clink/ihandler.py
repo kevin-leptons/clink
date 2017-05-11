@@ -3,6 +3,8 @@ SYNOPSIS
 
     interface IHandler
     interface IErrorHandler
+    interface IRecvHandler
+    interface ISendHandler
 
 DESCRIPTION
 
