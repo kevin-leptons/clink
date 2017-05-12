@@ -16,4 +16,4 @@ class SendHandler(ISendHandler):
         if res.body is None:
             return []
         else:
-            return [res.body]        
+            return [res.body]
