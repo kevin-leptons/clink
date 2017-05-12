@@ -65,6 +65,9 @@ cmd_install()
 
     # install development packages
     pip install -r dev-requires.txt
+
+    # install runtime depedency packages
+    pip install -e .
 }
 
 # Clean virtual environment files

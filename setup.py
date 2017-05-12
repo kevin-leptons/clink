@@ -29,6 +29,7 @@ setup(
     download_url='https://github.com/kevin-leptons/clink',
     python_requires=">=3.4",
     install_requires=[
+        'pymongo==3.4.0'
     ],
     packages=find_packages(exclude=['tool', 'test']),
 )
