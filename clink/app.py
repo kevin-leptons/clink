@@ -5,32 +5,20 @@ SYNOPSIS
 
 DESCRIPTION
 
-    HTTP Server with WSGI interface. Entry is method __call__().
-
-REFERENCES
-
-    WSGI - Wikipedia
-        https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface
-
-    PEP333 - Python Web Server Gateway Interface
-        https://www.python.org/dev/peps/pep-0333/
+    Implement application with WSGI interface.
 '''
 
 from os import path
 
+from .iface import IWsgi
 from .type import Request, Response
-from .recv_handler import RecvHandler
-from .send_handler import SendHandler
-from .req_json_handler import ReqJsonHandler
-from .req_urlenc_handler import ReqUrlEncHandler
-from .req_log_handler import ReqLogHandler
-from .res_json_handler import ResJsonHandler
-from .res_cors_handler import ResCorsHandler
-from .err_http_handler import ErrorHttpHandler
-from .err_log_handler import ErrorLogHandler
+from .handler import RecvHandler, SendHandler
+from .handler import ReqJsonHandler, ReqUrlEncodeHandler, ReqLogHandler
+from .handler import ResJsonHandler, ResCorsHandler
+from .handler import ErrorHttpHandler, ErrorLogHandler
 
 
-class Application():
+class Application(IWsgi):
     req_log_handler = None
     err_log_handler = None
 
@@ -52,7 +40,7 @@ class Application():
         self.err_log_handler = ErrorLogHandler(err_logfile)
 
         self.err_handlers = [ErrorHttpHandler()]
-        self.req_handlers = [ReqJsonHandler(), ReqUrlEncHandler()]
+        self.req_handlers = [ReqJsonHandler(), ReqUrlEncodeHandler()]
         self.res_handlers = [ResJsonHandler(), ResCorsHandler()]
 
     def __call__(self, wsgi_env, wsgi_send):
@@ -67,14 +55,14 @@ class Application():
             self.req_log_handler.handle(req, res)
 
             # routing, find main handler
-            m_req_handler = self._router.find_route_handler(req)
+            m_req_handle = self._router.find_handle(req)
 
             # perform request handlers
             for handler in self.req_handlers:
                 handler.handle(req, res)
 
             # perform main handler
-            m_req_handler(req, res)
+            m_req_handle(req, res)
 
             # perform response handlers
             for handler in self.res_handlers:

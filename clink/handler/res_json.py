@@ -1,11 +1,11 @@
 import json
 
-from .ihandler import IHandler
-from .mime_type import MIME_JSON
-from .encoding import UTF_8
+from ..iface import IPipeHandler
+from ..mime.type import MIME_JSON
+from ..etc import UTF_8
 
 
-class ResJsonHandler(IHandler):
+class ResJsonHandler(IPipeHandler):
     def handle(self, req, res):
         if res.content_type != MIME_JSON:
             return

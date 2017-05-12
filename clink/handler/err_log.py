@@ -1,9 +1,9 @@
 import logging
 from os.path import isfile
 
-from .ihandler import IErrorHandler
-from .logging import LOGFILE_MODE
-from .shell import touch
+from ..iface import IErrorHandler
+from ..etc import LOGFILE_MODE
+from ..shell import touch
 
 
 class ErrorLogHandler(IErrorHandler):

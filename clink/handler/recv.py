@@ -5,12 +5,12 @@ SYNOPSIS
 
 DESCRIPTION
 
-    Receive request HTTP message, initial req and res
+    Implement IRecvHandler
 '''
 
-from .http_error import HttpArgumentError, Http400Error
-from .mime_type import MIME_JSON
-from .ihandler import IRecvHandler
+from ..error.http import HttpArgumentError, Http400Error
+from ..mime.type import MIME_JSON
+from ..iface import IRecvHandler
 
 
 class RecvHandler(IRecvHandler):

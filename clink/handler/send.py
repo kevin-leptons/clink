@@ -1,6 +1,6 @@
-from .wsgi_error import WsgiResBodyError
-from .http_error import code_to_str
-from .ihandler import ISendHandler
+from ..error.wsgi import WsgiResBodyError
+from ..error.http import code_to_str
+from ..iface import ISendHandler
 
 
 class SendHandler(ISendHandler):

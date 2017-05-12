@@ -1,4 +1,4 @@
-from ..http_error import Http403Error, Http413Error
+from ..error.http import Http403Error, Http413Error
 
 
 def accept_remote(remotes):

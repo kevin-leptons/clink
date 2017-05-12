@@ -1,12 +1,12 @@
 import json
 
-from .http_error import Http400Error
-from .ihandler import IHandler
-from .encoding import UTF_8
-from .mime_type import MIME_JSON
+from ..error.http import Http400Error
+from ..iface import IPipeHandler
+from ..etc import UTF_8
+from ..mime.type import MIME_JSON
 
 
-class ReqJsonHandler(IHandler):
+class ReqJsonHandler(IPipeHandler):
     def handle(self, req, res):
         if req.content_type != MIME_JSON:
             return

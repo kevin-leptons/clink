@@ -1,12 +1,12 @@
 import logging
 from os.path import isfile
 
-from .logging import LOGFILE_MODE
-from .ihandler import IHandler
-from .shell import touch
+from ..etc import LOGFILE_MODE
+from ..iface import IPipeHandler
+from ..shell import touch
 
 
-class ReqLogHandler(IHandler):
+class ReqLogHandler(IPipeHandler):
     def __init__(self, file):
         self._file = file
         self.logger = logging.getLogger(file)

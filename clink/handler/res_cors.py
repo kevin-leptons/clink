@@ -1,7 +1,7 @@
-from .ihandler import IHandler
+from ..iface import IPipeHandler
 
 
-class ResCorsHandler(IHandler):
+class ResCorsHandler(IPipeHandler):
     def handle(self, req, res):
         if req.method.lower() != 'option':
             return

@@ -9,7 +9,8 @@ DESCRIPTION
 '''
 
 from wsgiref.simple_server import make_server
-from clink import Application, Route, Router
+from clink import Application
+from clink.routing import Route, Router
 
 
 def start(port=8080):

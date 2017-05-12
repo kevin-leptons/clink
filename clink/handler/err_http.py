@@ -1,8 +1,8 @@
 import json
 
-from .http_error import HttpError, code_to_str
-from .ihandler import IErrorHandler
-from .mime_type import MIME_JSON
+from ..error.http import HttpError, code_to_str
+from ..iface import IErrorHandler
+from ..mime.type import MIME_JSON
 
 
 class ErrorHttpHandler(IErrorHandler):
