@@ -1,3 +1,21 @@
+'''
+SYNOPSIS
+
+    class Application
+
+DESCRIPTION
+
+    HTTP Server with WSGI interface. Entry is method __call__().
+
+REFERENCES
+
+    WSGI - Wikipedia
+        https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface
+
+    PEP333 - Python Web Server Gateway Interface
+        https://www.python.org/dev/peps/pep-0333/
+'''
+
 from os import path
 
 from .type import Request, Response
@@ -16,9 +34,9 @@ class Application():
     req_log_handler = None
     err_log_handler = None
 
+    err_handlers = None
     req_handlers = None
     res_handlers = None
-    err_handlers = None
 
     def __init__(self, name, router):
         self._name = name
@@ -48,12 +66,14 @@ class Application():
             # perform request logging handler
             self.req_log_handler.handle(req, res)
 
+            # routing, find main handler
+            m_req_handler = self._router.find_route_handler(req)
+
             # perform request handlers
             for handler in self.req_handlers:
                 handler.handle(req, res)
 
-            # routing, find main handler and perform it
-            m_req_handler = self._router.find_route_handler(req)
+            # perform main handler
             m_req_handler(req, res)
 
             # perform response handlers
@@ -71,8 +91,8 @@ class Application():
             if not handled:
                 raise e
 
-            # send error response
-            return self.send_handler.handle(req, res, wsgi_send)
-
             # perform error logging handler
             self.err_log_handler.handle(req, res, e)
+
+            # send error response
+            return self.send_handler.handle(req, res, wsgi_send)
