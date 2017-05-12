@@ -17,7 +17,8 @@ May, 2017 <br>
 - Handlers for logging
 - Handlers for common data such as JSON, URL ENCONDE
 - Utilities to decorate with handlers
-- Work flow with MongoDB: Processing
+- *Work flow with database: Processing*
+- *Work flow with OAuth2: Processing*
 
 # USAGE
 
