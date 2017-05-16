@@ -35,7 +35,11 @@ class IMongoNode(ABC):
     _client = None
 
     @abstractmethod
-    def __init__(self, host, db_name, doc_specs):
+    def __init__(self, host, db_name, doc_specs=[]):
+        pass
+
+    @abstractmethod
+    def use_docspecs(self, doc_specs):
         pass
 
     @abstractmethod
@@ -52,4 +56,8 @@ class IMongoNode(ABC):
 
     @abstractmethod
     def close(self):
+        pass
+
+    @abstractmethod
+    def clear(self):
         pass

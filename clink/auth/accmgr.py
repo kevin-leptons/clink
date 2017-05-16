@@ -1,0 +1,163 @@
+'''
+SYNOPSIS
+
+    class AccMgr(acc_doc, grp_doc)
+        create(self, name, password, email, phone=None)
+        find_id(self, id)
+        find_name(self, name)
+        remove(self, id)
+        change_pwd(self, id, new_pwd)
+        reset_pwd(self, email)
+        add_group(self, group_name)
+        del_group(self, group_name)
+        add_to_group(self, acc_id, group_name)
+        del_fm_group(self, acc_id, group_name)
+
+DESCRIPTION
+
+    Manage accounts and groups.
+'''
+
+from datetime import datetime
+from time import time
+from string import ascii_lowercase, ascii_uppercase, digits
+
+from .error import AccountNotExist, GroupExist, GroupNotExist, \
+                   CodeNotExistError, CodeExpiredError
+from .util import hash_pwd, rand_pwd, rand_code
+
+_ACT_REGISTERED = 'REGISTERED'
+_ACT_CHANGE_PWD = 'CHANGE_PWD'
+_ACT_RESET_PWD = 'RESET_PWD'
+_ACT_ADD_TO_GRP = 'ADD_TO_GRP'
+_ACT_RM_FRM_GRP = 'RM_FRM_GRP'
+
+
+class AccMgr():
+    _pwd_chars = ascii_lowercase + ascii_uppercase + digits
+
+    def __init__(self, acc_doc, grp_doc, rpwd_doc):
+        self._acc_doc = acc_doc
+        self._grp_doc = grp_doc
+        self._rpwd_doc = rpwd_doc
+
+        self.rpwd_time = 3600
+
+    def create(self, name, password, email, phone=None):
+        account = {
+            'name': name,
+            'hashpwd': hash_pwd(password),
+            'email': email,
+            'phone': phone,
+            'groups': [],
+            'created_date': datetime.utcnow(),
+            'modified_date': datetime.utcnow(),
+            'last_action': _ACT_REGISTERED
+        }
+        result = self._acc_doc.insert_one(account)
+        return result.inserted_id
+
+    def find_id(self, id):
+        return self._acc_doc.find_one({'_id': id})
+
+    def find_name(self, name):
+        return self._acc_doc.find_one({'name': name})
+
+    def find_email(self, email):
+        return self._acc_doc.find_one({'email': email})
+
+    def remove(self, id):
+        result = self._acc_doc.delete_one({'_id': id})
+        if result.deleted_count != 1:
+            raise AccountNotExist(id)
+
+    def change_pwd(self, id, new_pwd):
+        upd = {
+            '$set': {
+                'hashpwd': hash_pwd(new_pwd),
+                'modified_date': datetime.utcnow(),
+                'last_action': _ACT_CHANGE_PWD
+            }
+        }
+        result = self._acc_doc.update_one({'_id': id}, upd)
+
+        if result.modified_count != 1:
+            raise AccountNotExist(id)
+
+    def reset_pwd_code(self, email):
+        acc = self._acc_doc.find_one({'email': email})
+        if acc is None:
+            raise AccountNotExist(email)
+        self._rpwd_doc.delete_many({'acc_id': acc['_id']})
+
+        reset_code = rand_code()
+        code_spec = {
+            'code': reset_code,
+            'expired_date': time() + self.rpwd_time,
+            'acc_id': acc['_id'],
+            'acc_email': acc['email']
+        }
+        self._rpwd_doc.insert_one(code_spec)
+
+        return reset_code
+
+    def reset_pwd(self, code, new_pwd):
+        code_spec = self._rpwd_doc.find_one({'code': code})
+        if code_spec is None:
+            raise CodeNotExistError(code)
+        if code_spec['expired_date'] < time():
+            raise CodeExpiredError()
+
+        acc_id = code_spec['acc_id']
+        self._rpwd_doc.delete_many({'acc_id': acc_id})
+
+        new_hashpwd = hash_pwd(new_pwd)
+        upd = {
+            '$set': {
+                'hashpwd': new_hashpwd,
+                'last_action': _ACT_RESET_PWD
+            }
+        }
+        self._acc_doc.update_one({'_id': acc_id}, upd)
+
+        return acc_id
+
+    def add_group(self, group_name):
+        self._grp_doc.insert_one({'name': group_name})
+
+    def del_group(self, group_name):
+        result = self._grp_doc.delete_one({'name': group_name})
+
+        if result.deleted_count != 1:
+            raise GroupNotExist(group_name)
+
+    def add_to_group(self, acc_id, group_name):
+        acc = self._acc_doc.find_one({'_id': acc_id})
+        if acc is None:
+            raise AccountNotExist(acc_id)
+
+        grp = self._grp_doc.find_one({'name': group_name})
+        if grp is None:
+            raise GroupNotExist(group_name)
+        if group_name in acc['groups']:
+            raise GroupExist(group_name)
+
+        upd = {
+            '$push': {'groups': group_name},
+            '$set': {'last_action': _ACT_ADD_TO_GRP}
+        }
+        self._acc_doc.update_one({'_id': acc_id}, upd)
+
+    def del_fm_group(self, acc_id, group_name):
+        acc = self._acc_doc.find_one({'_id': acc_id})
+
+        if acc is None:
+            raise AccountNotExist(acc_id)
+        if group_name not in acc['groups']:
+            raise GroupNotExist(group_name)
+
+        upd = {
+            '$pull': {'groups': group_name},
+            '$set': {'last_action': _ACT_RM_FRM_GRP}
+        }
+        self._acc_doc.update_one({'_id': acc_id}, upd)

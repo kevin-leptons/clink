@@ -16,11 +16,9 @@ from .type import RouteNode
 
 
 class Router(IRouter):
-    def __init__(self, routes):
+    def __init__(self, routes=[]):
         self._root_route = RouteNode('/')
-        for route in routes:
-            for spec in route.specs:
-                self.add_route(spec)
+        self.add_routes(routes)
 
     def find_handle(self, req):
         node = self.find_node(req.path)
@@ -34,7 +32,15 @@ class Router(IRouter):
                 return spec.handler
         raise Http406Error(req)
 
-    def add_route(self, spec):
+    def add_route(self, route):
+        for spec in route.specs:
+            self._add_route_spec(spec)
+
+    def add_routes(self, routes):
+        for route in routes:
+            self.add_route(route)
+
+    def _add_route_spec(self, spec):
         # search and add nodes
         node = self._root_route
         if spec.path != URL_SLASH:

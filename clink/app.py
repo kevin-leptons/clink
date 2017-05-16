@@ -1,7 +1,7 @@
 '''
 SYNOPSIS
 
-    class Application
+    class App
 
 DESCRIPTION
 
@@ -12,13 +12,14 @@ from os import path
 
 from .iface import IWsgi
 from .type import Request, Response
+from .routing import Router
 from .handler import RecvHandler, SendHandler
 from .handler import ReqJsonHandler, ReqUrlEncodeHandler, ReqLogHandler
 from .handler import ResJsonHandler, ResCorsHandler
 from .handler import ErrorHttpHandler, ErrorLogHandler
 
 
-class Application(IWsgi):
+class App(IWsgi):
     req_log_handler = None
     err_log_handler = None
 
@@ -26,9 +27,10 @@ class Application(IWsgi):
     req_handlers = None
     res_handlers = None
 
-    def __init__(self, name, router):
+    def __init__(self, name):
         self._name = name
-        self._router = router
+        self.router = Router()
+        self.ctx = {'name': name}
 
         self.recv_handler = RecvHandler()
         self.send_handler = SendHandler()
@@ -52,21 +54,21 @@ class Application(IWsgi):
             self.recv_handler.handle(req, res, wsgi_env)
 
             # perform request logging handler
-            self.req_log_handler.handle(req, res)
+            self.req_log_handler.handle(req, res, self.ctx)
 
             # routing, find main handler
-            m_req_handle = self._router.find_handle(req)
+            m_req_handle = self.router.find_handle(req)
 
             # perform request handlers
             for handler in self.req_handlers:
-                handler.handle(req, res)
+                handler.handle(req, res, self.ctx)
 
             # perform main handler
-            m_req_handle(req, res)
+            m_req_handle(req, res, self.ctx)
 
             # perform response handlers
             for handler in self.res_handlers:
-                handler.handle(req, res)
+                handler.handle(req, res, self.ctx)
 
             # send response
             return self.send_handler.handle(req, res, wsgi_send)

@@ -7,3 +7,4 @@ requests==2.12.3
 twine==1.8.1                                                                   
 click==6.6
 jsonschema==2.6.0
+fake-factory==0.7.2

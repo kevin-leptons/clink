@@ -2,7 +2,7 @@ from ..iface import IPipeHandler
 
 
 class ResCorsHandler(IPipeHandler):
-    def handle(self, req, res):
+    def handle(self, req, res, ctx):
         if req.method.lower() != 'option':
             return
         res.header['Access-Control-Allow-Origin'] = '*'

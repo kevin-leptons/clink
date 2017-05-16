@@ -6,7 +6,7 @@ from ..mime.type import MIME_URLENCODE
 
 
 class ReqUrlEncodeHandler(IPipeHandler):
-    def handle(self, req, res):
+    def handle(self, req, res, ctx):
         if req.content_type != MIME_URLENCODE:
             return
         if req.body is None:

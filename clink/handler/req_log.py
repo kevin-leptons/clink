@@ -24,6 +24,6 @@ class ReqLogHandler(IPipeHandler):
     def file(self):
         return self._file
 
-    def handle(self, req, res):
+    def handle(self, req, res, ctx):
         msg = '%s %s %s' % (req.remote_addr, req.method, req.path)
         self.logger.info(msg)

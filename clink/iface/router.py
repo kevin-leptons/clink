@@ -18,3 +18,11 @@ class IRouter(ABC):
     @abstractmethod
     def find_handle(self, req):
         pass
+
+    @abstractmethod
+    def add_route(self, route):
+        pass
+
+    @abstractmethod
+    def add_routes(self, routes):
+        pass

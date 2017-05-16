@@ -10,28 +10,37 @@ DESCRIPTION
 
 from pymongo import MongoClient, IndexModel
 
-from .error import DocumentNotExist, DocumentIndexError
+from .error import DocumentNotExist, DocumentIndexError, DocSpecExit
 from .imongo_node import IMongoNode
 
 
 class MongoNode(IMongoNode):
-    def __init__(self, url, db_name, doc_specs):
+    def __init__(self, url, db_name, doc_specs=[]):
         self._url = url
         self._db_name = db_name
         self._doc_specs = doc_specs
         self._client = None
+        self._doc_names = []
 
-        self._doc_names = [s.name for s in doc_specs]
+        self._create_docs()
+
+    def use_docspecs(self, doc_specs):
+        new_names = [s.name for s in doc_specs]
+
+        for new_name in new_names:
+            if new_name in self._doc_names:
+                raise DocSpecExit(new_name)
+
+        self._doc_specs.extend(doc_specs)
         self._create_docs()
 
     def instance(self):
-        if self._client is None:
-            self._client = MongoClient(host=self._url)
+        self._connect()
         return self._client[self._db_name]
 
     def doc(self, name):
         if name not in self._doc_names:
-            raise DocumentNotExist
+            raise DocumentNotExist(name)
         return self.instance()[name]
 
     def docs(self, *args):
@@ -45,15 +54,26 @@ class MongoNode(IMongoNode):
         if self._client is not None:
             self._client.close()
 
+    def clear(self):
+        self._connect()
+        self._client.drop_database(self._db_name)
+
+    def _connect(self):
+        if self._client is None:
+            self._client = MongoClient(host=self._url)
+
     def _create_docs(self):
         # ensure that database have documents with valid indexs
         db = self.instance()
         db_doc_names = db.collection_names()
+        self._doc_names = [s.name for s in self._doc_specs]
+
         for spec in self._doc_specs:
             if spec.name not in db_doc_names:
                 # document doesn't exist, create it and it's indexes
                 doc = db[spec.name]
-                doc.create_indexes(spec.indexes)
+                if len(spec.indexes) > 0:
+                    doc.create_indexes(spec.indexes)
             else:
                 # document is exist, verify it's indexes
                 doc = db[spec.name]

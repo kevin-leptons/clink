@@ -7,7 +7,7 @@ from ..mime.type import MIME_JSON
 
 
 class ReqJsonHandler(IPipeHandler):
-    def handle(self, req, res):
+    def handle(self, req, res, ctx):
         if req.content_type != MIME_JSON:
             return
         if req.body is None:

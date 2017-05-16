@@ -13,5 +13,5 @@ from abc import ABC, abstractmethod
 
 class IPipeHandler(ABC):
     @abstractmethod
-    def handle(self, req, res):
+    def handle(self, req, res, ctx):
         pass

@@ -1,3 +1,11 @@
+class DocSpecExit(Exception):
+    def __init__(self, name):
+        self._msg = name
+
+    def __str__(self):
+        return self._msg
+
+
 class DocumentNotExist(Exception):
     def __init__(self, doc_name):
         self._doc_name = doc_name
