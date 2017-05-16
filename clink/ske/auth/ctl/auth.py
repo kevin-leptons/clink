@@ -1,4 +1,4 @@
-from ..routing import Route
+from clink.routing import Route
 
 
 route = Route('auth')

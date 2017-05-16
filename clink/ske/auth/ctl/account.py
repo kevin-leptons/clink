@@ -26,8 +26,9 @@ from os.path import dirname, realpath
 from datetime import datetime, timedelta
 from bson import ObjectId
 
-from ..routing import Route
-from ..error.http import Http401Error, Http400Error, Http500Error
+from clink.routing import Route
+from clink.error.http import Http401Error, Http400Error, Http500Error
+
 from .util import build_template
 
 
