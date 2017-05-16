@@ -1,0 +1,28 @@
+SYNOPSIS
+========
+
+    Change password.
+
+DESCRIPTION
+===========
+
+    We changed your password successfully.
+
+WARNING
+=======
+
+    If you didn't perform this action, report to us. May be your account are
+    under attacking.
+
+METADATA
+========
+
+    Account             : ACC_NAME
+    Remote              : REMOTE_ADDR
+    Date                : DATETIME_NOW
+
+AUTHOR
+======
+
+    SENDER_NAME <SENDER_EMAIL>
+    APP_NAME
