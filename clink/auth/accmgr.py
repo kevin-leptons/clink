@@ -18,12 +18,12 @@ DESCRIPTION
     Manage accounts and groups.
 '''
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from time import time
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from .error import AccountNotExist, GroupExist, GroupNotExist, \
-                   CodeNotExistError, CodeExpiredError
+                   CodeNotExistError, CodeExpiredError, AccountExistError
 from .util import hash_pwd, rand_pwd, rand_code
 
 _ACT_REGISTERED = 'REGISTERED'
@@ -36,12 +36,14 @@ _ACT_RM_FRM_GRP = 'RM_FRM_GRP'
 class AccMgr():
     _pwd_chars = ascii_lowercase + ascii_uppercase + digits
 
-    def __init__(self, acc_doc, grp_doc, rpwd_doc):
+    def __init__(self, acc_doc, grp_doc, rpwd_doc, acctmp_doc):
         self._acc_doc = acc_doc
         self._grp_doc = grp_doc
         self._rpwd_doc = rpwd_doc
+        self._acctmp_doc = acctmp_doc
 
         self.rpwd_time = 3600
+        self.create_time = 3600
 
     def create(self, name, password, email, phone=None):
         account = {
@@ -56,6 +58,54 @@ class AccMgr():
         }
         result = self._acc_doc.insert_one(account)
         return result.inserted_id
+
+    def mk_creation(self, name, password, email, phone=None):
+        if self._acc_doc.find_one({'name': name}) is not None:
+            raise AccountExistError(name)
+        if self._acc_doc.find_one({'email': email}) is not None:
+            raise EmailExistError(email)
+        if phone is not None:
+            if self._acc_doc.find_one({'phone': phone}) is not None:
+                raise PhoneExistError(phone)
+
+        datetime_now = datetime.utcnow().timestamp()
+        self._acctmp_doc.delete_many({'_expired_date': {'$lt': datetime_now}})
+
+        creation_code = rand_code()
+        expired_date = datetime.utcnow() + timedelta(hours=self.create_time)
+        acctmp = {
+            'name': name,
+            'hashpwd': hash_pwd(password),
+            'email': email,
+            'phone': phone,
+            'groups': [],
+            'created_date': datetime.utcnow(),
+            'modified_date': datetime.utcnow(),
+            'last_action': _ACT_REGISTERED,
+
+            '_expired_date': expired_date.timestamp(),
+            '_creation_code': creation_code
+        }
+        self._acctmp_doc.insert_one(acctmp)
+
+        return creation_code
+
+    def confirm_creation(self, code):
+        acctmp = self._acctmp_doc.find_one({'_creation_code': code})
+        if acctmp is None:
+            raise CodeNotExistError(code)
+        if acctmp['_expired_date'] < datetime.utcnow().timestamp():
+            raise CodeExpiredError(code)
+        self._acctmp_doc.delete_one({'_creation_code': code})
+
+        del acctmp['_id']
+        del acctmp['_expired_date']
+        del acctmp['_creation_code']
+
+        result = self._acc_doc.insert_one(acctmp)
+        del acctmp['hashpwd']
+
+        return acctmp
 
     def find_id(self, id):
         return self._acc_doc.find_one({'_id': id})

@@ -1,35 +1,29 @@
 SYNOPSIS
 ========
 
-    Invoke reset password code.
+    Invoke registration.
 
 DESCRIPTION
 ===========
 
-    We reveived request to reset password and peform successfully.
-    Here are code to reset your password:
+    We reveived request to register your account and accepted it.
+    Here are code to register:
 
-        RESET_PWD_CODE
+        REG_CODE
 
     You have 1 hour to use that code. After that, code is invaild.
     Your code is valid before:
 
         EXPIRED_DATE
 
-    All of codes which grants before this code was deleted. You can't
-    use them.
-
-WARNING
-=======
-
-    If you didn't this action, report to us. May be your account are under
-    attacking.
-
+    If you don't confirm code with us before expired date, then this account
+    with name or email may be register by other users.
 
 METADATA
 ========
 
     Account             : ACC_NAME
+    Email               : EMAIL
     Remote              : REMOTE_ADDR
     Date                : DATETIME_NOW
 

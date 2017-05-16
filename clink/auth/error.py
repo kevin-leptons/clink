@@ -1,4 +1,4 @@
-class AccountExist(Exception):
+class AccountExistError(Exception):
     def __init__(self, identity):
         self._msg = identity
 

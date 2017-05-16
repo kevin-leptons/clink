@@ -1,5 +1,9 @@
-def build_template(text, values):
-    r = text
+def build_template(file_path, values):
+    f = open(file_path)
+    data = f.read()
+    f.close()
+
     for k, v in values.items():
-        r = r.replace(k, v)
-    return r
+        data = data.replace(k, v)
+
+    return data

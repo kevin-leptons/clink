@@ -1,0 +1,27 @@
+SYNOPSIS
+========
+
+    Registration.
+
+DESCRIPTION
+===========
+
+    We received your registration code and active your account successfully.
+    Here are essential information of your account:
+
+        Name: ACC_NAME
+        Email: ACC_EMAIL
+
+    Good luck with our services.
+
+METADATA
+========
+
+    Remote              : REMOTE_ADDR
+    Date                : DATETIME_NOW
+
+AUTHOR
+======
+
+    SENDER_NAME <SENDER_EMAIL>
+    APP_NAME
