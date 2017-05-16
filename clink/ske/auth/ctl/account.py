@@ -26,18 +26,16 @@ from os.path import dirname, realpath
 from datetime import datetime, timedelta
 from bson import ObjectId
 
-from clink.routing import Route
 from clink.error.http import Http401Error, Http400Error, Http500Error
+from clink.routing import Route
+from clink.service.template import build_tpl
 
-from .util import build_template
-
-
-_DIR = realpath(dirname(__file__))
-_REG_CODE_TMP_FILE = path.join(_DIR, 'reg-code-tmp.txt')
+_DIR = realpath(path.join(dirname(__file__), '../tpl'))
+_REG_CODE_TMP_FILE = path.join(_DIR, 'reg-code.txt')
 _REG_TMP_FILE = path.join(_DIR, 'reg-tmp.txt')
-_CHANGE_PWD_TMP_FILE = path.join(_DIR, 'change-pwd-tmp.txt')
-_RESET_PWD_TMP_FILE = path.join(_DIR, 'reset-pwd-tmp.txt')
-_RESET_PWD_CODE_TMP_FILE = path.join(_DIR, 'reset-pwd-code-tmp.txt')
+_CHANGE_PWD_TMP_FILE = path.join(_DIR, 'change-pwd.txt')
+_RESET_PWD_TMP_FILE = path.join(_DIR, 'reset-pwd.txt')
+_RESET_PWD_CODE_TMP_FILE = path.join(_DIR, 'reset-pwd-code.txt')
 
 route = Route('acc')
 
@@ -63,7 +61,7 @@ def create_reg_code(req, res, ctx):
         'DATETIME_NOW': datetime_now.strftime('%Y-%m-%d %H:%M:%S'),
         'EXPIRED_DATE': expired_date.strftime('%Y-%m-%d %H:%M:%S')
     }
-    txt_body = build_template(_REG_CODE_TMP_FILE, values)
+    txt_body = build_tpl(_REG_CODE_TMP_FILE, values)
     subject = 'Registration'
     mailsv.send(info['email'], subject, txt_body)
 
@@ -88,7 +86,7 @@ def confirm_reg_code(req, res, ctx):
         'ACC_EMAIL': acc['email'],
         'DATETIME_NOW': datetime_now.strftime('%Y-%m-%d %H:%M:%S')
     }
-    txt_body = build_template(_REG_TMP_FILE, values)
+    txt_body = build_tpl(_REG_TMP_FILE, values)
     subject = 'Registration'
     mailsv.send(acc['email'], subject, txt_body)
 
@@ -118,7 +116,7 @@ def change_pwd(req, res, ctx):
         'ACC_NAME': acc['name'],
         'DATETIME_NOW': datetime_now.strftime('%Y-%m-%d %H:%M:%S')
     }
-    txt_body = build_template(_CHANGE_PWD_TMP_FILE, values)
+    txt_body = build_tpl(_CHANGE_PWD_TMP_FILE, values)
     subject = 'Change password'
     mailsv.send(acc['email'], subject, txt_body)
 
@@ -148,7 +146,7 @@ def create_reset_pwd_code(req, res, ctx):
         'EXPIRED_DATE': expired_date.strftime('%Y-%m-%d %H:%M:%S'),
         'ACC_NAME': acc['name']
     }
-    txt_body = build_template(_RESET_PWD_CODE_TMP_FILE, values)
+    txt_body = build_tpl(_RESET_PWD_CODE_TMP_FILE, values)
 
     subject = 'Reset password code'
     mailsv.send(email, subject, txt_body)
@@ -179,7 +177,7 @@ def confirm_reset_pwd_code(req, res, ctx):
         'SENDER_NAME': 'root',
         'SENDER_EMAIL': ctx['rootmail']
     }
-    txt_msg = build_template(_RESET_PWD_TMP_FILE, values)
+    txt_msg = build_tpl(_RESET_PWD_TMP_FILE, values)
 
     subject = 'Reset password'
     mailsv.send(acc['email'], subject, txt_msg)
@@ -208,7 +206,6 @@ def get_me(req, res, ctx):
 
 
 def _authen(req, ctx):
-    # authorization header in format 'Bearer <token>'
     if 'AUTHORIZATION' not in req.header:
         raise Http401Error(req)
     auth_header = req.header['AUTHORIZATION']
