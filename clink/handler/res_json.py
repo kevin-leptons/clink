@@ -17,13 +17,16 @@ DESCRIPTION
 
 from bson import json_util
 
-from ..iface import IPipeHandler
-from ..mime.type import MIME_JSON
-from ..etc import UTF_8
+from clink.iface import IPipeHandler
+from clink.mime.type import MIME_JSON
+from clink.etc import UTF_8
+from clink.com.marker import com
+from clink.type.com import AppResHandler
 
 
-class ResJsonHandler(IPipeHandler):
-    def handle(self, req, res, ctx):
+@com()
+class ResJsonHandler(AppResHandler, IPipeHandler):
+    def handle(self, req, res):
         if res.content_type != MIME_JSON:
             return
         if res.body is None:

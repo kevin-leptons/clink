@@ -12,8 +12,10 @@ May, 2017 <br>
 
 # FEATURES
 
-- Routing by method, path and content type
-- Process follow a pipe with handlers
+- Provide components architecture
+- Solve dependency components by injector
+- Routing by method, path and request content type
+- Process handlers like pipe
 - Handlers for logging
 - Handlers for common data such as JSON, URL ENCONDE
 - Utilities to decorate with handlers
@@ -44,28 +46,31 @@ Create an file called **server.py** below:
 
 ```python
 from wsgiref.simple_server import make_server
-from clink import Application
-from clink.routing import Route, Router
+from clink import App
+from clink.com.marker import com
+from clink.marker import route
+from clink.type.com import Controller
+from clink.type import AppConfig
 
 ADDRESS = 'localhost'
 PORT = 8080
 
-# create route
-book_route = Route('book')
 
-
-# add request handle to route
-@book_route.get('item')
-def get_book(req, res):
-    res.body = {
-        'name': 'Linux Programming Interface',
-        'author': 'Michael Kerrisk'
-    }
-
+@com()
+@route.path('book')
+class BookCtl(Controller):
+    @route.get('item')
+    def get_item(self, req, res):
+        res.body = {
+            'name': 'Linux Programming Interface',
+            'author': 'Michael Kerrisk'
+        }
 
 # create application
-router = Router([book_route])
-app = Application('book-api', router)
+conf = AppConfig('book-api')
+app = App(conf)
+app.add_com(BookCtl)
+app.load()
 
 # serve application
 print('Prepare to start on http://%s:%i' % (ADDRESS, PORT))

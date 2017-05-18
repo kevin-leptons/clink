@@ -1,11 +1,14 @@
 import json
 
-from ..error.http import HttpError, code_to_str
-from ..iface import IErrorHandler
-from ..mime.type import MIME_JSON
+from clink.error.http import HttpError, code_to_str
+from clink.iface import IErrorHandler
+from clink.mime.type import MIME_JSON
+from clink.com.marker import com
+from clink.type.com import AppErrHandler
 
 
-class ErrorHttpHandler(IErrorHandler):
+@com()
+class ErrorHttpHandler(AppErrHandler, IErrorHandler):
     def handle(self, req, res, e):
         if not isinstance(e, HttpError):
             return False

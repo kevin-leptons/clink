@@ -1,13 +1,16 @@
 import json
 
-from ..error.http import Http400Error
-from ..iface import IPipeHandler
-from ..etc import UTF_8
-from ..mime.type import MIME_JSON
+from clink.error.http import Http400Error
+from clink.iface import IPipeHandler
+from clink.etc import UTF_8
+from clink.mime.type import MIME_JSON
+from clink.com.marker import com
+from clink.type.com import AppReqHandler
 
 
-class ReqJsonHandler(IPipeHandler):
-    def handle(self, req, res, ctx):
+@com()
+class ReqJsonHandler(AppReqHandler, IPipeHandler):
+    def handle(self, req, res):
         if req.content_type != MIME_JSON:
             return
         if req.body is None:

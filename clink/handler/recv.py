@@ -8,12 +8,15 @@ DESCRIPTION
     Implement IRecvHandler
 '''
 
-from ..error.http import HttpArgumentError, Http400Error
-from ..mime.type import MIME_JSON
-from ..iface import IRecvHandler
+from clink.error.http import HttpArgumentError, Http400Error
+from clink.mime.type import MIME_JSON
+from clink.iface import IRecvHandler
+from clink.com.marker import com
+from clink.com.type import Component
 
 
-class RecvHandler(IRecvHandler):
+@com()
+class RecvHandler(Component, IRecvHandler):
     def handle(self, req, res, env):
         res.status = 200
         res.content_type = MIME_JSON

@@ -1,15 +1,19 @@
 import logging
+from os import path
 from os.path import isfile
 
-from ..iface import IErrorHandler
-from ..etc import LOGFILE_MODE
-from ..shell import touch
+from clink.iface import IErrorHandler
+from clink.etc import LOGFILE_MODE
+from clink.shell import touch
+from clink.com.type import Component
+from clink.com.marker import com
+from clink.type import AppConfig
 
 
-class ErrorLogHandler(IErrorHandler):
-    def __init__(self, file):
-        self._file = file
-
+@com(AppConfig)
+class ErrorLogHandler(Component, IErrorHandler):
+    def __init__(self, app_conf):
+        file = path.join('/var/tmp', app_conf.name, 'error.log')
         if not isfile(file):
             touch(file, LOGFILE_MODE)
 
@@ -19,10 +23,6 @@ class ErrorLogHandler(IErrorHandler):
         fhandler.setFormatter(formatter)
         self._logger.addHandler(fhandler)
         self._logger.setLevel(logging.INFO)
-
-    @property
-    def file(self):
-        return self._file
 
     def handle(self, req, res, e):
         msg = ' '.join([
