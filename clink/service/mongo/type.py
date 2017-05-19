@@ -19,6 +19,8 @@ REFERENCES
         pymongo.collection.Collection.create_indexes
 '''
 
+from clink.com import com, Component
+
 
 class MongoDocSpec():
     def __init__(self, name, indexes):
@@ -32,3 +34,18 @@ class MongoDocSpec():
     @property
     def indexes(self):
         return self._indexes
+
+
+@com()
+class MongoConf(Component):
+    def __init__(self, dburl, dbname):
+        self._dburl = dburl
+        self._dbname = dbname
+
+    @property
+    def dburl(self):
+        return self._dburl
+
+    @property
+    def dbname(self):
+        return self._dbname

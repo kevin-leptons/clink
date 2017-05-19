@@ -7,10 +7,10 @@ from clink.etc import LOGFILE_MODE
 from clink.shell import touch
 from clink.com.type import Component
 from clink.com.marker import com
-from clink.type import AppConfig
+from clink.type import AppConf
 
 
-@com(AppConfig)
+@com(AppConf)
 class ErrorLogHandler(Component, IErrorHandler):
     def __init__(self, app_conf):
         file = path.join('/var/tmp', app_conf.name, 'error.log')

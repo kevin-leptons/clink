@@ -22,8 +22,15 @@ from datetime import datetime, timedelta
 from time import time
 from string import ascii_lowercase, ascii_uppercase, digits
 
+from clink.type.com import Service
+from clink.com import com
+from clink.service.mongo import MongoService
+
 from .error import AccountNotExist, GroupExist, GroupNotExist, \
-                   CodeNotExistError, CodeExpiredError, AccountExistError
+                   CodeNotExistError, CodeExpiredError, AccountExistError, \
+                   EmailExistError
+from .authdb_sv import AuthDbService
+from .type import AuthConf
 from .util import hash_pwd, rand_pwd, rand_code
 
 _ACT_REGISTERED = 'REGISTERED'
@@ -33,17 +40,23 @@ _ACT_ADD_TO_GRP = 'ADD_TO_GRP'
 _ACT_RM_FRM_GRP = 'RM_FRM_GRP'
 
 
-class AccMgr():
+@com(MongoService, AuthDbService, AuthConf)
+class AccService(Service):
     _pwd_chars = ascii_lowercase + ascii_uppercase + digits
 
-    def __init__(self, acc_doc, grp_doc, rpwd_doc, acctmp_doc):
-        self._acc_doc = acc_doc
-        self._grp_doc = grp_doc
-        self._rpwd_doc = rpwd_doc
-        self._acctmp_doc = acctmp_doc
+    def __init__(self, mongo_sv, authdb_sv, auth_conf):
+        pass
+        self._acc_doc = mongo_sv.doc('account')
+        self._grp_doc = mongo_sv.doc('group')
+        self._rpwd_doc = mongo_sv.doc('rpwd')
+        self._acctmp_doc = mongo_sv.doc('acctmp')
 
         self.rpwd_time = 3600
         self.create_time = 3600
+
+        root_acc = self.find_name('root')
+        if root_acc is None:
+            self.create('root', auth_conf.root_pwd, auth_conf.root_email)
 
     def create(self, name, password, email, phone=None):
         account = {

@@ -1,27 +1,16 @@
-from clink import App
-from clink.auth import Auth
-from clink.db import MongoNode
-from clink.service import MailService
+import clink
 
-from .ctl import routes
+from clink import com
+from clink.type.com import Controller
+from clink.ske.auth import ctl
 
 
-class AuthApp(App):
-    def __init__(
-        self, name, dburl, dbname, jwt_key,
-        root_pwd, root_email, email_pwd, email_server,
-        token_time=4*3600, rtoken_time=30*24*3600
-    ):
-        super().__init__(name)
+class App(clink.App):
+    def __init__(self, app_conf, mongo_conf, auth_conf):
+        super().__init__(app_conf)
 
-        self.ctx['rootmail'] = root_email
-        self.ctx['dbnode'] = MongoNode(dburl, dbname)
-        self.ctx['auth'] = Auth(
-            self.ctx['dbnode'], root_pwd, root_email,
-            jwt_key, token_time, rtoken_time
-        )
-        self.ctx['mailsv'] = MailService(
-            email_server, root_email, email_pwd, name
-        )
+        self.injector.add_inst(mongo_conf)
+        self.injector.add_inst(auth_conf)
 
-        self.router.add_routes(routes)
+        ctl_coms = com.find(ctl, Controller)
+        self.injector.add_coms(ctl_coms)

@@ -64,11 +64,20 @@ class CodeNotExistError(Exception):
     def __str__(self):
         return self._msg
 
+
 class CodeExpiredError(Exception):
     def __init__(self, spec):
         self._msg = 'code=%s, expired_date=%i'.format(
             spec['code'], spec['expired-date']
         )
+
+    def __str__(self):
+        return self._msg
+
+
+class EmailExistError(Exception):
+    def __init__(self, email):
+        self._msg = email
 
     def __str__(self):
         return self._msg

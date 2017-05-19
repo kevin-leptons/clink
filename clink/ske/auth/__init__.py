@@ -1,1 +1,2 @@
-from .app import AuthApp
+from .app import App
+from .type import *

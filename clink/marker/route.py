@@ -33,7 +33,7 @@ def post(path, req_type=MIME_JSON):
 
 
 def put(path, req_type=MIME_JSON):
-    return put('put', path, req_type)
+    return map('put', path, req_type)
 
 
 def patch(path, req_type=MIME_JSON):

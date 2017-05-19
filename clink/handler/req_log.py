@@ -7,10 +7,10 @@ from clink.iface import IPipeHandler
 from clink.shell import touch
 from clink.com.marker import com
 from clink.com.type import Component
-from clink.type import AppConfig
+from clink.type import AppConf
 
 
-@com(AppConfig)
+@com(AppConf)
 class ReqLogHandler(Component, IPipeHandler):
     def __init__(self, app_conf):
         file = path.join('/var/tmp', app_conf.name, 'request.log')

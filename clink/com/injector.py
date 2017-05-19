@@ -31,7 +31,8 @@ DESCRIPTION
 from collections import deque
 
 from .type import Component
-from .error import ComInvalidError, CircleComError, ComExistError 
+from .error import ComInvalidError, CircleComError, ComExistError, \
+                   ComCreationError
 
 CLINK_COM_ATTR = '__clink'
 
@@ -42,7 +43,7 @@ class Injector():
         self._com_layer = []
         self.com_inst = {}
 
-    def add_isnt(self, com_obj):
+    def add_inst(self, com_obj):
         com_type = type(com_obj)
         if not isinstance(com_obj, Component):
             raise ComInvalidError(com_type)
@@ -53,7 +54,6 @@ class Injector():
         clink_spec = getattr(com_type, CLINK_COM_ATTR)
         if len(clink_spec['req_coms']) > 0:
             raise InvalidDepedencyError(com_type)
-
         self._com_dict[com_type] = []
         self.com_inst[com_type] = com_obj
 
@@ -65,6 +65,10 @@ class Injector():
             raise ComExistError(com_type)
         clink_spec = getattr(com_type, CLINK_COM_ATTR)
         self._com_dict[com_type] = clink_spec['req_coms']
+
+    def add_coms(self, com_type):
+        for t in com_type:
+            self.add_com(t)
 
     def load(self):
         self._expand_com()
@@ -121,4 +125,7 @@ class Injector():
                     continue
                 arg_types = tuple([t for t in self._com_dict[com_type]])
                 args = tuple([self.com_inst[t] for t in arg_types])
-                self.com_inst[com_type] = com_type(*args)
+                try:
+                    self.com_inst[com_type] = com_type(*args)
+                except TypeError as e:
+                    raise ComCreationError(com_type, args)

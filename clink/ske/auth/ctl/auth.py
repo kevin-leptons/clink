@@ -1,12 +1,35 @@
-from clink.routing import Route
+'''
+SYNOPSIS
+
+    POST /auth/token
+
+DESCRIPTION
+
+    Create token with username, password or refresh_token
+'''
+
+from clink.com.marker import com
+from clink.marker import route
+from clink.type.com import Controller
+from clink.service.auth import OAuthService
 
 
-route = Route('auth')
+@com(OAuthService)
+@route.path('auth')
+class AuthCtl(Controller):
+    def __init__(self, oauth_sv):
+        self._oauth_sv = oauth_sv
 
+    @route.post('token')
+    def get_token(self, req, res):
+        info = req.body
+        grant_type = info['grant_type']
 
-@route.post('token')
-def get_token(req, res, ctx):
-    auth = ctx['auth'].auth
-    info = req.body
-
-    res.body = auth.mktoken_pwd(info['name'], info['password'])
+        if grant_type == 'password':
+            res.body = self._oauth_sv.mktoken_pwd(
+                info['username'], info['password']
+            )
+        elif grant_type == 'refresh_token':
+            res.body = self._oauth_sv.mktoken_rtoken(info['refresh_token'])
+        else:
+            raise Http400Error(req, 'Not support grant_type=' + grant_type)

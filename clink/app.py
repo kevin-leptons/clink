@@ -42,7 +42,7 @@ class App(IWsgi):
     def __init__(self, conf):
         self.router = Router()
         self.injector = Injector()
-        self.injector.add_isnt(conf)
+        self.injector.add_inst(conf)
 
         self.add_com(RecvHandler)
         self.add_com(SendHandler)

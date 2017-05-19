@@ -47,23 +47,30 @@ import jwt
 from time import time
 from bson import ObjectId
 
+from clink.com import com
+from clink.type.com import Service
+from clink.service.mongo import MongoService
+from clink.error.http import Http400Error, Http401Error
+
 from .error import AccountNotExist, PasswordError, TokenExpiredError, \
                    RTokenExpiredError
+from .authdb_sv import AuthDbService
+from .type import AuthConf
 from .util import hash_pwd
 
 
-class OAuth():
+@com(MongoService, AuthDbService, AuthConf)
+class OAuthService(Service):
     _TOKEN_ALG = 'HS512'
 
-    def __init__(
-        self, acc_doc, grp_doc, jwt_key,
-        token_time=4*3600, rtoken_time=30*24*3600
-    ):
-        self._acc_doc = acc_doc
-        self._grp_doc = grp_doc
-        self._jwt_key = jwt_key
-        self._token_time = token_time
-        self._rtoken_time = rtoken_time
+    def __init__(self, mongo_sv, authdb_sv, auth_conf):
+        pass
+        self._acc_doc = mongo_sv.doc('account')
+        self._grp_doc = mongo_sv.doc('group')
+
+        self._jwt_key = auth_conf.jwt_key
+        self._token_time = auth_conf.token_time
+        self._rtoken_time = auth_conf.rtoken_time
 
     def mktoken_pwd(self, name, password):
         acc = self._acc_doc.find_one({'name': name})
@@ -122,3 +129,14 @@ class OAuth():
             token_raw, self._jwt_key, algorithm=self._TOKEN_ALG
         )
         return token.decode()
+
+    def authen_req(self, req):
+        if 'AUTHORIZATION' not in req.header:
+            raise Http401Error(req)
+        auth_header = req.header['AUTHORIZATION']
+        auth_type = auth_header[:7]
+        if auth_type != 'Bearer ':
+            raise Http400Error(req)
+        atoken = auth_header[7:]
+
+        return self.authen(atoken)
