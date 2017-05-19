@@ -12,15 +12,11 @@ May, 2017 <br>
 
 # FEATURES
 
+- Process handlers likes pipe line
 - Provide components architecture
-- Solve dependency components by injector
 - Routing by method, path and request content type
-- Process handlers like pipe
-- Handlers for logging
-- Handlers for common data such as JSON, URL ENCONDE
-- Utilities to decorate with handlers
-- Work flow with database
-- Work flow with OAuth2: Processing
+- Database with MongoDB
+- Authentication with limited OAuth2 specifications
 
 # USAGE
 
