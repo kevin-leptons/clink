@@ -15,7 +15,8 @@ May, 2017 <br>
 - Process handlers likes pipe line
 - Provide components architecture
 - Routing by method, path and request content type
-- Database with MongoDB
+- Database operations with MongoDB
+- Account managements with built-in service
 - Authentication with limited OAuth2 specifications
 
 # USAGE
