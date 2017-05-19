@@ -3,7 +3,7 @@ SYNOPSIS
 
     class App
         add_com(com_type)
-        load() 
+        load()
         __call__()
 
 DESCRIPTION
@@ -73,34 +73,35 @@ class App(IWsgi):
         self.res_handlers = self.injector.instanceof(AppResHandler)
 
     def __call__(self, wsgi_env, wsgi_send):
+        # level 0: recv handling
         req = Request()
         res = Response()
 
         try:
-            # receive message, initial req and res
+            # level 0 continue: recev handling
             self.recv_handler.handle(req, res, wsgi_env)
 
-            # perform request logging handler
+            # level 1: pre-routing handling
             self.req_log_handler.handle(req, res)
 
-            # routing, find main handler
+            # level 2: routing, find main handler
             m_req_handle = self.router.find_handle(req)
 
-            # perform request handlers
+            # level 3: pre-main handling
             for handler in self.req_handlers:
                 handler.handle(req, res)
 
-            # perform main handler
+            # level 4: main handling
             m_req_handle(req, res)
 
-            # perform response handlers
+            # level 5: response handling
             for handler in self.res_handlers:
                 handler.handle(req, res)
 
-            # send response
+            # level 6: send handling
             return self.send_handler.handle(req, res, wsgi_send)
         except Exception as e:
-            # perform error handlers
+            # level 7: error handling
             handled = False
             for handler in self.err_handlers:
                 if handler.handle(req, res, e):
@@ -108,10 +109,10 @@ class App(IWsgi):
             if not handled:
                 raise e
 
-            # perform error logging handler
+            # level 8: error log handling
             self.err_log_handler.handle(req, res, e)
 
-            # send error response
+            # level 9: send error response
             return self.send_handler.handle(req, res, wsgi_send)
 
     def _init_routes(self):
