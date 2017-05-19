@@ -50,12 +50,12 @@ from clink import App
 from clink.com.marker import com
 from clink.marker import route
 from clink.type.com import Controller
-from clink.type import AppConfig
+from clink.type import AppConf
 
-ADDRESS = 'localhost'
-PORT = 8080
+# define component - application configuration
+conf = AppConf('book-api')
 
-
+# define component - controller
 @com()
 @route.path('book')
 class BookCtl(Controller):
@@ -67,14 +67,19 @@ class BookCtl(Controller):
         }
 
 # create application
-conf = AppConfig('book-api')
 app = App(conf)
+
+# add component to application
 app.add_com(BookCtl)
+
+# create instance of all of components
 app.load()
 
 # serve application
-print('Prepare to start on http://%s:%i' % (ADDRESS, PORT))
-httpd = make_server(ADDRESS, PORT, app)
+address = 'localhost'
+port = 8080
+print('Prepare to start on http://%s:%i' % (address, port))
+httpd = make_server(address, port, app)
 httpd.serve_forever()
 ```
 

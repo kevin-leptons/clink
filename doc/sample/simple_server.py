@@ -29,6 +29,8 @@ app.add_com(BookCtl)
 app.load()
 
 # serve application
-print('Prepare to start on http://%s:%i' % (ADDRESS, PORT))
-httpd = make_server('localhost', 8080, app)
+address = 'localhost'
+port = 8080
+print('Prepare to start on http://%s:%i' % (address, port))
+httpd = make_server(address, port, app)
 httpd.serve_forever()
