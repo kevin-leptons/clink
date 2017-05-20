@@ -78,13 +78,10 @@ Now you can test it:
 
 .. code-block:: shell-session
 
-    $ # start app in background
     $ python app_creation.py &> /dev/null &
     [1] 5946
 
-    $ # perform: GET /book/item
     $ curl localhost:8080/book/item
     {"author": "Death", "name": "How to Die"}
 
-    $ #  stop app
-    kill -s KILL 5946
+    $ kill %1

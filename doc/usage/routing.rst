@@ -56,3 +56,5 @@ Test it:
 
     $ curl localhost:8080/not-exist-path; echo
     {"status_name": "404 Not Found", "message": null, "status": 404}
+
+    $ kill %1

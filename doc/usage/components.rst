@@ -22,6 +22,15 @@ that concept be perform by **Injector**. For example:
 .. literalinclude:: ../sample/components.py
     :language: python
 
+Test it
+-------
+
+.. code-block:: shell-session
+
+    $ python components.py
+    created: {'name': 'Micheal', 'email': 'michael@mars.com'}
+    <__main__.AccountService object at 0x7f4716069f28>
+
 Component
 ---------
 

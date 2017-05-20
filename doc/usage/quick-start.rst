@@ -30,12 +30,10 @@ Testing
 
 .. code-block:: shell-session
 
-    $ # start api in background
     $ python server.py &> /dev/null &
+    [1] 10297
 
-    $ # test it
     $ curl localhost:8080/book/item
     {"name": "Linux Programming Interface", "author": "Michael Kerrisk"}
 
-    $ # stop api
     $ kill %1
