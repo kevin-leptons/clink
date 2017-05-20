@@ -15,5 +15,4 @@ Usage
     data-conversion
     data-validation
     service
-    dependency
     auth-app/index

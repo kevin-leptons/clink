@@ -31,7 +31,7 @@ class RootCtl(Controller):
 
     @route.get('no-content')
     def no_content(self, req, res):
-        res.staus = 204
+        res.status = 204
 
     @route.get('not-found')
     def not_found(self, req, res):

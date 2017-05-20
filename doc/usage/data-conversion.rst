@@ -19,10 +19,23 @@ two handlers:
 - **ReqTextHandler** converts 'text/plain' to list of words.
 - **ResTextHandler** joins list of words to string
 
-And we create main handler convert words to uppercase:
+And we create main handler to converts list of words to uppercase:
 **TextCtl.process_text**
 
 Back to **app_creation**, modify program and get example below:
 
 .. literalinclude:: ../sample/app_data_conversion.py
     :language: python
+
+Test it:
+
+.. code-block:: shell-session
+
+    $ python app_data_conversion.py &> /dev/null &
+    [1] 6456
+
+    $ curl -X POST -H "Content-Type: text/plain" \
+      -d "my name is kevin" localhost:8080/text; echo
+    MY NAME IS KEVIN
+
+    $ kill %1

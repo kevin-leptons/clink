@@ -10,7 +10,7 @@ from wsgiref.simple_server import make_server
 conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
-# STEP 4: define component - controllers
+# STEP 4: define components
 #===[BEGIN] ADD DATA CONVERSION HANDLERS =====================================
 @com()
 class ReqTextHandler(Lv3Handler):

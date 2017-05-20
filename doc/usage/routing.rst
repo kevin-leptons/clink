@@ -35,3 +35,24 @@ Now, modify **app_creation**  to get knowledge about routing:
 
 .. literalinclude:: ../sample/app_routing.py
     :language: python
+
+Test it:
+
+.. code-block:: shell-session
+
+    $ python app_routing.py &> /dev/null &
+    [1] 7071
+
+    $ curl -X GET localhost:8080/book/item; echo
+    {"name": "How to Die", "author": "Death"}
+
+    $ curl -X POST -H "Content-Type: text/plain" localhost:8080/book/item; \
+      echo
+    {"msg": "created"}
+
+    $ curl -X POST -H "Content-Type: application/json" \
+      localhost:8080/book/item; echo
+    {"status_name": "406 Not Accepted", "message": null, "status": 406}
+
+    $ curl localhost:8080/not-exist-path; echo
+    {"status_name": "404 Not Found", "message": null, "status": 404}
