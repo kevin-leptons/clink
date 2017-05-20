@@ -4,11 +4,11 @@ from clink.error.http import Http400Error
 from clink.iface import IPipeHandler
 from clink.mime.type import MIME_URLENCODE
 from clink.com.marker import com
-from clink.type.com import AppReqHandler
+from clink.type.com import Lv3Handler
 
 
 @com()
-class ReqUrlEncodeHandler(AppReqHandler, IPipeHandler):
+class ReqUrlEncodeHandler(Lv3Handler, IPipeHandler):
     def handle(self, req, res):
         if req.content_type != MIME_URLENCODE:
             return

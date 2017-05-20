@@ -2,11 +2,11 @@ from clink.error.wsgi import WsgiResBodyError
 from clink.error.http import code_to_str
 from clink.iface import ISendHandler
 from clink.com.marker import com
-from clink.com.type import Component
+from clink.type import Lv6Handler
 
 
 @com()
-class SendHandler(Component, ISendHandler):
+class SendHandler(Lv6Handler, ISendHandler):
     def handle(self, req, res, wsgi_send):
         if res.body is not None and not isinstance(res.body, bytes):
             raise WsgiResBodyError(res.body)

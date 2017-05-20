@@ -1,10 +1,10 @@
 from clink.iface import IPipeHandler
 from clink.com.marker import com
-from clink.type.com import AppResHandler
+from clink.type import Lv5Handler
 
 
 @com()
-class ResCorsHandler(AppResHandler, IPipeHandler):
+class ResCorsHandler(Lv5Handler, IPipeHandler):
     def handle(self, req, res):
         if req.method.lower() != 'option':
             return

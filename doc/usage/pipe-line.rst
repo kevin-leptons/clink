@@ -121,8 +121,8 @@ This level receive input as text stream, or string then send it to client.
 Level 7: Error Handling
 -----------------------
 
-If from level 0 to level 6 causes error, this level handles for it. It
-can changes [req, res] content. Main target of this level is provide
+From level 0 to level 6 if error occurs, this level handles for it. It
+can changes [req, res] contents. Main target of this level is provides
 HTTP Status Code and Message to client.
 
 Level 8: Error Logging Handling

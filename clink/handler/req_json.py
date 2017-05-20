@@ -5,11 +5,11 @@ from clink.iface import IPipeHandler
 from clink.etc import UTF_8
 from clink.mime.type import MIME_JSON
 from clink.com.marker import com
-from clink.type.com import AppReqHandler
+from clink.type.com import Lv3Handler
 
 
 @com()
-class ReqJsonHandler(AppReqHandler, IPipeHandler):
+class ReqJsonHandler(Lv3Handler, IPipeHandler):
     def handle(self, req, res):
         if req.content_type != MIME_JSON:
             return

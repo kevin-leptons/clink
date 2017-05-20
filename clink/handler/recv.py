@@ -12,11 +12,11 @@ from clink.error.http import HttpArgumentError, Http400Error
 from clink.mime.type import MIME_JSON
 from clink.iface import IRecvHandler
 from clink.com.marker import com
-from clink.com.type import Component
+from clink.type import Lv0Handler
 
 
 @com()
-class RecvHandler(Component, IRecvHandler):
+class RecvHandler(Lv0Handler, IRecvHandler):
     def handle(self, req, res, env):
         res.status = 200
         res.content_type = MIME_JSON

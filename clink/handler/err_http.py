@@ -4,11 +4,11 @@ from clink.error.http import HttpError, code_to_str
 from clink.iface import IErrorHandler
 from clink.mime.type import MIME_JSON
 from clink.com.marker import com
-from clink.type.com import AppErrHandler
+from clink.type import Lv7Handler
 
 
 @com()
-class ErrorHttpHandler(AppErrHandler, IErrorHandler):
+class ErrorHttpHandler(Lv7Handler, IErrorHandler):
     def handle(self, req, res, e):
         if not isinstance(e, HttpError):
             return False

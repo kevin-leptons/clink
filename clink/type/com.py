@@ -1,15 +1,42 @@
 from clink.com.type import Component
 
 
-class AppErrHandler(Component):
+class Lv0Handler(Component):
     pass
 
 
-class AppReqHandler(Component):
+class Lv1Handler(Component):
+    pass
+
+class Lv2Handler(Component):
     pass
 
 
-class AppResHandler(Component):
+class Lv3Handler(Component):
+    pass
+
+
+class Lv4Handler(Component):
+    pass
+
+
+class Lv5Handler(Component):
+    pass
+
+
+class Lv6Handler(Component):
+    pass
+
+
+class Lv7Handler(Component):
+    pass
+
+
+class Lv8Handler(Component):
+    pass
+
+
+class Lv9Handler(Component):
     pass
 
 

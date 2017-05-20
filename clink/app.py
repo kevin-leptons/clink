@@ -14,6 +14,19 @@ DESCRIPTION
     load() create all of components, solve their depedency.
 
     __call__() is implements of WSGI.
+
+    Handler MUST follow description blow:
+
+        Lv0Handler: Receive HTTP message Handling
+        Lv1Handler: Pre-Routing Handling
+        Lv2Handler: Routing Handling
+        Lv3Handler: Pre-Main Handling
+        Lv4Handler: Main Handling
+        Lv5Handler: Responding Handling
+        Lv6Handler: Sending Handling
+        Lv7Handler: Error Handling
+        Lv8Handler: Error Logging Handling
+        Lv9Handler: Error Sending Handling
 '''
 
 from os import path
@@ -26,18 +39,19 @@ from .handler import ReqJsonHandler, ReqUrlEncodeHandler, ReqLogHandler
 from .handler import ResJsonHandler, ResCorsHandler
 from .handler import ErrorHttpHandler, ErrorLogHandler
 from clink.com.injector import Injector, CLINK_COM_ATTR
-from clink.type.com import Controller
 from clink.routing import Route
-from clink.type.com import AppErrHandler, AppReqHandler, AppResHandler
+from clink.type import *
 
 
 class App(IWsgi):
-    req_log_handler = None
-    err_log_handler = None
-
-    err_handlers = None
-    req_handlers = None
-    res_handlers = None
+    lv0_handler = None
+    lv1_handler = None
+    lv3_handlers = None
+    lv5_handlers = None
+    lv6_handler = None
+    lv7_handlers = None
+    lv8_handler = None
+    lv9_handler = None
 
     def __init__(self, conf):
         self.router = Router()
@@ -45,16 +59,14 @@ class App(IWsgi):
         self.injector.add_inst(conf)
 
         self.add_com(RecvHandler)
-        self.add_com(SendHandler)
-
         self.add_com(ReqLogHandler)
-        self.add_com(ErrorLogHandler)
-        self.add_com(ErrorHttpHandler)
-
         self.add_com(ReqJsonHandler)
         self.add_com(ReqUrlEncodeHandler)
         self.add_com(ResJsonHandler)
         self.add_com(ResCorsHandler)
+        self.add_com(SendHandler)
+        self.add_com(ErrorHttpHandler)
+        self.add_com(ErrorLogHandler)
 
     def add_com(self, com_type):
         self.injector.add_com(com_type)
@@ -63,14 +75,14 @@ class App(IWsgi):
         self.injector.load()
         self._init_routes()
 
-        self.recv_handler = self.injector.instance(RecvHandler)
-        self.send_handler = self.injector.instance(SendHandler)
-        self.req_log_handler = self.injector.instance(ReqLogHandler)
-        self.err_log_handler = self.injector.instance(ErrorLogHandler)
-
-        self.err_handlers = self.injector.instanceof(AppErrHandler)
-        self.req_handlers = self.injector.instanceof(AppReqHandler)
-        self.res_handlers = self.injector.instanceof(AppResHandler)
+        self.lv0_handler = self.injector.instanceof(Lv0Handler)[0]
+        self.lv1_handler = self.injector.instanceof(Lv1Handler)[0]
+        self.lv3_handlers = self.injector.instanceof(Lv3Handler)
+        self.lv5_handlers = self.injector.instanceof(Lv5Handler)
+        self.lv6_handler = self.injector.instanceof(Lv6Handler)[0]
+        self.lv7_handlers = self.injector.instanceof(Lv7Handler)
+        self.lv8_handler = self.injector.instanceof(Lv8Handler)[0]
+        self.lv9_handler = self.lv6_handler
 
     def __call__(self, wsgi_env, wsgi_send):
         # level 0: recv handling
@@ -78,42 +90,42 @@ class App(IWsgi):
         res = Response()
 
         try:
-            # level 0 continue: recev handling
-            self.recv_handler.handle(req, res, wsgi_env)
+            # level 0 continue: receiving handling
+            self.lv0_handler.handle(req, res, wsgi_env)
 
             # level 1: pre-routing handling
-            self.req_log_handler.handle(req, res)
+            self.lv1_handler.handle(req, res)
 
             # level 2: routing, find main handler
-            m_req_handle = self.router.find_handle(req)
+            lv4_handle = self.router.find_handle(req)
 
             # level 3: pre-main handling
-            for handler in self.req_handlers:
+            for handler in self.lv3_handlers:
                 handler.handle(req, res)
 
             # level 4: main handling
-            m_req_handle(req, res)
+            lv4_handle(req, res)
 
             # level 5: response handling
-            for handler in self.res_handlers:
+            for handler in self.lv5_handlers:
                 handler.handle(req, res)
 
             # level 6: send handling
-            return self.send_handler.handle(req, res, wsgi_send)
+            return self.lv6_handler.handle(req, res, wsgi_send)
         except Exception as e:
             # level 7: error handling
             handled = False
-            for handler in self.err_handlers:
+            for handler in self.lv7_handlers:
                 if handler.handle(req, res, e):
                     handled = True
             if not handled:
                 raise e
 
             # level 8: error log handling
-            self.err_log_handler.handle(req, res, e)
+            self.lv8_handler.handle(req, res, e)
 
             # level 9: send error response
-            return self.send_handler.handle(req, res, wsgi_send)
+            return self.lv9_handler.handle(req, res, wsgi_send)
 
     def _init_routes(self):
         for type, obj in self.injector.com_inst.items():
