@@ -1,4 +1,5 @@
 from clink.com.type import Component
+from clink.iface import IPipeHandler
 
 
 class Lv0Handler(Component):
@@ -12,7 +13,7 @@ class Lv2Handler(Component):
     pass
 
 
-class Lv3Handler(Component):
+class Lv3Handler(Component, IPipeHandler):
     pass
 
 
@@ -20,7 +21,7 @@ class Lv4Handler(Component):
     pass
 
 
-class Lv5Handler(Component):
+class Lv5Handler(Component, IPipeHandler):
     pass
 
 

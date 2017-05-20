@@ -29,7 +29,7 @@ class RecvHandler(Lv0Handler, IRecvHandler):
         req.server_port = int(env['SERVER_PORT'])
         req.server_protocol = env['SERVER_PROTOCOL']
         req.remote_addr = env['REMOTE_ADDR']
-        if req.method.lower() not in ['get', 'head', 'option']:
+        if req.method.lower() not in ['get', 'delete', 'head', 'option']:
             req.content_type = env['CONTENT_TYPE']
         try:
             req.args = self._parse_args(env['QUERY_STRING'])

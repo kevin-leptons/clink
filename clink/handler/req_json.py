@@ -9,7 +9,7 @@ from clink.type.com import Lv3Handler
 
 
 @com()
-class ReqJsonHandler(Lv3Handler, IPipeHandler):
+class ReqJsonHandler(Lv3Handler):
     def handle(self, req, res):
         if req.content_type != MIME_JSON:
             return

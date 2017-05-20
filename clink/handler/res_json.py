@@ -25,7 +25,7 @@ from clink.type.com import Lv5Handler
 
 
 @com()
-class ResJsonHandler(Lv5Handler, IPipeHandler):
+class ResJsonHandler(Lv5Handler):
     def handle(self, req, res):
         if res.content_type != MIME_JSON:
             return

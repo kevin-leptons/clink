@@ -19,5 +19,6 @@ TABLE OF CONTENTS
     :maxdepth: 2
 
     usage/index
+    api/index
     dev/index
     reference

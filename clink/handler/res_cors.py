@@ -4,7 +4,7 @@ from clink.type import Lv5Handler
 
 
 @com()
-class ResCorsHandler(Lv5Handler, IPipeHandler):
+class ResCorsHandler(Lv5Handler):
     def handle(self, req, res):
         if req.method.lower() != 'option':
             return

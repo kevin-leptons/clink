@@ -8,7 +8,7 @@ from clink.type.com import Lv3Handler
 
 
 @com()
-class ReqUrlEncodeHandler(Lv3Handler, IPipeHandler):
+class ReqUrlEncodeHandler(Lv3Handler):
     def handle(self, req, res):
         if req.content_type != MIME_URLENCODE:
             return
