@@ -1,11 +1,11 @@
-from clink.com.injector import CLINK_COM_ATTR
+from clink.com import COM_ATTR
 from clink.mime.type import MIME_JSON
 
 
 def path(path):
     def new_fn(target_fn):
         target_fn._path = path
-        if CLINK_COM_ATTR in dir(target_fn):
+        if COM_ATTR in dir(target_fn):
             target_fn.__clink['route_path'] = path
         else:
             target_fn.__clink = {'route_path': path}
@@ -16,7 +16,7 @@ def path(path):
 def map(method, path, req_type):
     def decorator_fn(target_fn):
         raw_route = (method, path, req_type)
-        if CLINK_COM_ATTR in dir(target_fn):
+        if COM_ATTR in dir(target_fn):
             target_fn.__clink['raw_route'] = raw_route
         else:
             target_fn.__clink = {'raw_route': raw_route}

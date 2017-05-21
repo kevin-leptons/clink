@@ -41,7 +41,7 @@ class Lv9Handler(Component):
     pass
 
 
-class Controller(Component):
+class Controller(Lv4Handler):
     pass
 
 

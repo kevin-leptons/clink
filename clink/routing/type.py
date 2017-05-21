@@ -1,24 +1,32 @@
-'''
-SYNOPSIS
-    class RouteNode
-    class RouteSpec
+class NodeAction():
+    '''
+    Specify pair of method, content type and handle in a map node
+    '''
 
-DESCRIPTION
+    def __init__(self, method, content_type, handle):
+        '''
+        :param str method:
+        :param str content_type:
+        :param function handle:
+        '''
 
-    Data structures are uses during routing.
-'''
+        self.method = method
+        self.content_type = content_type
+        self.handle = handle
 
 
-class RouteNode():
-    def __init__(self, name):
+class MapNode():
+    '''
+    Specify a map node with name, children and actions
+    '''
+
+    def __init__(self, name, child={}, actions=[]):
+        '''
+        :param str name:
+        :param list[MapNode] child:
+        :param list[NodeAction] actions:
+        '''
+
         self.name = name
         self.child = {}
-        self.specs = []
-
-
-class RouteSpec():
-    def __init__(self, method, path, handler, req_type):
-        self.method = method
-        self.path = path
-        self.handler = handler
-        self.req_type = req_type
+        self.actions = []

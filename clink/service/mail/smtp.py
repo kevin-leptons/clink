@@ -9,7 +9,16 @@ from clink.service.auth import AuthConf
 
 @com(AppConf, AuthConf)
 class SmtpService(Service):
+    '''
+    Send mail message on SMTP
+    '''
+
     def __init__(self, app_conf, auth_conf):
+        '''
+        :param AppConf app_conf:
+        :param AuthConf auth_conf:
+        '''
+
         self._app_conf = app_conf
         self._auth_conf = auth_conf
 
@@ -20,6 +29,14 @@ class SmtpService(Service):
         self._smtp = self._connect()
 
     def send(self, dest_email, subject, text_body):
+        '''
+        Send plain text message
+
+        :param str dest_email:
+        :param str subject:
+        :param str text_body:
+        '''
+
         msg = MIMEText(text_body)
         msg['To'] = dest_email
         msg['Subject'] = subject

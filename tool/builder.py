@@ -17,8 +17,8 @@ from .doc_builder import build_doc, clean_doc
 from .packer import dist_pip, clean_dist, release_pip
 
 
-def pkg_doc(spec):
-    build_doc(spec)
+def pkg_doc(spec, force):
+    build_doc(spec, force)
 
 
 def pkg_doc_clean(spec):

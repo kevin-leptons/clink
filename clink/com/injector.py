@@ -1,119 +1,146 @@
-'''
-SYSNOPSIS
-
-    class Injector
-        com_inst
-
-        add_isnt(com_inst) 
-        add_com(com_type)
-        load()
-
-DESCRIPTION
-
-    com_inst is dictionary of instance of component. Key is type of component,
-    value is isinstance of it. It must use as read only attribute, don't
-    modify it.
-
-    add_isnt() put an instance of component into list of instance of 
-    component. com_inst argument must be subclass of clink.com.type.Component
-    and marked as a component by clink.com.marker.com. add_isnt() only
-    use to add configuration for other component because it doesn't support
-    depedency component. It work like that for clear.
-
-    add_com() put specification of component with com_type. com_type is
-    type, not an instance. It must be subclass of clink.com.type.Component.
-    Depedency components are specify via clink.com.marker.com.
-
-    load() perform creating component by solve depedency components and
-    put instance of depedency components to constructor.
-'''
-
 from collections import deque
 
-from .type import Component
-from .error import ComInvalidError, CircleComError, ComExistError, \
-                   ComCreationError
-
-CLINK_COM_ATTR = '__clink'
+from .type import Component, COM_ATTR, COM_DEP
+from .error import CircleComError, ComExistError, ComDepedencyError, \
+                   ComCreationError, InjectorLoadingError
 
 
 class Injector():
+    '''
+    Object management
+    '''
+
     def __init__(self):
         self._com_dict = {}
         self._com_layer = []
         self.com_inst = {}
+        self._loaded = False
 
-    def add_inst(self, com_obj):
+    def add_ref(self, com_obj):
+        '''
+        Put an instance of component under management. Instance MUST NOT
+        contains any depedencies
+
+        :param clink.com.Component com_obj:
+        :raise ComExistError:
+        :raise ComDepedencyError:
+        '''
+
         com_type = type(com_obj)
-        if not isinstance(com_obj, Component):
-            raise ComInvalidError(com_type)
-        if CLINK_COM_ATTR not in dir(com_type):
-            raise ComInvalidError(com_type)
         if com_type in self._com_dict:
             raise ComExistError(com_type)
-        clink_spec = getattr(com_type, CLINK_COM_ATTR)
-        if len(clink_spec['req_coms']) > 0:
-            raise InvalidDepedencyError(com_type)
+
+        if len(self._req_coms(com_type)) > 0:
+            raise ComDepedencyError(com_type, 'MUST NOT contains dependency')
+
         self._com_dict[com_type] = []
         self.com_inst[com_type] = com_obj
 
     def add_com(self, com_type):
-        methods = dir(com_type)
-        if CLINK_COM_ATTR not in methods:
-            raise ComInvalidError(com_type)
+        '''
+        Put an component under management
+
+        :param class com_type:
+        :raise ComExistError:
+        '''
+
         if com_type in self._com_dict:
             raise ComExistError(com_type)
-        clink_spec = getattr(com_type, CLINK_COM_ATTR)
-        self._com_dict[com_type] = clink_spec['req_coms']
 
-    def add_coms(self, com_type):
-        for t in com_type:
-            self.add_com(t)
+        self._com_dict[com_type] = self._req_coms(com_type)
+
+    def add_coms(self, com_types):
+        '''
+        Put components under management
+
+        :param list[class] com_types:
+        '''
+
+        for com_type in com_types:
+            self.add_com(com_type)
 
     def load(self):
+        '''
+        Start to create instances of all of components
+        '''
         self._expand_com()
         self._mkcom_layer()
         self._mkcom_instance()
+        self._loaded = True
 
-    def instance(self, type):
-        if type not in self.com_inst:
+    def ref(self, com_type):
+        '''
+        Return reference to component
+
+        :param class com_type:
+        :rtype: object
+        '''
+
+        self._must_loaded()
+        if com_type not in self.com_inst:
             return None
-        return self.com_inst[type]    
 
-    def instanceof(self, com_type):
+        return self.com_inst[com_type]    
+
+    def sub_ref(self, com_type):
+        '''
+        Return references to components which extends from com_type
+
+        :param class com_type:
+        :rtype: list[object]
+        '''
+
+        self._must_loaded()
+
         coms = []
-        for t in self.com_inst:
-            if isinstance(self.com_inst[t], com_type):
-                coms.append(self.com_inst[t])
+        for key in self.com_inst:
+            if isinstance(self.com_inst[key], com_type):
+                coms.append(self.com_inst[key])
+
         return coms
+
+    def _must_loaded(self):
+        if not self._loaded:
+            raise InjectorLoadingError()
+
+    def _req_coms(self, com_type):
+        if not issubclass(com_type, Component):
+            raise ComTypeError(com_type)
+        if COM_ATTR not in dir(com_type):
+            raise ComAtrrError(com_type)
+        com_attrs = getattr(com_type, COM_ATTR)
+        if COM_DEP not in com_attrs:
+            raise ComAttrError(com_type)
+
+        return com_attrs[COM_DEP]
 
     def _expand_com(self):
         com_queue = deque(self._com_dict.keys())
+
         while len(com_queue) > 0:
-            ct = com_queue.popleft()
-            methods = dir(ct)
-            if CLINK_COM_ATTR not in methods:
-                raise ComInvalidError(ct)
-            req_coms = getattr(ct, CLINK_COM_ATTR)['req_coms']
-            if ct not in self._com_dict:
-                self._com_dict[ct] = req_coms
-            for t in req_coms:
-                if t not in self._com_dict:
-                    com_queue.append(t)
+            com_type = com_queue.popleft()
+            req_coms = self._req_coms(com_type)
+
+            if com_type not in self._com_dict:
+                self._com_dict[com_type] = req_coms
+            for req_com in req_coms:
+                if req_com not in self._com_dict:
+                    com_queue.append(req_com)
 
     def _mkcom_layer(self):
         com_list = list(self._com_dict.keys())
+
         while len(com_list) > 0:
             layer = []
-            for ct in com_list:
+            for com_type in com_list:
                 in_layer = True
-                for dt in self._com_dict[ct]:
-                    if dt in com_list:
+                for req_com in self._com_dict[com_type]:
+                    if req_com in com_list:
                         in_layer = False
                         break
                 if in_layer is True:
-                    layer.append(ct)
-                    com_list.remove(ct)
+                    layer.append(com_type)
+                    com_list.remove(com_type)
             if len(layer) == 0:
                 raise CircleComError(com_list)
             self._com_layer.append(layer)

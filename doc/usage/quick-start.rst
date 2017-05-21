@@ -22,7 +22,7 @@ Writting
 
 Create an file named **server.py** below:
 
-.. literalinclude:: ../sample/simple_server.py
+.. literalinclude:: ../sample/app_creation.py
     :language: python
 
 Testing

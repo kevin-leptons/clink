@@ -17,10 +17,12 @@ from subprocess import Popen
 from .shell import call, rm
 
 
-def build_doc(spec):
+def build_doc(spec, force=False):
     dest = path.join(spec.dest, 'doc')
-
-    call(['sphinx-build', '-b', 'html',  spec.doc, dest])
+    cmd = ['sphinx-build', '-b', 'html',  spec.doc, dest]
+    if force:
+        cmd.insert(3, '-E')
+    call(cmd)
 
 
 def clean_doc(spec):

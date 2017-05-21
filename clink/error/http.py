@@ -1,26 +1,3 @@
-'''
-SYSNOPSIS
-
-    HTTP_STATUS_NAMES
-
-    code_to_str(code)
-
-    class HttpError
-    class Http4xxError
-    class Http5xxError
-    class HttpArgumentError
-
-DESCRIPTION
-
-    HTTP eror code. See RFC2616, section 10 Status Code Definitions.
-    An copy of RFC2616 located in 'doc/rfc2626.txt'.
-
-BUGS
-
-    You can pass any value into status argument, but don't do that.
-    You must pass value in rage [400, 600) for correct context.
-'''
-
 HTTP_STATUS_NAMES = {
     100: 'Continue',
     101: 'Switching Protocol',

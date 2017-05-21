@@ -1,39 +1,43 @@
-'''
-SYNOPSIS
-
-    class Route
-
-DESCRIPTION
-
-    Decorate function to add it's function to routing.
-'''
-
 import os
 
 from ..mime.type import MIME_JSON
 from ..etc import URL_SLASH
-from .error import RoutePathError
-from .type import RouteSpec
+from .error import RouteMethodError, RoutePathError, RouteHandleError
+
+_ALLOWED_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'option', 'head']
 
 
 class Route():
-    def __init__(self, base_path):
-        if not self.verify_path(base_path):
-            raise RoutePathError(base_path)
-        self.base_path = base_path
-        self.specs = []
+    '''
+    Specify a route in a map
+    '''
 
-    def add_spec(self, method, path, req_type, handler):
-        if not self.verify_path(path):
+    def __init__(self, method, content_type, path, handle):
+        '''
+        :param str method:
+        :param str content_type:
+        :param function handle:
+        '''
+
+        self._verify_method(method)
+        self._verify_path(path)
+        self._verify_handle(handle)
+
+        self.method = method
+        self.content_type = content_type
+        self.path = path
+        self.handle = handle
+
+    def _verify_path(self, path):
+        if len(path) == 0:
+            return
+        if path[0] == URL_SLASH or path[-1:] == URL_SLASH:
             raise RoutePathError(path)
 
-        abs_path = os.path.join(self.base_path, path) 
-        spec = RouteSpec(method, abs_path, handler, req_type)
-        self.specs.append(spec)
+    def _verify_method(self, method):
+        if method.lower() not in _ALLOWED_METHODS:
+            raise RouteMethodError(method)
 
-
-    def verify_path(self, path):
-        if len(path) > 0:
-            if path[0] == URL_SLASH:
-                return False
-        return True
+    def _verify_handle(self, handle):
+        if not callable(handle):
+            raise RouteHandleError(handle)

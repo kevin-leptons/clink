@@ -54,13 +54,14 @@ def release():
 @cli.command(help='Build document')
 @click.option('--clean', is_flag=True, help='Clean dest/doc/ directory')
 @click.option('--view', is_flag=True, help='Open HTML document')
-def doc(clean, view):
+@click.option('--force', is_flag=True, help='Force rebuild anythings')
+def doc(clean, view, force):
     if clean:
         pkg_doc_clean(pkg_spec)
     elif view:
         open_doc(pkg_spec, 8081)
     else:
-        pkg_doc(pkg_spec)
+        pkg_doc(pkg_spec, force)
 
 
 @cli.command(help='Run unit testing')
