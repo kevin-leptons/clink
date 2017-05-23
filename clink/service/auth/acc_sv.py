@@ -1,4 +1,5 @@
 import random
+import re
 from datetime import datetime, timedelta
 from time import time
 from string import ascii_lowercase, ascii_uppercase, digits
@@ -41,6 +42,36 @@ def rand_code():
     return '-'.join([a, b, c, d])
 
 
+_ACC_NAME_RESTR = '^[a-z0-9-]{2,32}$'
+_ACC_NAME_REGEX = re.compile(_ACC_NAME_RESTR)
+def _verify_name(name):
+    if _ACC_NAME_REGEX.match(name) is None:
+        raise TypeError('Name must match regex: %s' % _ACC_NAME_RESTR)
+
+
+_ACC_PWD_RESTR = '^.{6,64}$'
+_ACC_PWD_REGEX = re.compile(_ACC_PWD_RESTR)
+def _verify_pwd(pwd):
+    if _ACC_PWD_REGEX.match(pwd) is None:
+        raise TypeError('Password must match regex: %s' % _ACC_PWD_RESTR)
+
+
+_ACC_EMAIL_RESTR = ('^[a-zA-Z0-9-._]{1,64}\@'
+                    '[a-zA-Z0-9\[]{1}[a-zA-Z0-9.-:]{1,61}[a-zA-Z0-9\]]{1}$'
+)
+_ACC_EMAIL_REGEX = re.compile(_ACC_EMAIL_RESTR)
+def _verify_email(email):
+    if _ACC_EMAIL_REGEX.match(email) is None:
+        raise TypeError('Email must match regex: %s' % _ACC_EMAIL_RESTR)
+
+
+_ACC_PHONE_RESTR = '^\+[0-9]{2}\s[0-9]{3}\s([0-9]{3}|[0-9]{4})\s[0-9]{4}$'
+_ACC_PHONE_REGEX = re.compile(_ACC_PHONE_RESTR)
+def _verify_phone(phone):
+    if _ACC_PHONE_REGEX.match(phone) is None:
+        raise TypeError('Phone must match regex: %s' %_ACC_PHONE_RESTR)
+
+
 @stamp(AuthDbSv, AuthConf)
 class AccSv(Service):
     '''
@@ -74,7 +105,14 @@ class AccSv(Service):
         :param str email:
         :param str phone:
         :rtype: bson.objectid.ObjectId
+        :raise TypeError:
         '''
+
+        _verify_name(name)
+        _verify_pwd(password)
+        _verify_email(email)
+        if phone is not None:
+            _verify_phone(phone)
 
         account = {
             'name': name,
@@ -99,10 +137,17 @@ class AccSv(Service):
         :param str email:
         :param str phone:
         :rtype: str
+        :raise TypeError:
         :raise AccountExistError:
         :raise EmailExistError:
         :raise PhoneExistError:
         '''
+
+        _verify_name(name)
+        _verify_pwd(password)
+        _verify_email(email)
+        if phone is not None:
+            _verify_phone(phone)
 
         if self._acc_doc.find_one({'name': name}) is not None:
             raise AccountExistError(name)
@@ -176,7 +221,10 @@ class AccSv(Service):
 
         :param str name:
         :rtype: dict
+        :raise TypeError:
         '''
+
+        _verify_name(name)
 
         return self._acc_doc.find_one({'name': name})
 
@@ -186,7 +234,10 @@ class AccSv(Service):
 
         :param str email:
         :rtype: dict
+        :raise TypeError:
         '''
+
+        _verify_email(email)
         
         return self._acc_doc.find_one({'email': email})
 
@@ -196,7 +247,10 @@ class AccSv(Service):
 
         :param str phone:
         :rtype: dict
+        :raise TypeError:
         '''
+
+        _verify_phone(phone)
 
         return self._acc_doc.find_one({'phone': phone})
 
@@ -207,7 +261,11 @@ class AccSv(Service):
         :param str name:
         :param str pwd:
         :rtype: dict
+        :raise TypeError:
         '''
+
+        _verify_name(name)
+        _verify_pwd(pwd)
 
         hashpwd = _hash_pwd(pwd)
         return self._acc_doc.find_one({'name': name, 'hashpwd': hashpwd})
@@ -229,7 +287,10 @@ class AccSv(Service):
 
         :param bson.objectid.ObjectId id:
         :param str new_pwd:
+        :raise TypeError:
         '''
+
+        _verify_pwd(new_pwd)
 
         upd = {
             '$set': {
@@ -250,7 +311,10 @@ class AccSv(Service):
 
         :param str email:
         :rtype: str
+        :raise TypeError:
         '''
+
+        _verify_email(email)
 
         acc = self._acc_doc.find_one({'email': email})
         if acc is None:
@@ -275,7 +339,10 @@ class AccSv(Service):
         :param str code:
         :param str new_pwd:
         :rtype: bson.objectid.ObjectId
+        :raise TypeError:
         '''
+
+        _verify_pwd(new_pwd)
 
         code_spec = self._rpwd_doc.find_one({'code': code})
         if code_spec is None:
