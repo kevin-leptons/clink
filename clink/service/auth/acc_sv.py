@@ -1,37 +1,19 @@
-'''
-SYNOPSIS
-
-    class AccMgr(acc_doc, grp_doc)
-        create(self, name, password, email, phone=None)
-        find_id(self, id)
-        find_name(self, name)
-        remove(self, id)
-        change_pwd(self, id, new_pwd)
-        reset_pwd(self, email)
-        add_group(self, group_name)
-        del_group(self, group_name)
-        add_to_group(self, acc_id, group_name)
-        del_fm_group(self, acc_id, group_name)
-
-DESCRIPTION
-
-    Manage accounts and groups.
-'''
-
+import random
 from datetime import datetime, timedelta
 from time import time
 from string import ascii_lowercase, ascii_uppercase, digits
+from hashlib import sha224
 
 from clink.type.com import Service
-from clink.com import com
-from clink.service.mongo import MongoService
+from clink.com import stamp
+from clink.service.mongo import MongoSv
 
 from .error import AccountNotExist, GroupExist, GroupNotExist, \
                    CodeNotExistError, CodeExpiredError, AccountExistError, \
-                   EmailExistError
-from .authdb_sv import AuthDbService
-from .type import AuthConf
-from .util import hash_pwd, rand_pwd, rand_code
+                   EmailExistError, PhoneExistError
+from .authdb_sv import AuthDbSv, ACC_DOCNAME, GRP_DOCNAME, \
+                       RPWD_DOCNAME, ACCTMP_DOCNAME
+from clink import AuthConf
 
 _ACT_REGISTERED = 'REGISTERED'
 _ACT_CHANGE_PWD = 'CHANGE_PWD'
@@ -39,29 +21,64 @@ _ACT_RESET_PWD = 'RESET_PWD'
 _ACT_ADD_TO_GRP = 'ADD_TO_GRP'
 _ACT_RM_FRM_GRP = 'RM_FRM_GRP'
 
+_PWD_CHARS = ascii_lowercase + ascii_uppercase + digits
+_CODE_CHARS = ascii_uppercase
 
-@com(MongoService, AuthDbService, AuthConf)
-class AccService(Service):
-    _pwd_chars = ascii_lowercase + ascii_uppercase + digits
+def _hash_pwd(password):
+    return sha224(password.encode('utf-8')).hexdigest()
 
-    def __init__(self, mongo_sv, authdb_sv, auth_conf):
-        pass
-        self._acc_doc = mongo_sv.doc('account')
-        self._grp_doc = mongo_sv.doc('group')
-        self._rpwd_doc = mongo_sv.doc('rpwd')
-        self._acctmp_doc = mongo_sv.doc('acctmp')
+
+def _rand_pwd():
+    return ''.join(random.sample(_PWD_CHARS, 6))
+
+
+def rand_code():
+    a = ''.join(random.sample(_CODE_CHARS, 4))
+    b = ''.join(random.sample(_CODE_CHARS, 4))
+    c = ''.join(random.sample(_CODE_CHARS, 4))
+    d = ''.join(random.sample(_CODE_CHARS, 4))
+
+    return '-'.join([a, b, c, d])
+
+
+@stamp(AuthDbSv, AuthConf)
+class AccSv(Service):
+    '''
+    Manage accounts and related concepts
+    '''
+
+    def __init__(self, authdb_sv, auth_conf):
+        '''
+        :param AuthDbSv authdb_sv:
+        :param AuthConf auth_conf:
+        '''
+
+        self._acc_doc = authdb_sv.doc(ACC_DOCNAME)
+        self._grp_doc = authdb_sv.doc(GRP_DOCNAME)
+        self._rpwd_doc = authdb_sv.doc(RPWD_DOCNAME)
+        self._acctmp_doc = authdb_sv.doc(ACCTMP_DOCNAME)
 
         self.rpwd_time = 3600
         self.create_time = 3600
 
         root_acc = self.find_name('root')
         if root_acc is None:
-            self.create('root', auth_conf.root_pwd, auth_conf.root_email)
+            self.mk_acc('root', auth_conf.root_pwd, auth_conf.root_email)
 
-    def create(self, name, password, email, phone=None):
+    def mk_acc(self, name, password, email, phone=None):
+        '''
+        Create new account
+
+        :param str name:
+        :param str password:
+        :param str email:
+        :param str phone:
+        :rtype: bson.objectid.ObjectId
+        '''
+
         account = {
             'name': name,
-            'hashpwd': hash_pwd(password),
+            'hashpwd': _hash_pwd(password),
             'email': email,
             'phone': phone,
             'groups': [],
@@ -72,7 +89,21 @@ class AccService(Service):
         result = self._acc_doc.insert_one(account)
         return result.inserted_id
 
-    def mk_creation(self, name, password, email, phone=None):
+    def mk_reg_code(self, name, password, email, phone=None):
+        '''
+        Create a registration code. Use returned code with cf_reg_code()
+        to create account
+
+        :param str name:
+        :param str password:
+        :param str email:
+        :param str phone:
+        :rtype: str
+        :raise AccountExistError:
+        :raise EmailExistError:
+        :raise PhoneExistError:
+        '''
+
         if self._acc_doc.find_one({'name': name}) is not None:
             raise AccountExistError(name)
         if self._acc_doc.find_one({'email': email}) is not None:
@@ -88,7 +119,7 @@ class AccService(Service):
         expired_date = datetime.utcnow() + timedelta(hours=self.create_time)
         acctmp = {
             'name': name,
-            'hashpwd': hash_pwd(password),
+            'hashpwd': _hash_pwd(password),
             'email': email,
             'phone': phone,
             'groups': [],
@@ -103,7 +134,16 @@ class AccService(Service):
 
         return creation_code
 
-    def confirm_creation(self, code):
+    def cf_reg_code(self, code):
+        '''
+        Use registration code to create account
+
+        :param str code:
+        :rtype: dict
+        :raise CodeNotExistError:
+        :raise CodeExpiredError:
+        '''
+
         acctmp = self._acctmp_doc.find_one({'_creation_code': code})
         if acctmp is None:
             raise CodeNotExistError(code)
@@ -121,23 +161,79 @@ class AccService(Service):
         return acctmp
 
     def find_id(self, id):
+        '''
+        Find account by identity
+
+        :param bson.objectid.ObjectId id:
+        :rtype: dict
+        '''
+
         return self._acc_doc.find_one({'_id': id})
 
     def find_name(self, name):
+        '''
+        Find account by name
+
+        :param str name:
+        :rtype: dict
+        '''
+
         return self._acc_doc.find_one({'name': name})
 
     def find_email(self, email):
+        '''
+        Find account by email
+
+        :param str email:
+        :rtype: dict
+        '''
+        
         return self._acc_doc.find_one({'email': email})
 
-    def remove(self, id):
+    def find_phone(self, phone):
+        '''
+        Find account by phone number
+
+        :param str phone:
+        :rtype: dict
+        '''
+
+        return self._acc_doc.find_one({'phone': phone})
+
+    def find_pwd(self, name, pwd):
+        '''
+        Find account by name and password
+
+        :param str name:
+        :param str pwd:
+        :rtype: dict
+        '''
+
+        hashpwd = _hash_pwd(pwd)
+        return self._acc_doc.find_one({'name': name, 'hashpwd': hashpwd})
+
+    def rm_acc(self, id):
+        '''
+        Remove account by identity
+
+        :param bson.objectid.ObjectId id:
+        '''
+
         result = self._acc_doc.delete_one({'_id': id})
         if result.deleted_count != 1:
             raise AccountNotExist(id)
 
-    def change_pwd(self, id, new_pwd):
+    def ch_pwd(self, id, new_pwd):
+        '''
+        Change password of account by identity
+
+        :param bson.objectid.ObjectId id:
+        :param str new_pwd:
+        '''
+
         upd = {
             '$set': {
-                'hashpwd': hash_pwd(new_pwd),
+                'hashpwd': _hash_pwd(new_pwd),
                 'modified_date': datetime.utcnow(),
                 'last_action': _ACT_CHANGE_PWD
             }
@@ -147,7 +243,15 @@ class AccService(Service):
         if result.modified_count != 1:
             raise AccountNotExist(id)
 
-    def reset_pwd_code(self, email):
+    def mk_rpwd_code(self, email):
+        '''
+        Create reset password code from email. 
+        Use returned code with cf_rpwd_code() to reset to new password
+
+        :param str email:
+        :rtype: str
+        '''
+
         acc = self._acc_doc.find_one({'email': email})
         if acc is None:
             raise AccountNotExist(email)
@@ -164,7 +268,15 @@ class AccService(Service):
 
         return reset_code
 
-    def reset_pwd(self, code, new_pwd):
+    def cf_rpwd_code(self, code, new_pwd):
+        '''
+        Reset password from code
+
+        :param str code:
+        :param str new_pwd:
+        :rtype: bson.objectid.ObjectId
+        '''
+
         code_spec = self._rpwd_doc.find_one({'code': code})
         if code_spec is None:
             raise CodeNotExistError(code)
@@ -174,7 +286,7 @@ class AccService(Service):
         acc_id = code_spec['acc_id']
         self._rpwd_doc.delete_many({'acc_id': acc_id})
 
-        new_hashpwd = hash_pwd(new_pwd)
+        new_hashpwd = _hash_pwd(new_pwd)
         upd = {
             '$set': {
                 'hashpwd': new_hashpwd,
@@ -185,16 +297,35 @@ class AccService(Service):
 
         return acc_id
 
-    def add_group(self, group_name):
+    def mk_group(self, group_name):
+        '''
+        Create new account group
+
+        :param str group_name:
+        '''
+        
         self._grp_doc.insert_one({'name': group_name})
 
-    def del_group(self, group_name):
+    def rm_group(self, group_name):
+        '''
+        Remove account group
+
+        :param str group_name:
+        '''
+
         result = self._grp_doc.delete_one({'name': group_name})
 
         if result.deleted_count != 1:
             raise GroupNotExist(group_name)
 
     def add_to_group(self, acc_id, group_name):
+        '''
+        Put an account into group
+
+        :param bson.objectid.ObjectId acc_id:
+        :param str group_name:
+        '''
+
         acc = self._acc_doc.find_one({'_id': acc_id})
         if acc is None:
             raise AccountNotExist(acc_id)
@@ -212,6 +343,13 @@ class AccService(Service):
         self._acc_doc.update_one({'_id': acc_id}, upd)
 
     def del_fm_group(self, acc_id, group_name):
+        '''
+        Remove an account from group
+
+        :param bson.objectid.ObjectId acc_id:
+        :param str group_name:
+        '''
+
         acc = self._acc_doc.find_one({'_id': acc_id})
 
         if acc is None:

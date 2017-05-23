@@ -3,12 +3,14 @@ Router
 
 .. autoclass:: clink.routing.Router
 
-**Example**
+Example
+-------
 
 .. literalinclude:: ../sample/api/router.py
     :language: python
 
-**Testing**
+Testing
+-------
 
 .. code-block:: shell-session
 

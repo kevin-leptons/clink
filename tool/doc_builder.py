@@ -21,7 +21,7 @@ def build_doc(spec, force=False):
     dest = path.join(spec.dest, 'doc')
     cmd = ['sphinx-build', '-b', 'html',  spec.doc, dest]
     if force:
-        cmd.insert(3, '-E')
+        cmd.insert(3, '-a')
     call(cmd)
 
 

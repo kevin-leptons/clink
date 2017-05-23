@@ -1,8 +1,9 @@
 clink
 =====
 
-.. automodule:: clink.type
-.. automodule:: clink.type.request
-.. automodule:: clink.type.response
-.. automodule:: clink.error.http
-.. automodule:: clink.error.wsgi
+.. toctree::
+    :maxdepth: 1
+
+    clink-app
+    clink-type
+    clink-error

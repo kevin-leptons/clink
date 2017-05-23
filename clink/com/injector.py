@@ -1,6 +1,7 @@
 from collections import deque
 
-from .type import Component, COM_ATTR, COM_DEP
+from .type import Component
+from .label import stamp, read_stamp, COM_DPDC_ATTR
 from .error import CircleComError, ComExistError, ComDepedencyError, \
                    ComCreationError, InjectorLoadingError
 
@@ -30,7 +31,7 @@ class Injector():
         if com_type in self._com_dict:
             raise ComExistError(com_type)
 
-        if len(self._req_coms(com_type)) > 0:
+        if len(read_stamp(com_type, COM_DPDC_ATTR)) > 0:
             raise ComDepedencyError(com_type, 'MUST NOT contains dependency')
 
         self._com_dict[com_type] = []
@@ -47,7 +48,7 @@ class Injector():
         if com_type in self._com_dict:
             raise ComExistError(com_type)
 
-        self._com_dict[com_type] = self._req_coms(com_type)
+        self._com_dict[com_type] = read_stamp(com_type, COM_DPDC_ATTR)
 
     def add_coms(self, com_types):
         '''
@@ -103,23 +104,12 @@ class Injector():
         if not self._loaded:
             raise InjectorLoadingError()
 
-    def _req_coms(self, com_type):
-        if not issubclass(com_type, Component):
-            raise ComTypeError(com_type)
-        if COM_ATTR not in dir(com_type):
-            raise ComAtrrError(com_type)
-        com_attrs = getattr(com_type, COM_ATTR)
-        if COM_DEP not in com_attrs:
-            raise ComAttrError(com_type)
-
-        return com_attrs[COM_DEP]
-
     def _expand_com(self):
         com_queue = deque(self._com_dict.keys())
 
         while len(com_queue) > 0:
             com_type = com_queue.popleft()
-            req_coms = self._req_coms(com_type)
+            req_coms = read_stamp(com_type, COM_DPDC_ATTR)
 
             if com_type not in self._com_dict:
                 self._com_dict[com_type] = req_coms

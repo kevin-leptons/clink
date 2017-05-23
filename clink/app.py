@@ -29,8 +29,6 @@ class App(IWsgi):
 
     def __init__(self, conf):
         '''
-        Create application from essential configuration
-
         :param clink.AppConf conf:
         '''
 
@@ -75,6 +73,14 @@ class App(IWsgi):
         self._lv9_handler = self._lv6_handler
 
     def __call__(self, wsgi_env, wsgi_send):
+        '''
+        Implemention of WSGI. That mean you can call instance of App by
+        WSGI server to make application is available on network.
+
+        :param dict wsgi_env:
+        :param function wsgi_send:
+        '''
+
         # level 0: recv handling
         req = Request()
         res = Response()
@@ -87,7 +93,9 @@ class App(IWsgi):
             self._lv1_handler.handle(req, res)
 
             # level 2: routing, find main handler
-            lv4_handle = self.router.find_handle(req)
+            lv4_handle = self.router.find_handle(
+                req.method, req.content_type, req.path
+            )
 
             # level 3: pre-main handling
             for handler in self._lv3_handlers:
@@ -118,24 +126,6 @@ class App(IWsgi):
             return self._lv9_handler.handle(req, res, wsgi_send)
 
     def _init_routes(self):
-        for type, obj in self.injector.com_inst.items():
-            if isinstance(obj, Controller):
-                self._add_ctl(obj)
-
-    def _add_ctl(self, ctl):
-        base_path = getattr(ctl, COM_ATTR)['route_path']
-        route = Route(base_path)
-
-        for m in dir(ctl):
-            mm = getattr(ctl, m)
-            if COM_ATTR in dir(mm):
-                mm_attrs = getattr(mm, COM_ATTR)
-                if 'raw_route' not in mm_attrs:
-                    continue
-                raw_route = mm_attrs['raw_route']
-                method = raw_route[0]
-                path = raw_route[1]
-                req_type = raw_route[2]
-                route.add_spec(method, path, req_type, mm)
-
-        self.router.add_route(route)
+        for com_type, com_ref in self.injector.com_inst.items():
+            if isinstance(com_ref, Controller):
+                self.router.add_ctl(com_ref)

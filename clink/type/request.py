@@ -1,4 +1,8 @@
 class Request():
+    '''
+    Carries data of request from client to application
+    '''
+
     method = None
     path = None
     query_str = None
@@ -14,6 +18,3 @@ class Request():
     body = None
 
     args = {}
-
-    def __init__(self):
-        pass

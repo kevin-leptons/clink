@@ -20,11 +20,11 @@ from bson import json_util
 from clink.iface import IPipeHandler
 from clink.mime.type import MIME_JSON
 from clink.etc import UTF_8
-from clink.com.marker import com
+from clink.com import stamp
 from clink.type.com import Lv5Handler
 
 
-@com()
+@stamp()
 class ResJsonHandler(Lv5Handler):
     def handle(self, req, res):
         if res.content_type != MIME_JSON:

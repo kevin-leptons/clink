@@ -1,4 +1,4 @@
-from clink.service import SmtpService, AuthConf
+from clink.service import SmtpSv, AuthConf
 from clink import AppConf
 
 
@@ -12,7 +12,7 @@ auth_conf = AuthConf(
     email_server_address, 'jwt-key'
 )
 
-smtp = SmtpService(app_conf, auth_conf)
+smtp = SmtpSv(app_conf, auth_conf)
 
 receiver = 'someone@email.com'
 subject = 'Let be friends'

@@ -5,6 +5,13 @@ from clink.com.type import Component
 
 
 def find(module, com_type=Component):
+    '''
+    Find class which extends from com_type in module
+
+    :param module module:
+    :param class com_type:
+    '''
+
     coms = []
     mod_que = deque([module])
 

@@ -2,14 +2,19 @@ App
 ===
 
 .. autoclass:: clink.App
+    :special-members: __call__
     
 
-**Example**
+.. _api-app-example:
+
+Example
+-------
 
 .. literalinclude:: ../sample/api/app.py
     :language: python
 
-**Testing**
+Testing
+-------
 
 .. code-block:: shell-session
 
@@ -18,3 +23,5 @@ App
 
     $ curl localhost:8080/book/item
     {"name": "How to Die", "author": "Death"}
+
+    $ kill %1

@@ -2,31 +2,55 @@ from pymongo import ASCENDING, IndexModel
 
 from clink.service.mongo import MongoDocSpec
 
-from clink.com import com
+from clink.com import stamp
 from clink.type.com import Service
-from clink.service.mongo import MongoService
+from clink.service.mongo import MongoSv
+from .error import DocDeniedError
 
-_ROOT_NAME = 'root'
-_ACC_DOCNAME = 'account'
-_GRP_DOCNAME = 'group'
-_RPWD_DOCNAME = 'rpwd'
-_ACCTMP_DOCNAME = 'acctmp'
+ROOT_NAME = 'root'
+ACC_DOCNAME = 'account'
+GRP_DOCNAME = 'group'
+RPWD_DOCNAME = 'rpwd'
+ACCTMP_DOCNAME = 'acctmp'
+DOC_NAMES = [ACC_DOCNAME, GRP_DOCNAME, RPWD_DOCNAME, ACCTMP_DOCNAME]
 
 _ACC_IND_1 = IndexModel([('name', ASCENDING)], unique=True)
 _ACC_IND_2 = IndexModel([('email', ASCENDING)], unique=True)
-_ACC_DOCSPEC = MongoDocSpec(_ACC_DOCNAME, [_ACC_IND_1, _ACC_IND_2])
+_ACC_DOCSPEC = MongoDocSpec(ACC_DOCNAME, [_ACC_IND_1, _ACC_IND_2])
 
 _GRP_IND_1 = IndexModel([('name', ASCENDING)], unique=True)
-_GRP_DOCSPEC = MongoDocSpec(_GRP_DOCNAME, [_GRP_IND_1])
+_GRP_DOCSPEC = MongoDocSpec(GRP_DOCNAME, [_GRP_IND_1])
 
-_RPWD_DOCSPEC = MongoDocSpec(_RPWD_DOCNAME, [])
+_RPWD_DOCSPEC = MongoDocSpec(RPWD_DOCNAME, [])
 
-_ACCTMP_DOCSPEC = MongoDocSpec(_ACCTMP_DOCNAME, _ACC_DOCSPEC.indexes)
+_ACCTMP_DOCSPEC = MongoDocSpec(ACCTMP_DOCNAME, _ACC_DOCSPEC.indexes)
 
 _DOC_SPECS = [_ACC_DOCSPEC, _GRP_DOCSPEC, _RPWD_DOCSPEC, _ACCTMP_DOCSPEC]
 
 
-@com(MongoService)
-class AuthDbService(Service):
+@stamp(MongoSv)
+class AuthDbSv(Service):
+    '''
+    Ensure that database is compative with both AccSv and OAuthSv
+    '''
+
     def __init__(self, mongo_sv):
+        '''
+        :param MongoSv mongo_sv:
+        '''
+
         mongo_sv.use_docspecs(_DOC_SPECS)
+        self._mongo_sv = mongo_sv
+
+    def doc(self, doc_name):
+        '''
+        Return document object
+
+        :param str doc_name:
+        :raise DocDeniedError:
+        '''
+
+        if doc_name not in DOC_NAMES:
+            raise DocDeniedError(doc_name)
+
+        return self._mongo_sv.doc(doc_name)

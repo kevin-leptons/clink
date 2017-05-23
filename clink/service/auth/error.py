@@ -1,3 +1,19 @@
+class PhoneExistError(Exception):
+    def __init__(self, phone_numer):
+        self._msg = phone_numer
+
+    def __str__(self):
+        return self._msg
+
+
+class DocDeniedError(Exception):
+    def __init__(self, doc_name):
+        self._msg = 'You MUST NOT access outside auth scope: %s' % doc_name
+
+    def __str__(self):
+        return self._msg
+
+
 class AccountExistError(Exception):
     def __init__(self, identity):
         self._msg = identity

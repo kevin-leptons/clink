@@ -6,11 +6,11 @@ from clink.iface import IErrorHandler
 from clink.etc import LOGFILE_MODE
 from clink.shell import touch
 from clink.type import Lv8Handler
-from clink.com.marker import com
+from clink.com import stamp
 from clink.type import AppConf
 
 
-@com(AppConf)
+@stamp(AppConf)
 class ErrorLogHandler(Lv8Handler, IErrorHandler):
     def __init__(self, app_conf):
         file = path.join('/var/tmp', app_conf.name, 'error.log')

@@ -5,7 +5,8 @@ tmp/
 venv/
 clink.egg-info/
 run/
-__pycache__
+__pycache__/
+.vscode/
 .cache/
 .eggs/
 *.swp

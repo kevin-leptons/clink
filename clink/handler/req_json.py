@@ -4,11 +4,11 @@ from clink.error.http import Http400Error
 from clink.iface import IPipeHandler
 from clink.etc import UTF_8
 from clink.mime.type import MIME_JSON
-from clink.com.marker import com
+from clink.com import stamp
 from clink.type.com import Lv3Handler
 
 
-@com()
+@stamp()
 class ReqJsonHandler(Lv3Handler):
     def handle(self, req, res):
         if req.content_type != MIME_JSON:

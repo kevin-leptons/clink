@@ -47,20 +47,17 @@ import jwt
 from time import time
 from bson import ObjectId
 
-from clink.com import com
+from clink.com import stamp
 from clink.type.com import Service
-from clink.service.mongo import MongoService
+from clink.service.mongo import MongoSv
 from clink.error.http import Http400Error, Http401Error
 
 from .error import AccountNotExist, PasswordError, TokenExpiredError, \
                    RTokenExpiredError
-from .authdb_sv import AuthDbService
-from .type import AuthConf
-from .util import hash_pwd
-
-
-@com(MongoService, AuthDbService, AuthConf)
-class OAuthService(Service):
+from .authdb_sv import AuthDbSv
+from clink import AuthConf
+@stamp(MongoSv, AuthDbSv, AuthConf)
+class OAuthSv(Service):
     _TOKEN_ALG = 'HS512'
 
     def __init__(self, mongo_sv, authdb_sv, auth_conf):
@@ -73,12 +70,8 @@ class OAuthService(Service):
         self._rtoken_time = auth_conf.rtoken_time
 
     def mktoken_pwd(self, name, password):
-        acc = self._acc_doc.find_one({'name': name})
+        acc = self._acc_doc.find_pwd(name, password)
         if acc is None:
-            raise AccountNotExist(name)
-
-        hashpwd = hash_pwd(password)
-        if hashpwd != acc['hashpwd']:
             raise PasswordError(name, password)
 
         return self._mktoken(acc['_id'])

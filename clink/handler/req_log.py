@@ -5,12 +5,12 @@ from os.path import isfile
 from clink.etc import LOGFILE_MODE
 from clink.iface import IPipeHandler
 from clink.shell import touch
-from clink.com.marker import com
+from clink.com import stamp
 from clink.type import Lv1Handler
 from clink.type import AppConf
 
 
-@com(AppConf)
+@stamp(AppConf)
 class ReqLogHandler(Lv1Handler, IPipeHandler):
     def __init__(self, app_conf):
         file = path.join('/var/tmp', app_conf.name, 'request.log')

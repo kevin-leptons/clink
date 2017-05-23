@@ -43,6 +43,13 @@ HTTP_STATUS_NAMES = {
 
 
 def code_to_str(code):
+    '''
+    Convert HTTP error code to string
+
+    :param int code:
+    :raise: HttpStatusError:
+    '''
+
     if code not in HTTP_STATUS_NAMES:
         raise HttpStatusError(code)
     return '%i %s' % (code, HTTP_STATUS_NAMES[code])

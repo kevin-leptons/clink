@@ -4,10 +4,14 @@ Injector
 .. autoclass:: clink.com.Injector
     :members:
 
-**Example**
+Example
+-------
 
 .. literalinclude:: ../sample/api/injector.py
     :language: python
+
+Testing
+-------
 
 .. code-block:: shell-session
 

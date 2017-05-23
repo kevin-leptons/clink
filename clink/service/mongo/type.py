@@ -1,29 +1,17 @@
-'''
-SYNOPSIS
-
-    class MongoDocSpec
-
-DESCRIPTION
-
-    Specify documents of MongoDB.
-
-    indexes is list of pymongo.IndexModel.
-
-REFERENCES
-
-    pymongo.IndexModel
-        https://api.mongodb.com/python/current/api/pymongo/operations.html#\
-        pymongo.operations.IndexModel
-    PyMongo - Create document index
-        https://api.mongodb.com/python/current/api/pymongo/collection.html#\
-        pymongo.collection.Collection.create_indexes
-'''
-
-from clink.com import com, Component
+from clink.com import stamp, Component
 
 
 class MongoDocSpec():
+    '''
+    Specify an mongo document
+    '''
+
     def __init__(self, name, indexes):
+        '''
+        :param str name:
+        :param list[pymongo.IndexModel] indexes:
+        '''
+
         self._name = name
         self._indexes = indexes
 
@@ -36,7 +24,7 @@ class MongoDocSpec():
         return self._indexes
 
 
-@com()
+@stamp()
 class MongoConf(Component):
     def __init__(self, dburl, dbname):
         self._dburl = dburl

@@ -1,7 +1,12 @@
+import os
 from clink.etc import URL_SLASH
+from clink.com import read_stamp
 
-from .error import RouteExistError, PathNotFoundError, HandleNotFoundError
+from .error import RouteExistError, PathNotFoundError, HandleNotFoundError, \
+                   CtlSpecError
 from .type import MapNode, NodeAction
+from .route import Route
+from .mapper import CTL_PATH_ATTR, CTL_METHOD_ATTR
 
 
 class Router():
@@ -16,6 +21,28 @@ class Router():
 
         self._root_node = MapNode('/')
         self.add_routes(routes)
+
+    def add_ctl(self, ctl):
+        '''
+        Collect routing information from controller
+
+        :param object ctl:
+        '''
+
+        ctl_type = type(ctl)
+        ctl_path = read_stamp(ctl, CTL_PATH_ATTR)
+        for attr_name in dir(ctl_type):
+            ctl_attr = getattr(ctl_type, attr_name)
+            try:
+                ctl_method = read_stamp(ctl_attr, CTL_METHOD_ATTR) 
+                route = Route(
+                    ctl_method.method, ctl_method.content_type,
+                    os.path.join(ctl_path, ctl_method.path),
+                    getattr(ctl, attr_name)
+                )
+                self.add_route(route)
+            except KeyError:
+                pass
 
     def add_route(self, route):
         '''
@@ -73,9 +100,11 @@ class Router():
                 continue
             return action.handle
         raise HandleNotFoundError(method, content_type, path)
-
-
+        
     def _find_node(self, path):
+        '''
+        notes: algorithm can be improve here
+        '''
         node = self._root_node
         if path != URL_SLASH:
             node_names = path.split(URL_SLASH)

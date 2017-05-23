@@ -1,3 +1,11 @@
+class CtlSpecError(Exception):
+    def __init__(self, ctl):
+        self._msg = '%s MUST contains COM_ATT.ROUTE_PATH_ATTR' % ctl.__name__
+
+    def __str__(self):
+        return self._msg
+
+
 class PathNotFoundError(Exception):
     def __init__(self, path):
         self._msg = path

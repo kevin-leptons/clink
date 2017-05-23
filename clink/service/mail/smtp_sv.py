@@ -1,14 +1,14 @@
 from smtplib import SMTP
 from email.mime.text import MIMEText
 
-from clink.com import com
+from clink.com import stamp
 from clink.type.com import Service
 from clink.type import AppConf
 from clink.service.auth import AuthConf
 
 
-@com(AppConf, AuthConf)
-class SmtpService(Service):
+@stamp(AppConf, AuthConf)
+class SmtpSv(Service):
     '''
     Send mail message on SMTP
     '''

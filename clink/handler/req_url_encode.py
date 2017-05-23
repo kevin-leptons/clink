@@ -3,11 +3,11 @@ from urllib.parse import parse_qsl
 from clink.error.http import Http400Error
 from clink.iface import IPipeHandler
 from clink.mime.type import MIME_URLENCODE
-from clink.com.marker import com
+from clink.com import stamp
 from clink.type.com import Lv3Handler
 
 
-@com()
+@stamp()
 class ReqUrlEncodeHandler(Lv3Handler):
     def handle(self, req, res):
         if req.content_type != MIME_URLENCODE:
