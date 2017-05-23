@@ -43,31 +43,37 @@ Create an file called **server.py** below:
 
 ```python
 # STEP 1: get clink library
-from clink import App, AppConf, com, route, Controller
+from clink import stamp, mapper, App, AppConf, Controller
+
 
 # STEP 2: get an WSGI server
 from wsgiref.simple_server import make_server
+
 
 # STEP 3: create application configuration and application
 conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
+
 # STEP 4: define component - controllers
-@com()
-@route.path('book')
+@stamp()
+@mapper.path('book')
 class BookCtl(Controller):
-    @route.get('item')
+    @mapper.get('item')
     def get_item(self, req, res):
         res.body = {
             'name': 'How to Die',
             'author': 'Death'
         }
 
+
 # STEP 5: add components to application
 app.add_com(BookCtl)
 
+
 # STEP 6: load components
 app.load()
+
 
 # STEP 7: serve application on WSGI server
 address = 'localhost'
