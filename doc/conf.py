@@ -165,5 +165,5 @@ intersphinx_mapping = {
 }
 
 autodoc_member_order = 'bysource'
-autodoc_default_flags = ['members', 'undoc-members']
+autodoc_default_flags = ['members', 'undoc-members', 'inherited-members']
 autoclass_content = 'both'

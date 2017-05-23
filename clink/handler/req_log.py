@@ -3,15 +3,19 @@ from os import path
 from os.path import isfile
 
 from clink.etc import LOGFILE_MODE
-from clink.iface import IPipeHandler
+from clink.iface import ILv1Handler
 from clink.shell import touch
 from clink.com import stamp
-from clink.type import Lv1Handler
 from clink.type import AppConf
 
 
 @stamp(AppConf)
-class ReqLogHandler(Lv1Handler, IPipeHandler):
+class ReqLogHandler(ILv1Handler):
+    '''
+    Catch HTTP request, write information of request to file in
+    /var/tmp/<app-name>/request.log
+    '''
+
     def __init__(self, app_conf):
         file = path.join('/var/tmp', app_conf.name, 'request.log')
         if not isfile(file):

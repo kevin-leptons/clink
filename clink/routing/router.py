@@ -1,6 +1,7 @@
 import os
 from clink.etc import URL_SLASH
 from clink.com import read_stamp
+from clink.iface import ILv2Handler
 
 from .error import RouteExistError, PathNotFoundError, HandleNotFoundError, \
                    CtlSpecError
@@ -9,7 +10,7 @@ from .route import Route
 from .mapper import CTL_PATH_ATTR, CTL_METHOD_ATTR
 
 
-class Router():
+class Router(ILv2Handler):
     '''
     Store and find routes 
     '''
@@ -80,28 +81,26 @@ class Router():
         for route in routes:
             self.add_route(route)
 
-    def find_handle(self, method, content_type, path):
+    def handle(self, req):
         '''
         Find handle which match with request
 
-        :param str method:
-        :param str content_type:
-        :param str path:
+        :param Request req:
         :rtype: function
         :raise PathNotFoundError:
         :raise HandleNotFoundError:
         '''
 
-        node = self._find_node(path)
+        node = self._find_node(req.path)
         if node is None or len(node.actions) == 0:
-            raise PathNotFoundError(path)
+            raise PathNotFoundError(req.path)
         for action in node.actions:
-            if action.method != method.lower():
+            if action.method != req.method.lower():
                 continue
-            if action.content_type != content_type:
+            if action.content_type != req.content_type:
                 continue
             return action.handle
-        raise HandleNotFoundError(method, content_type, path)
+        raise HandleNotFoundError(req.method, req.content_type, req.path)
         
     def _find_node(self, path):
         '''

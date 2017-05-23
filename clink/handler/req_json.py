@@ -1,15 +1,18 @@
 import json
 
 from clink.error.http import Http400Error
-from clink.iface import IPipeHandler
+from clink.iface import ILv3Handler
 from clink.etc import UTF_8
 from clink.mime.type import MIME_JSON
 from clink.com import stamp
-from clink.type.com import Lv3Handler
 
 
 @stamp()
-class ReqJsonHandler(Lv3Handler):
+class ReqJsonHandler(ILv3Handler):
+    '''
+    Map JSON string from body message to Python object 
+    '''
+
     def handle(self, req, res):
         if req.content_type != MIME_JSON:
             return

@@ -1,6 +1,6 @@
 from os import path
 
-from .iface import IWsgi
+from .iface import *
 from .type import Request, Response
 from .routing import Router
 from .handler import RecvHandler, SendHandler
@@ -63,13 +63,13 @@ class App(IWsgi):
         self.injector.load()
         self._init_routes()
 
-        self._lv0_handler = self.injector.sub_ref(Lv0Handler)[0]
-        self._lv1_handler = self.injector.sub_ref(Lv1Handler)[0]
-        self._lv3_handlers = self.injector.sub_ref(Lv3Handler)
-        self._lv5_handlers = self.injector.sub_ref(Lv5Handler)
-        self._lv6_handler = self.injector.sub_ref(Lv6Handler)[0]
-        self._lv7_handlers = self.injector.sub_ref(Lv7Handler)
-        self._lv8_handler = self.injector.sub_ref(Lv8Handler)[0]
+        self._lv0_handler = self.injector.sub_ref(ILv0Handler)[0]
+        self._lv1_handler = self.injector.sub_ref(ILv1Handler)[0]
+        self._lv3_handlers = self.injector.sub_ref(ILv3Handler)
+        self._lv5_handlers = self.injector.sub_ref(ILv5Handler)
+        self._lv6_handler = self.injector.sub_ref(ILv6Handler)[0]
+        self._lv7_handlers = self.injector.sub_ref(ILv7Handler)
+        self._lv8_handler = self.injector.sub_ref(ILv8Handler)[0]
         self._lv9_handler = self._lv6_handler
 
     def __call__(self, wsgi_env, wsgi_send):
@@ -93,9 +93,7 @@ class App(IWsgi):
             self._lv1_handler.handle(req, res)
 
             # level 2: routing, find main handler
-            lv4_handle = self.router.find_handle(
-                req.method, req.content_type, req.path
-            )
+            lv4_handle = self.router.handle(req)
 
             # level 3: pre-main handling
             for handler in self._lv3_handlers:

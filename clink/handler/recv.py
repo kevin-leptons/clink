@@ -1,22 +1,15 @@
-'''
-SYNOPSIS
-
-    class RecvHandler
-
-DESCRIPTION
-
-    Implement IRecvHandler
-'''
-
 from clink.error.http import HttpArgumentError, Http400Error
 from clink.mime.type import MIME_JSON
-from clink.iface import IRecvHandler
+from clink.iface import ILv0Handler
 from clink.com import stamp
-from clink.type import Lv0Handler
 
 
 @stamp()
-class RecvHandler(Lv0Handler, IRecvHandler):
+class RecvHandler(ILv0Handler):
+    '''
+    Receive HTTP message, construct an isinstance of Request
+    '''
+
     def handle(self, req, res, env):
         res.status = 200
         res.content_type = MIME_JSON

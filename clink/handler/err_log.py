@@ -2,16 +2,20 @@ import logging
 from os import path
 from os.path import isfile
 
-from clink.iface import IErrorHandler
+from clink.iface import ILv8Handler
 from clink.etc import LOGFILE_MODE
 from clink.shell import touch
-from clink.type import Lv8Handler
 from clink.com import stamp
 from clink.type import AppConf
 
 
 @stamp(AppConf)
-class ErrorLogHandler(Lv8Handler, IErrorHandler):
+class ErrorLogHandler(ILv8Handler):
+    '''
+    Catch error, write information to file at
+    /var/tmp/<app-name>/error.log
+    '''
+
     def __init__(self, app_conf):
         file = path.join('/var/tmp', app_conf.name, 'error.log')
         if not isfile(file):

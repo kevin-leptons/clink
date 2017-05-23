@@ -1,12 +1,15 @@
 from clink.error.wsgi import WsgiResBodyError
 from clink.error.http import code_to_str
-from clink.iface import ISendHandler
+from clink.iface import ILv6Handler
 from clink.com import stamp
-from clink.type import Lv6Handler
 
 
 @stamp()
-class SendHandler(Lv6Handler, ISendHandler):
+class SendHandler(ILv6Handler):
+    '''
+    Send response message to client
+    '''
+
     def handle(self, req, res, wsgi_send):
         if res.body is not None and not isinstance(res.body, bytes):
             raise WsgiResBodyError(res.body)

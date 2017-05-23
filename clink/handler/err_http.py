@@ -1,14 +1,18 @@
 import json
 
 from clink.error.http import HttpError, code_to_str
-from clink.iface import IErrorHandler
+from clink.iface import ILv7Handler
 from clink.mime.type import MIME_JSON
 from clink.com import stamp
-from clink.type import Lv7Handler
 
 
 @stamp()
-class ErrorHttpHandler(Lv7Handler, IErrorHandler):
+class ErrorHttpHandler(ILv7Handler):
+    '''
+    Catch HTTP error and make response message correspond with
+    error
+    '''
+
     def handle(self, req, res, e):
         if not isinstance(e, HttpError):
             return False
