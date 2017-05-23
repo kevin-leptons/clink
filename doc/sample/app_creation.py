@@ -1,5 +1,5 @@
 # STEP 1: get clink library
-from clink import App, AppConf, com, route, Controller
+from clink import stamp, mapper, App, AppConf, Controller
 
 # STEP 2: get an WSGI server
 from wsgiref.simple_server import make_server
@@ -9,10 +9,10 @@ conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
 # STEP 4: define component - controllers
-@com()
-@route.path('book')
+@stamp()
+@mapper.path('book')
 class BookCtl(Controller):
-    @route.get('item')
+    @mapper.get('item')
     def get_item(self, req, res):
         res.body = {
             'name': 'How to Die',

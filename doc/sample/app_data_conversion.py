@@ -1,5 +1,5 @@
 # STEP 1: get clink library
-from clink import App, AppConf, com, route, Controller
+from clink import stamp, mapper, App, AppConf, Controller
 from clink import Lv3Handler, Lv5Handler
 from clink.mime.type import MIME_PLAINTEXT
 
@@ -12,7 +12,7 @@ app = App(conf)
 
 # STEP 4: define components
 #===[BEGIN] ADD DATA CONVERSION HANDLERS =====================================
-@com()
+@stamp()
 class ReqTextHandler(Lv3Handler):
     def handle(self, req, res):
         if req.content_type != MIME_PLAINTEXT :
@@ -22,7 +22,7 @@ class ReqTextHandler(Lv3Handler):
         else:
             req.body = req.body.decode('utf-8').split(' ')
 
-@com()
+@stamp()
 class ResTextHandler(Lv5Handler):
     def handle(self, req, res):
         if res.content_type != MIME_PLAINTEXT:
@@ -32,10 +32,10 @@ class ResTextHandler(Lv5Handler):
         else:
             res.body = ' '.join(res.body).encode('utf-8')
 
-@com()
-@route.path('text')
+@stamp()
+@mapper.path('text')
 class TextCtl(Controller):
-    @route.post('', MIME_PLAINTEXT)
+    @mapper.post('', MIME_PLAINTEXT)
     def process_text(self, req, res):
         res.body = [w.upper() for w in req.body]
         res.content_type = MIME_PLAINTEXT

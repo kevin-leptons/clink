@@ -15,19 +15,22 @@ Service is component. You should use service when you need:
   simple way to to do it because serivce is component and Injector give it's
   dependencies automatically.
 
-Clink also provides built-in service, check it out in **API - Services**.
+Clink also provides built-in services, check it out in 
+:ref:`api-service`
+
+Example
+-------
 
 Now, let create an service, share way to public newsparer or magazine.
 It accepts type and content of newsparer, magazine then generate string
 includes information of application with type and content. Two controllers
 use this service though injector.
 
-Go back **app_creation** then modify program to get code below:
-
 .. literalinclude:: ../sample/app_service.py
     :language: python
 
-Test it:
+Testing
+-------
 
 .. code-block:: shell-session
 

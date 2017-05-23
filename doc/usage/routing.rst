@@ -31,12 +31,15 @@ As you see, GET and DELETE method ignores content-type because it's no
 meaning. Other methods allow content-type with default value is MIME_JSON.
 You can access shortcut name for MIME type in **clink.mime.type**.
 
-Now, modify **app_creation**  to get knowledge about routing:
+Example
+-------
 
-.. literalinclude:: ../sample/app_routing.py
+.. literalinclude:: ../sample/app_routing.py    
     :language: python
+    :caption:
 
-Test it:
+Testing
+-------
 
 .. code-block:: shell-session
 

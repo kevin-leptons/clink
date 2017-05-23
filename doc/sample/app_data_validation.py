@@ -1,6 +1,6 @@
 # STEP 1: get clink library
-from clink import App, AppConf, com, route, Controller
-from clink.marker import jsonv, msgv
+from clink import stamp, mapper, App, AppConf, Controller
+from clink.validator import reqv
 
 # STEP 2: get an WSGI server
 from wsgiref.simple_server import make_server
@@ -22,12 +22,12 @@ POST_BOOK_SCHEMA = {
     }
 }
 
-@com()
-@route.path('book')
+@stamp()
+@mapper.path('book')
 class BookCtl(Controller):
-    @route.post('item')
-    @jsonv.body(POST_BOOK_SCHEMA)
-    @msgv.max_content_size(50)
+    @mapper.post('item')
+    @reqv.body(POST_BOOK_SCHEMA)
+    @reqv.max_content_size(50)
     def get_item(self, req, res):
         res.body = {'msg': 'created'}
 #===[END] TRY DATA VALIDATION ================================================

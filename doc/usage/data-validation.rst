@@ -8,8 +8,6 @@ properties. **name** is string, contains alpha and numeric,
 length >= 2 and <= 32. **author** is the same, however length <= 16.
 Maximum content size is 50 bytes.
 
-Back to **app_creation** and modify to get code below:
-
 .. _usage-data-validation-example:
 
 Example
@@ -18,7 +16,8 @@ Example
 .. literalinclude:: ../sample/app_data_validation.py
     :language: python
 
-Test it:
+Testing
+-------
 
 .. code-block:: shell-session
 

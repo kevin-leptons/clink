@@ -3,7 +3,7 @@ from clink.com import stamp, Component
 
 class MongoDocSpec():
     '''
-    Specify an mongo document
+    Specify an mongo document in database
     '''
 
     def __init__(self, name, indexes):
@@ -17,23 +17,49 @@ class MongoDocSpec():
 
     @property
     def name(self):
+        '''
+        Name of document
+        '''
+
         return self._name
 
     @property
     def indexes(self):
+        '''
+        List of indexes of document
+        '''
+
         return self._indexes
 
 
 @stamp()
 class MongoConf(Component):
+    '''
+    Specify information of mongo server
+
+    :param str dburl:
+    :param str dbname:
+    '''
+
     def __init__(self, dburl, dbname):
         self._dburl = dburl
         self._dbname = dbname
 
     @property
     def dburl(self):
+        '''
+        URL to server, it follows forms
+
+            - mongodb://domain/path
+            - mongodb://<username>:<password>@domain/path
+        '''
+
         return self._dburl
 
     @property
     def dbname(self):
+        '''
+        Name of database will be use
+        '''
+
         return self._dbname

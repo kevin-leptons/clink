@@ -1,5 +1,5 @@
 # STEP 1: get clink library
-from clink import App, AppConf, com, route, Controller
+from clink import stamp, mapper, App, AppConf, Controller
 
 # STEP 2: get an WSGI server
 from wsgiref.simple_server import make_server
@@ -9,10 +9,10 @@ conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
 # STEP 4: define component - controllers
-@com()
-@route.path('book')
+@stamp()
+@mapper.path('book')
 class BookCtl(Controller):
-    @route.get('item')
+    @mapper.get('item')
     def get_item(self, req, res):
         res.body = {
             'name': 'How to Die',
@@ -20,19 +20,19 @@ class BookCtl(Controller):
         }
 
     #===[BEGIN] ADD MORE ROUTES HERE =========================================
-    @route.post('item', 'text/plain')
+    @mapper.post('item', 'text/plain')
     def create_item(self, req, res):
         res.body = {'msg': 'created'}
 
-    @route.patch('item')
+    @mapper.patch('item')
     def patch_item(self, req, res):
         res.body = {'msg': 'patched'}
 
-    @route.put('item')
+    @mapper.put('item')
     def put_item(self, req, res):
         res.body = {'msg': 'putted'}
 
-    @route.delete('item')
+    @mapper.delete('item')
     def delete_item(self, req, res):
         res.body = {'msg': 'deleted'}
     #===[END] ADD MORE ROUTES HERE ===========================================

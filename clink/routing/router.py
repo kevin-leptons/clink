@@ -35,10 +35,12 @@ class Router():
             ctl_attr = getattr(ctl_type, attr_name)
             try:
                 ctl_method = read_stamp(ctl_attr, CTL_METHOD_ATTR) 
+                abs_path = ctl_path
+                if len(ctl_method.path) > 0:
+                    abs_path = os.path.join(ctl_path, ctl_method.path)
                 route = Route(
                     ctl_method.method, ctl_method.content_type,
-                    os.path.join(ctl_path, ctl_method.path),
-                    getattr(ctl, attr_name)
+                    abs_path, getattr(ctl, attr_name)
                 )
                 self.add_route(route)
             except KeyError:

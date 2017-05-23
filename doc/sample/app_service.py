@@ -1,5 +1,5 @@
 # STEP 1: get clink library
-from clink import App, AppConf, com, route, Controller, Service
+from clink import stamp, mapper, App, AppConf, Controller, Service
 from clink.mime.type import MIME_PLAINTEXT
 from bson import ObjectId
 
@@ -12,7 +12,7 @@ app = App(conf)
 
 # STEP 4: define components
 #===[BEGIN] DEFINE SERVICES ==================================================
-@com(AppConf)
+@stamp(AppConf)
 class PubService(Service):
     def __init__(self, app_conf):
         self._app_conf = app_conf
@@ -29,26 +29,26 @@ class PubService(Service):
         )
         return ''.join(parts)
 
-@com(PubService)
-@route.path('newsparer')
+@stamp(PubService)
+@mapper.path('newsparer')
 class NewsCtl(Controller):
     def __init__(self, pub_sv):
         self._pub_sv = pub_sv
 
-    @route.post('', MIME_PLAINTEXT)
+    @mapper.post('', MIME_PLAINTEXT)
     def publish(self, req, res):
         content = req.body.decode('utf-8')
         pub = self._pub_sv.publish('NEWSPAPER', content)
         res.body = pub.encode('utf-8')
         res.content_type = MIME_PLAINTEXT
 
-@com(PubService)
-@route.path('magazine')
+@stamp(PubService)
+@mapper.path('magazine')
 class MagazineCtl(Controller):
     def __init__(self, pub_sv):
         self._pub_sv = pub_sv
 
-    @route.post('', MIME_PLAINTEXT)
+    @mapper.post('', MIME_PLAINTEXT)
     def publish(self, req, res):
         content = req.body.decode('utf-8')
         pub = self._pub_sv.publish('MAGAZINE', content)

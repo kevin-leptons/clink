@@ -1,5 +1,5 @@
 # STEP 1: get clink library
-from clink import App, AppConf, com, route, Controller
+from clink import stamp, mapper, App, AppConf, Controller
 from clink.error.http import Http401Error, Http404Error
 
 # STEP 2: get an WSGI server
@@ -11,10 +11,10 @@ app = App(conf)
 
 # STEP 4: define component - controllers
 #===[BEGIN] REMOVE BOOKCTL AND ADD ROOTCTL ===================================
-@com()
-@route.path('req')
+@stamp()
+@mapper.path('req')
 class RootCtl(Controller):
-    @route.get('info')
+    @mapper.get('info')
     def get_info(self, req, res):
         res.body = {
             'path': req.path,
@@ -29,15 +29,15 @@ class RootCtl(Controller):
             'body': req.body,
         }
 
-    @route.get('no-content')
+    @mapper.get('no-content')
     def no_content(self, req, res):
         res.status = 204
 
-    @route.get('not-found')
+    @mapper.get('not-found')
     def not_found(self, req, res):
         raise Http404Error(req, 'Nothing here')
 
-    @route.get('no-auth')
+    @mapper.get('no-auth')
     def no_auth(self, req, res):
         raise Http401Error(req, 'Go back. You are alien')
 #===[END] REMOVE BOOKCTL AND ADD ROOTCTL =====================================

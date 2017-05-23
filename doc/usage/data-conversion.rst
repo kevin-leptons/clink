@@ -22,12 +22,14 @@ two handlers:
 And we create main handler to converts list of words to uppercase:
 **TextCtl.process_text**
 
-Back to **app_creation**, modify program and get example below:
+Example
+-------
 
 .. literalinclude:: ../sample/app_data_conversion.py
     :language: python
 
-Test it:
+Testing
+-------
 
 .. code-block:: shell-session
 
