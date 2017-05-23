@@ -2,15 +2,18 @@
 from clink import stamp, mapper, App, AppConf, Controller
 from clink.error.http import Http401Error, Http404Error
 
+
 # STEP 2: get an WSGI server
 from wsgiref.simple_server import make_server
+
 
 # STEP 3: create application configuration and application
 conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
+
 # STEP 4: define component - controllers
-#===[BEGIN] REMOVE BOOKCTL AND ADD ROOTCTL ===================================
+# ===[BEGIN] REMOVE BOOKCTL AND ADD ROOTCTL ==================================
 @stamp()
 @mapper.path('req')
 class RootCtl(Controller):
@@ -40,13 +43,16 @@ class RootCtl(Controller):
     @mapper.get('no-auth')
     def no_auth(self, req, res):
         raise Http401Error(req, 'Go back. You are alien')
-#===[END] REMOVE BOOKCTL AND ADD ROOTCTL =====================================
+# ===[END] REMOVE BOOKCTL AND ADD ROOTCTL ====================================
+
 
 # STEP 5: add components to application
 app.add_com(RootCtl)
 
+
 # STEP 6: load components
 app.load()
+
 
 # STEP 7: serve application on WSGI server
 address = 'localhost'

@@ -4,11 +4,9 @@ from bson import ObjectId
 
 from clink.com import stamp
 from clink.type.com import Service
-from clink.service.mongo import MongoSv
 from clink.error.http import Http400Error, Http401Error
 
-from .error import AccountNotExist, PasswordError, TokenExpiredError, \
-                   RTokenExpiredError
+from .error import PasswordError, TokenExpiredError, RTokenExpiredError
 from .authdb_sv import AuthDbSv
 from .acc_sv import AccSv
 from clink import AuthConf
@@ -28,7 +26,7 @@ class OAuthSv(Service):
         :param AccSv acc_sv:
         :param AuthConf auth_conf:
         '''
-        
+
         self._authdb_sv = authdb_sv
         self._acc_sv = acc_sv
 

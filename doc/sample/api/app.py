@@ -4,6 +4,7 @@ from wsgiref.simple_server import make_server
 conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
+
 @stamp()
 @mapper.path('book')
 class BookCtl(Controller):
@@ -14,8 +15,10 @@ class BookCtl(Controller):
             'author': 'Death'
         }
 
+
 app.add_com(BookCtl)
 app.load()
+
 
 address = 'localhost'
 port = 8080

@@ -1,7 +1,6 @@
 from collections import deque
 
-from .type import Component
-from .label import stamp, read_stamp, COM_DPDC_ATTR
+from .label import read_stamp, COM_DPDC_ATTR
 from .error import CircleComError, ComExistError, ComDepedencyError, \
                    ComCreationError, InjectorLoadingError
 
@@ -81,7 +80,7 @@ class Injector():
         if com_type not in self.com_inst:
             return None
 
-        return self.com_inst[com_type]    
+        return self.com_inst[com_type]
 
     def sub_ref(self, com_type):
         '''

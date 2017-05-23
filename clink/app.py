@@ -1,16 +1,12 @@
-from os import path
-
-from .iface import *
-from .type import Request, Response
+from clink.iface import IWsgi, ILv0Handler, ILv1Handler, ILv3Handler, \
+                        ILv5Handler, ILv6Handler, ILv7Handler, ILv8Handler
+from .type import Request, Response, Controller
 from .routing import Router
 from .handler import RecvHandler, SendHandler
 from .handler import ReqJsonHandler, ReqUrlEncodeHandler, ReqLogHandler
 from .handler import ResJsonHandler, ResCorsHandler
 from .handler import ErrorHttpHandler, ErrorLogHandler
 from clink.com.injector import Injector
-from clink.com.type import COM_ATTR
-from clink.routing import Route
-from clink.type import *
 
 
 class App(IWsgi):

@@ -3,8 +3,7 @@ from clink.etc import URL_SLASH
 from clink.com import read_stamp
 from clink.iface import ILv2Handler
 
-from .error import RouteExistError, PathNotFoundError, HandleNotFoundError, \
-                   CtlSpecError
+from .error import RouteExistError, PathNotFoundError, HandleNotFoundError
 from .type import MapNode, NodeAction
 from .route import Route
 from .mapper import CTL_PATH_ATTR, CTL_METHOD_ATTR
@@ -12,7 +11,7 @@ from .mapper import CTL_PATH_ATTR, CTL_METHOD_ATTR
 
 class Router(ILv2Handler):
     '''
-    Store and find routes 
+    Store and find routes
     '''
 
     def __init__(self, routes=[]):
@@ -35,7 +34,7 @@ class Router(ILv2Handler):
         for attr_name in dir(ctl_type):
             ctl_attr = getattr(ctl_type, attr_name)
             try:
-                ctl_method = read_stamp(ctl_attr, CTL_METHOD_ATTR) 
+                ctl_method = read_stamp(ctl_attr, CTL_METHOD_ATTR)
                 abs_path = ctl_path
                 if len(ctl_method.path) > 0:
                     abs_path = os.path.join(ctl_path, ctl_method.path)
@@ -101,7 +100,7 @@ class Router(ILv2Handler):
                 continue
             return action.handle
         raise HandleNotFoundError(req.method, req.content_type, req.path)
-        
+
     def _find_node(self, path):
         '''
         notes: algorithm can be improve here

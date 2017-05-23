@@ -9,7 +9,7 @@ from clink.com import stamp
 @stamp()
 class ResJsonHandler(ILv5Handler):
     '''
-    Serialize Python object to JSON string 
+    Serialize Python object to JSON string
     '''
 
     def handle(self, req, res):

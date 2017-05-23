@@ -20,7 +20,7 @@ class TemplateSv(Service):
         self._app_conf = app_conf
         self._auth_conf = auth_conf
 
-    def build_file(file_path, values):
+    def build_file(self, file_path, values):
         '''
         Read data from file then build it as a template
 
@@ -28,7 +28,7 @@ class TemplateSv(Service):
         :param dict values:
         :rtype: str
         '''
-        
+
         f = open(file_path)
         data = f.read()
         f.close()
@@ -43,5 +43,5 @@ class TemplateSv(Service):
         :param dict values:
         :rtype: str
         '''
-        
+
         return Template(data).safe_substitute(values)

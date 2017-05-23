@@ -49,6 +49,5 @@ class ComCreationError(Exception):
     def __init__(self, com_type, args):
         self._msg = 'type=%s, args=%s' % (com_type, args)
 
-
     def __str__(self):
         return self._msg

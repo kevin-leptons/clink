@@ -1,7 +1,7 @@
 from pymongo import MongoClient, IndexModel
 from clink.com import stamp, Component
 
-from .error import DocumentNotExist, DocumentIndexError, DocSpecExit
+from .error import DocumentNotExist, DocumentIndexError
 from .type import MongoConf
 
 
@@ -131,7 +131,7 @@ class MongoSv(Component):
 
         :param pymongo.IndexModel index_1:
         :param pymongo.IndexModel index_2:
-        :rtype: bool 
+        :rtype: bool
         '''
 
         # index_1, index_2: pymongo.IndexModel
@@ -161,4 +161,3 @@ class MongoSv(Component):
 
         self._connect()
         return self._client[self._conf.dbname]
-

@@ -20,7 +20,7 @@ report_tpl = (
     'Name       : $name\n'
     'Price      : $price\n'
     'Color      : $color\n'
-    'Power      : $power'    
+    'Power      : $power'
 )
 values = {
     'author': 'Johnny Blaze',

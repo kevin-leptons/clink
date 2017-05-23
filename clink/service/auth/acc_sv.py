@@ -7,7 +7,6 @@ from hashlib import sha224
 
 from clink.type.com import Service
 from clink.com import stamp
-from clink.service.mongo import MongoSv
 
 from .error import AccountNotExist, GroupExist, GroupNotExist, \
                    CodeNotExistError, CodeExpiredError, AccountExistError, \
@@ -24,6 +23,19 @@ _ACT_RM_FRM_GRP = 'RM_FRM_GRP'
 
 _PWD_CHARS = ascii_lowercase + ascii_uppercase + digits
 _CODE_CHARS = ascii_uppercase
+
+_ACC_NAME_RESTR = '^[a-z0-9-]{2,32}$'
+_ACC_NAME_REGEX = re.compile(_ACC_NAME_RESTR)
+_ACC_PWD_RESTR = '^.{6,64}$'
+_ACC_PWD_REGEX = re.compile(_ACC_PWD_RESTR)
+_ACC_EMAIL_RESTR = (
+    '^[a-zA-Z0-9-._]{1,64}\@'
+    '[a-zA-Z0-9\[]{1}[a-zA-Z0-9.-:]{1,61}[a-zA-Z0-9\]]{1}$'
+)
+_ACC_EMAIL_REGEX = re.compile(_ACC_EMAIL_RESTR)
+_ACC_PHONE_RESTR = '^\+[0-9]{2}\s[0-9]{3}\s([0-9]{3}|[0-9]{4})\s[0-9]{4}$'
+_ACC_PHONE_REGEX = re.compile(_ACC_PHONE_RESTR)
+
 
 def _hash_pwd(password):
     return sha224(password.encode('utf-8')).hexdigest()
@@ -42,34 +54,24 @@ def rand_code():
     return '-'.join([a, b, c, d])
 
 
-_ACC_NAME_RESTR = '^[a-z0-9-]{2,32}$'
-_ACC_NAME_REGEX = re.compile(_ACC_NAME_RESTR)
 def _verify_name(name):
     if _ACC_NAME_REGEX.match(name) is None:
         raise TypeError('Name must match regex: %s' % _ACC_NAME_RESTR)
 
 
-_ACC_PWD_RESTR = '^.{6,64}$'
-_ACC_PWD_REGEX = re.compile(_ACC_PWD_RESTR)
 def _verify_pwd(pwd):
     if _ACC_PWD_REGEX.match(pwd) is None:
         raise TypeError('Password must match regex: %s' % _ACC_PWD_RESTR)
 
 
-_ACC_EMAIL_RESTR = ('^[a-zA-Z0-9-._]{1,64}\@'
-                    '[a-zA-Z0-9\[]{1}[a-zA-Z0-9.-:]{1,61}[a-zA-Z0-9\]]{1}$'
-)
-_ACC_EMAIL_REGEX = re.compile(_ACC_EMAIL_RESTR)
 def _verify_email(email):
     if _ACC_EMAIL_REGEX.match(email) is None:
         raise TypeError('Email must match regex: %s' % _ACC_EMAIL_RESTR)
 
 
-_ACC_PHONE_RESTR = '^\+[0-9]{2}\s[0-9]{3}\s([0-9]{3}|[0-9]{4})\s[0-9]{4}$'
-_ACC_PHONE_REGEX = re.compile(_ACC_PHONE_RESTR)
 def _verify_phone(phone):
     if _ACC_PHONE_REGEX.match(phone) is None:
-        raise TypeError('Phone must match regex: %s' %_ACC_PHONE_RESTR)
+        raise TypeError('Phone must match regex: %s' % _ACC_PHONE_RESTR)
 
 
 @stamp(AuthDbSv, AuthConf)
@@ -200,7 +202,7 @@ class AccSv(Service):
         del acctmp['_expired_date']
         del acctmp['_creation_code']
 
-        result = self._acc_doc.insert_one(acctmp)
+        self._acc_doc.insert_one(acctmp)
         del acctmp['hashpwd']
 
         return acctmp
@@ -238,7 +240,7 @@ class AccSv(Service):
         '''
 
         _verify_email(email)
-        
+
         return self._acc_doc.find_one({'email': email})
 
     def find_phone(self, phone):
@@ -306,7 +308,7 @@ class AccSv(Service):
 
     def mk_rpwd_code(self, email):
         '''
-        Create reset password code from email. 
+        Create reset password code from email.
         Use returned code with cf_rpwd_code() to reset to new password
 
         :param str email:
@@ -370,7 +372,7 @@ class AccSv(Service):
 
         :param str group_name:
         '''
-        
+
         self._grp_doc.insert_one({'name': group_name})
 
     def rm_group(self, group_name):

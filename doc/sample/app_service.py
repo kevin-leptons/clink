@@ -3,15 +3,18 @@ from clink import stamp, mapper, App, AppConf, Controller, Service
 from clink.mime.type import MIME_PLAINTEXT
 from bson import ObjectId
 
+
 # STEP 2: get an WSGI server
 from wsgiref.simple_server import make_server
+
 
 # STEP 3: create application configuration and application
 conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
+
 # STEP 4: define components
-#===[BEGIN] DEFINE SERVICES ==================================================
+# ===[BEGIN] DEFINE SERVICES =================================================
 @stamp(AppConf)
 class PubService(Service):
     def __init__(self, app_conf):
@@ -29,6 +32,7 @@ class PubService(Service):
         )
         return ''.join(parts)
 
+
 @stamp(PubService)
 @mapper.path('newsparer')
 class NewsCtl(Controller):
@@ -42,6 +46,7 @@ class NewsCtl(Controller):
         res.body = pub.encode('utf-8')
         res.content_type = MIME_PLAINTEXT
 
+
 @stamp(PubService)
 @mapper.path('magazine')
 class MagazineCtl(Controller):
@@ -54,7 +59,9 @@ class MagazineCtl(Controller):
         pub = self._pub_sv.publish('MAGAZINE', content)
         res.body = pub.encode('utf-8')
         res.content_type = MIME_PLAINTEXT
-#===[END] DEFINE SERVICES ====================================================
+
+# ===[END] DEFINE SERVICES ===================================================
+
 
 # STEP 5: add components to application
 app.add_com(NewsCtl)

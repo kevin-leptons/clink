@@ -37,7 +37,7 @@ class ILv2Handler(Component, ABC):
     '''
     Routing
     '''
-    
+
     @abstractmethod
     def handle(self, req):
         '''

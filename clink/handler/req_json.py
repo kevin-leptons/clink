@@ -10,7 +10,7 @@ from clink.com import stamp
 @stamp()
 class ReqJsonHandler(ILv3Handler):
     '''
-    Map JSON string from body message to Python object 
+    Map JSON string from body message to Python object
     '''
 
     def handle(self, req, res):

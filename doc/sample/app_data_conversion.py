@@ -3,24 +3,28 @@ from clink import stamp, mapper, App, AppConf, Controller
 from clink import Lv3Handler, Lv5Handler
 from clink.mime.type import MIME_PLAINTEXT
 
+
 # STEP 2: get an WSGI server
 from wsgiref.simple_server import make_server
+
 
 # STEP 3: create application configuration and application
 conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
+
 # STEP 4: define components
-#===[BEGIN] ADD DATA CONVERSION HANDLERS =====================================
+# ===[BEGIN] ADD DATA CONVERSION HANDLERS ====================================
 @stamp()
 class ReqTextHandler(Lv3Handler):
     def handle(self, req, res):
-        if req.content_type != MIME_PLAINTEXT :
+        if req.content_type != MIME_PLAINTEXT:
             return
         if req.body is None:
             req.body = []
         else:
             req.body = req.body.decode('utf-8').split(' ')
+
 
 @stamp()
 class ResTextHandler(Lv5Handler):
@@ -32,6 +36,7 @@ class ResTextHandler(Lv5Handler):
         else:
             res.body = ' '.join(res.body).encode('utf-8')
 
+
 @stamp()
 @mapper.path('text')
 class TextCtl(Controller):
@@ -39,7 +44,8 @@ class TextCtl(Controller):
     def process_text(self, req, res):
         res.body = [w.upper() for w in req.body]
         res.content_type = MIME_PLAINTEXT
-#===[END] ADD DATA CONVERSION HANDLERS =======================================
+# ===[END] ADD DATA CONVERSION HANDLERS ======================================
+
 
 # STEP 5: add components to application
 app.add_com(ReqTextHandler)

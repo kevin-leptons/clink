@@ -1,12 +1,15 @@
 # STEP 1: get clink library
 from clink import stamp, mapper, App, AppConf, Controller
 
+
 # STEP 2: get an WSGI server
 from wsgiref.simple_server import make_server
+
 
 # STEP 3: create application configuration and application
 conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
+
 
 # STEP 4: define component - controllers
 @stamp()
@@ -19,7 +22,7 @@ class BookCtl(Controller):
             'author': 'Death'
         }
 
-    #===[BEGIN] ADD MORE ROUTES HERE =========================================
+# ===[BEGIN] ADD MORE ROUTES HERE ============================================
     @mapper.post('item', 'text/plain')
     def create_item(self, req, res):
         res.body = {'msg': 'created'}
@@ -35,13 +38,16 @@ class BookCtl(Controller):
     @mapper.delete('item')
     def delete_item(self, req, res):
         res.body = {'msg': 'deleted'}
-    #===[END] ADD MORE ROUTES HERE ===========================================
+# ===[END] ADD MORE ROUTES HERE ==============================================
+
 
 # STEP 5: add components to application
 app.add_com(BookCtl)
 
+
 # STEP 6: load components
 app.load()
+
 
 # STEP 7: serve application on WSGI server
 address = 'localhost'

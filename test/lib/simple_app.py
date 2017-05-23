@@ -1,23 +1,12 @@
-'''
-SYNOPSIS
-
-    start_server(port=8080)
-
-DESCRIPTION
-
-    Start server with one route '/book/item'. It return book information.
-'''
-
 from wsgiref.simple_server import make_server
-from clink import App
-from clink.routing import Route, Router
+from clink import stamp, mapper, App, AppConf, Controller
 
 
-def start(port=8080):
-    route = Route('api')
-
-    @route.get('info')
-    def get_book_item(req, res, ctx):
+@stamp()
+@mapper.path('api')
+class BookCtl(Controller):
+    @mapper.get('info')
+    def get_book_item(self, req, res):
         res.body = {
             'header': req.header,
             'path': req.path,
@@ -28,8 +17,12 @@ def start(port=8080):
             'content_length': req.content_length
         }
 
-    app = App('clink')
-    app.router.add_route(route)
 
-    httpd = make_server('', port, app)
+def start(port=8080):
+    app_conf = AppConf('simple-api')
+    app = App(app_conf)
+    app.add_com(BookCtl)
+    app.load()
+
+    httpd = make_server('localhost', port, app)
     httpd.serve_forever()

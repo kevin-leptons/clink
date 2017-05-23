@@ -1,26 +1,15 @@
-'''
-SYNOPSIS
-
-    POST /auth/token
-
-DESCRIPTION
-
-    Create token with username, password or refresh_token
-'''
-
-from clink.com.marker import com
-from clink.marker import route
-from clink.type.com import Controller
+from clink import stamp, mapper, Controller
 from clink.service.auth import OAuthService
+from clink import Http400Error
 
 
-@com(OAuthService)
-@route.path('auth')
+@stamp(OAuthService)
+@mapper.path('auth')
 class AuthCtl(Controller):
     def __init__(self, oauth_sv):
         self._oauth_sv = oauth_sv
 
-    @route.post('token')
+    @mapper.post('token')
     def get_token(self, req, res):
         info = req.body
         grant_type = info['grant_type']

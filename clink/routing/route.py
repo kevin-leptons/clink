@@ -1,6 +1,3 @@
-import os
-
-from ..mime.type import MIME_JSON
 from ..etc import URL_SLASH
 from .error import RouteMethodError, RoutePathError, RouteHandleError
 
