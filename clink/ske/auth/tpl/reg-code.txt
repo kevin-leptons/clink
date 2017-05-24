@@ -9,12 +9,12 @@ DESCRIPTION
     We reveived request to register your account and accepted it.
     Here are code to register:
 
-        REG_CODE
+        $reg_code
 
     You have 1 hour to use that code. After that, code is invaild.
     Your code is valid before:
 
-        EXPIRED_DATE
+        $expired_date
 
     If you don't confirm code with us before expired date, then this account
     with name or email may be register by other users.
@@ -22,13 +22,13 @@ DESCRIPTION
 METADATA
 ========
 
-    Account             : ACC_NAME
-    Email               : EMAIL
-    Remote              : REMOTE_ADDR
-    Date                : DATETIME_NOW
+    Account             : $acc_name
+    Email               : $acc_email
+    Remote              : $remote_addr
+    Date                : $datetime_now
 
 AUTHOR
 ======
 
-    SENDER_NAME <SENDER_EMAIL>
-    APP_NAME
+    $root_name <$root_email>
+    $app_name

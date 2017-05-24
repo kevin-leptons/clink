@@ -1,4 +1,5 @@
 from string import Template
+from datetime import datetime
 
 from clink.type.com import Service
 from clink.com import stamp
@@ -17,8 +18,12 @@ class TemplateSv(Service):
         :param AuthConf auth_conf:
         '''
 
-        self._app_conf = app_conf
-        self._auth_conf = auth_conf
+        self._base_values = {
+            'app_name': app_conf.name,
+            'root_name': 'root',
+            'root_email': auth_conf.root_email,
+            'datetime_now': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        }
 
     def build_file(self, file_path, values):
         '''
@@ -33,7 +38,7 @@ class TemplateSv(Service):
         data = f.read()
         f.close()
 
-        return self.build_str(data)
+        return self.build_str(data, values)
 
     def build_str(self, data, values):
         '''
@@ -44,4 +49,5 @@ class TemplateSv(Service):
         :rtype: str
         '''
 
+        values.update(self._base_values)
         return Template(data).safe_substitute(values)

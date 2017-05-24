@@ -9,19 +9,19 @@ DESCRIPTION
     We received your registration code and active your account successfully.
     Here are essential information of your account:
 
-        Name    : ACC_NAME
-        Email   : ACC_EMAIL
+        Name    : $acc_name
+        Email   : $acc_email
 
     Good luck with our services.
 
 METADATA
 ========
 
-    Remote              : REMOTE_ADDR
-    Date                : DATETIME_NOW
+    Remote              : $remote_addr
+    Date                : $datetime_now
 
 AUTHOR
 ======
 
-    SENDER_NAME <SENDER_EMAIL>
-    APP_NAME
+    $root_name <$root_email>
+    $app_name

@@ -9,11 +9,11 @@ DESCRIPTION
     We received valid code and change password as invoke. Here is
     new password:
 
-        NEW_PWD
+        $new_pwd
 
     And here is accepted code:
 
-        RESET_PWD_CODE
+        $reset_pwd_code
 
     That code and all of codes which grants before this actions was deteleted.
     You can't use them.
@@ -27,12 +27,12 @@ WARNING
 METADATA
 ========
 
-    Account             : ACC_NAME
-    Remote              : REMOTE_ADDR
-    Date                : DATETIME_NOW
+    Account             : $acc_name
+    Remote              : $remote_addr
+    Date                : $datetime_now
 
 AUTHOR
 ======
 
-    SENDER_NAME <SENDER_EMAIL>
-    APP_NAME
+    $root_name <root_email>
+    $app_name

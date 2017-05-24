@@ -9,12 +9,12 @@ DESCRIPTION
     We reveived request to reset password and peform successfully.
     Here are code to reset your password:
 
-        RESET_PWD_CODE
+        $reset_pwd_code
 
     You have 1 hour to use that code. After that, code is invaild.
     Your code is valid before:
 
-        EXPIRED_DATE
+        $expired_date
 
     All of codes which grants before this code was deleted. You can't
     use them.
@@ -29,12 +29,12 @@ WARNING
 METADATA
 ========
 
-    Account             : ACC_NAME
-    Remote              : REMOTE_ADDR
-    Date                : DATETIME_NOW
+    Account             : $acc_name
+    Remote              : $remote_addr
+    Date                : $datetime_now
 
 AUTHOR
 ======
 
-    SENDER_NAME <SENDER_EMAIL>
-    APP_NAME
+    $root_name <root_email>
+    $app_name

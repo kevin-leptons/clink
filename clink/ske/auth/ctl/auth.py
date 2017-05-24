@@ -1,9 +1,9 @@
 from clink import stamp, mapper, Controller
-from clink.service.auth import OAuthService
+from clink.service import OAuthSv
 from clink import Http400Error
 
 
-@stamp(OAuthService)
+@stamp(OAuthSv)
 @mapper.path('auth')
 class AuthCtl(Controller):
     def __init__(self, oauth_sv):

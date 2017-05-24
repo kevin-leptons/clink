@@ -59,7 +59,7 @@ class AccountCtl(Controller):
     def create_reg_code(self, req, res):
         info = req.body
 
-        reg_code = self._acc_sv.mk_creation(
+        reg_code = self._acc_sv.mk_reg_code(
             info['name'], info['pwd'], info['email']
         )
 
@@ -69,7 +69,8 @@ class AccountCtl(Controller):
             'reg_code': reg_code,
             'acc_name': info['name'],
             'acc_email': info['email'],
-            'expired_date': expired_date.strftime('%Y-%m-%d %H:%M:%S')
+            'expired_date': expired_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'remote_addr': req.remote_addr
         }
         txt_body = self._tpl_sv.build_file(_REG_CODE_TMP_FILE, values)
         subject = 'Registration'
@@ -81,11 +82,12 @@ class AccountCtl(Controller):
     def confirm_reg_code(self, req, res):
         reg_code = req.body['code']
 
-        acc = self._acc_sv.confirm_creation(reg_code)
+        acc = self._acc_sv.cf_reg_code(reg_code)
 
         values = {
             'acc_name': acc['name'],
-            'acc_email': acc['email']
+            'acc_email': acc['email'],
+            'remote_addr': req.remote_addr
         }
         txt_body = self._tpl_sv.build_file(_REG_TMP_FILE, values)
         subject = 'Registration'
@@ -101,10 +103,11 @@ class AccountCtl(Controller):
         acc = self._acc_sv.find_id(acc_id)
         if acc is None:
             raise Http500Error(req, 'Account identity not found')
-        self._acc_sv.change_pwd(acc_id, new_pwd)
+        self._acc_sv.ch_pwd(acc_id, new_pwd)
 
         values = {
-            'acc_name': acc['name']
+            'acc_name': acc['name'],
+            'remote_addr': req.remote_addr
         }
         txt_body = self._tpl_sv.build_file(_CHANGE_PWD_TMP_FILE, values)
         subject = 'Change password'
@@ -120,17 +123,18 @@ class AccountCtl(Controller):
         if acc is None:
             raise Http404Error(req, 'Email does not exist')
 
-        reset_code = self._acc_sv.reset_pwd_code(email)
+        reset_code = self._acc_sv.mk_rpwd_code(email)
         expired_date = datetime.utcnow() + timedelta(hours=1)
 
         values = {
             'reset_pwd_code': reset_code,
             'app_name': self._app_conf.name,
             'acc_name': acc['name'],
-            'expired_date': expired_date.strftime('%Y-%m-%d %H:%M:%S')
+            'expired_date': expired_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'remote_addr': req.remote_addr
         }
-        txt_body = self._tpl_sv.build_file(_RESET_PWD_CODE_TMP_FILE, values)
 
+        txt_body = self._tpl_sv.build_file(_RESET_PWD_CODE_TMP_FILE, values)
         subject = 'Reset password code'
         self._smtp_sv.send(email, subject, txt_body)
 
@@ -141,7 +145,7 @@ class AccountCtl(Controller):
         reset_code = req.body['code']
         new_pwd = req.body['new_pwd']
 
-        acc_id = self._acc_sv.reset_pwd(reset_code, new_pwd)
+        acc_id = self._acc_sv.cf_rpwd_code(reset_code, new_pwd)
 
         acc = self._acc_sv.find_id(acc_id)
         if acc is None:
@@ -150,10 +154,11 @@ class AccountCtl(Controller):
         values = {
             'new_pwd': new_pwd,
             'reset_pwd_code': reset_code,
-            'acc_name': acc['name']
+            'acc_name': acc['name'],
+            'remote_addr': req.remote_addr
         }
-        txt_msg = self._tpl_sv.build_file(_RESET_PWD_TMP_FILE, values)
 
+        txt_msg = self._tpl_sv.build_file(_RESET_PWD_TMP_FILE, values)
         subject = 'Reset password'
         self._smtp_sv.send(acc['email'], subject, txt_msg)
 

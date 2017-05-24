@@ -17,12 +17,12 @@ WARNING
 METADATA
 ========
 
-    Account             : ACC_NAME
-    Remote              : REMOTE_ADDR
-    Date                : DATETIME_NOW
+    Account             : $acc_name
+    Remote              : $remote_addr
+    Date                : $datetime_now
 
 AUTHOR
 ======
 
-    SENDER_NAME <SENDER_EMAIL>
-    APP_NAME
+    $root_name <root_email>
+    $app_name
