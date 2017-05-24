@@ -10,6 +10,7 @@ APIs
     clink-routing
     clink-handler
     clink-validator
+    clink-dflow
     clink-mime
     clink-service
 
