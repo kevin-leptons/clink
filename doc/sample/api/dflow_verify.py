@@ -1,24 +1,23 @@
 from clink.dflow import verify, FormatError
 
 
-name_schema = {'type': 'string', 'pattern': '^[a-z0-9-]{2,32}$'}
-password_schema = {'type': 'string', 'pattern': '^.{6,32}$'}
-info_schema = {
-    'type': 'object',
-    'properties': {
-        'name': name_schema,
-        'password': password_schema
-    }
-}
+road_schema = {'type': 'string', 'pattern': '^[a-zA-Z0-9 ]{6,32}$'}
 
 
-@verify(name_schema, password_schema)
-def create_account(name, password):
-    print('name=%s, password=%s, validated' % (name, password))
+@verify(road_schema)
+def run_car(road):
+        print('Car is running on the %s' % road)
+
+
+class Car():
+    @verify(None, road_schema)
+    def run(self, road):
+        print('Car is running on the %s' % road)
 
 
 try:
-    create_account('kevin', 'secret-words')
-    create_account('ke vin', 'secret-words')
+    car = Car()
+    car.run('1st Hell Street')
+    run_car('1st Hell Street @@@')
 except FormatError as e:
-    print('FormatError:', e)
+    print('Error: ', e)

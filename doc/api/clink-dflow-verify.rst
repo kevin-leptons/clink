@@ -16,6 +16,6 @@ Testing
 .. code-block:: shell-session
 
     $ python dflow_verify.py
-    name=kevin, password=secret-words, validated
-    FormatError: name=name, value=ke vin, schema={'pattern': 
-    '^[a-z0-9-]{2,32}$', 'type': 'string'}
+    Car is running on the 1st Hell Street
+    Error:  name=, value=1st Hell Street @@@, schema={'pattern': 
+    '^[a-zA-Z0-9 ]{6,32}$', 'type': 'string'}
