@@ -1,12 +1,29 @@
 from clink.com import Primitive, stamp
+from .version import Version
 
 
 @stamp()
 class AppConf(Primitive):
-    def __init__(self, name, org_name=None, org_loc=None):
+    '''
+    Essential information about application
+    '''
+
+    def __init__(
+        self, name, license, version, org_name, org_addr
+    ):
+        '''
+        :param str name:
+        :param str license:
+        :param Version version:
+        :param str org_name:
+        :param str org_addr:
+        '''
+
         self.name = name
+        self.license = license
+        self.version = version
         self.org_name = org_name
-        self.org_loc = org_loc
+        self.org_addr = org_addr
 
 
 @stamp()
@@ -22,5 +39,3 @@ class AuthConf(Primitive):
         self.jwt_key = jwt_key
         self.token_time = token_time
         self.rtoken_time = rtoken_time
-
-
