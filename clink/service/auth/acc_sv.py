@@ -5,15 +5,11 @@ from time import time
 from string import ascii_lowercase, ascii_uppercase, digits
 from hashlib import sha224
 
-from clink.type.com import Service
+from clink.type import Service, AuthConf
 from clink.com import stamp
-
-from .error import AccountNotExist, GroupExist, GroupNotExist, \
-                   CodeNotExistError, CodeExpiredError, AccountExistError, \
-                   EmailExistError, PhoneExistError
-from .authdb_sv import AuthDbSv, ACC_DOCNAME, GRP_DOCNAME, \
-                       RPWD_DOCNAME, ACCTMP_DOCNAME
-from clink import AuthConf
+from clink.dflow import *
+from .error import *
+from .authdb_sv import *
 
 _ACT_REGISTERED = 'REGISTERED'
 _ACT_CHANGE_PWD = 'CHANGE_PWD'
@@ -23,18 +19,6 @@ _ACT_RM_FRM_GRP = 'RM_FRM_GRP'
 
 _PWD_CHARS = ascii_lowercase + ascii_uppercase + digits
 _CODE_CHARS = ascii_uppercase
-
-_ACC_NAME_RESTR = '^[a-z0-9-]{2,32}$'
-_ACC_NAME_REGEX = re.compile(_ACC_NAME_RESTR)
-_ACC_PWD_RESTR = '^.{6,64}$'
-_ACC_PWD_REGEX = re.compile(_ACC_PWD_RESTR)
-_ACC_EMAIL_RESTR = (
-    '^[a-zA-Z0-9-._]{1,64}\@'
-    '[a-zA-Z0-9\[]{1}[a-zA-Z0-9.-:]{1,61}[a-zA-Z0-9\]]{1}$'
-)
-_ACC_EMAIL_REGEX = re.compile(_ACC_EMAIL_RESTR)
-_ACC_PHONE_RESTR = '^\+[0-9]{2}\s[0-9]{3}\s([0-9]{3}|[0-9]{4})\s[0-9]{4}$'
-_ACC_PHONE_REGEX = re.compile(_ACC_PHONE_RESTR)
 
 
 def _hash_pwd(password):
@@ -54,24 +38,23 @@ def rand_code():
     return '-'.join([a, b, c, d])
 
 
-def _verify_name(name):
-    if _ACC_NAME_REGEX.match(name) is None:
-        raise TypeError('Name must match regex: %s' % _ACC_NAME_RESTR)
-
-
-def _verify_pwd(pwd):
-    if _ACC_PWD_REGEX.match(pwd) is None:
-        raise TypeError('Password must match regex: %s' % _ACC_PWD_RESTR)
-
-
-def _verify_email(email):
-    if _ACC_EMAIL_REGEX.match(email) is None:
-        raise TypeError('Email must match regex: %s' % _ACC_EMAIL_RESTR)
-
-
-def _verify_phone(phone):
-    if _ACC_PHONE_REGEX.match(phone) is None:
-        raise TypeError('Phone must match regex: %s' % _ACC_PHONE_RESTR)
+ACC_NAME_SCHM = dict(type='string', pattern='^[a-z0-9-]{2,32}$')
+ACC_PWD_SCHM = dict(type='string', pattern='^.{6,32}$')
+EMAIL_SCHM = dict(
+    type='string', 
+    pattern=(
+        '^[a-zA-Z0-9-._]{1,64}\@'
+        '[a-zA-Z0-9\[]{1}[a-zA-Z0-9.-:]{1,61}[a-zA-Z0-9\]]{1}$'
+    )
+)
+PHONE_SCHM = dict(
+    type=['string',  'null'],
+    pattern='^\+[0-9]{2}\s[0-9]{3}\s([0-9]{3}|[0-9]{4})\s[0-9]{4}$'
+)
+_CFCODE_SCHM = dict(
+    type='string',
+    pattern='^([a-zA-Z]{4}-){3}[a-zA-Z]{4}$'
+)
 
 
 @stamp(AuthDbSv, AuthConf)
@@ -98,6 +81,7 @@ class AccSv(Service):
         if root_acc is None:
             self.mk_acc('root', auth_conf.root_pwd, auth_conf.root_email)
 
+    @verify(None, ACC_NAME_SCHM, ACC_PWD_SCHM, EMAIL_SCHM, PHONE_SCHM)
     def mk_acc(self, name, password, email, phone=None):
         '''
         Create new account
@@ -109,12 +93,6 @@ class AccSv(Service):
         :rtype: bson.objectid.ObjectId
         :raise TypeError:
         '''
-
-        _verify_name(name)
-        _verify_pwd(password)
-        _verify_email(email)
-        if phone is not None:
-            _verify_phone(phone)
 
         account = {
             'name': name,
@@ -129,6 +107,7 @@ class AccSv(Service):
         result = self._acc_doc.insert_one(account)
         return result.inserted_id
 
+    @verify(None, ACC_NAME_SCHM, ACC_PWD_SCHM, EMAIL_SCHM, PHONE_SCHM)
     def mk_reg_code(self, name, password, email, phone=None):
         '''
         Create a registration code. Use returned code with cf_reg_code()
@@ -145,19 +124,13 @@ class AccSv(Service):
         :raise PhoneExistError:
         '''
 
-        _verify_name(name)
-        _verify_pwd(password)
-        _verify_email(email)
-        if phone is not None:
-            _verify_phone(phone)
-
         if self._acc_doc.find_one({'name': name}) is not None:
-            raise AccountExistError(name)
+            raise ExistError({'name': name})
         if self._acc_doc.find_one({'email': email}) is not None:
-            raise EmailExistError(email)
+            raise ExistError({'email': email})
         if phone is not None:
             if self._acc_doc.find_one({'phone': phone}) is not None:
-                raise PhoneExistError(phone)
+                raise ExistError({'phone': phone})
 
         datetime_now = datetime.utcnow().timestamp()
         self._acctmp_doc.delete_many({'_expired_date': {'$lt': datetime_now}})
@@ -181,6 +154,7 @@ class AccSv(Service):
 
         return creation_code
 
+    @verify(None, _CFCODE_SCHM)
     def cf_reg_code(self, code):
         '''
         Use registration code to create account
@@ -193,9 +167,9 @@ class AccSv(Service):
 
         acctmp = self._acctmp_doc.find_one({'_creation_code': code})
         if acctmp is None:
-            raise CodeNotExistError(code)
+            raise NonExistError({'code': code})
         if acctmp['_expired_date'] < datetime.utcnow().timestamp():
-            raise CodeExpiredError(code)
+            raise ExpiredError({'code': time()})
         self._acctmp_doc.delete_one({'_creation_code': code})
 
         del acctmp['_id']
@@ -217,6 +191,7 @@ class AccSv(Service):
 
         return self._acc_doc.find_one({'_id': id})
 
+    @verify(None, ACC_NAME_SCHM)
     def find_name(self, name):
         '''
         Find account by name
@@ -226,10 +201,9 @@ class AccSv(Service):
         :raise TypeError:
         '''
 
-        _verify_name(name)
-
         return self._acc_doc.find_one({'name': name})
 
+    @verify(None, EMAIL_SCHM)
     def find_email(self, email):
         '''
         Find account by email
@@ -239,10 +213,9 @@ class AccSv(Service):
         :raise TypeError:
         '''
 
-        _verify_email(email)
-
         return self._acc_doc.find_one({'email': email})
 
+    @verify(None, PHONE_SCHM)
     def find_phone(self, phone):
         '''
         Find account by phone number
@@ -252,10 +225,9 @@ class AccSv(Service):
         :raise TypeError:
         '''
 
-        _verify_phone(phone)
-
         return self._acc_doc.find_one({'phone': phone})
 
+    @verify(None, ACC_NAME_SCHM, ACC_PWD_SCHM)
     def find_pwd(self, name, pwd):
         '''
         Find account by name and password
@@ -265,9 +237,6 @@ class AccSv(Service):
         :rtype: dict
         :raise TypeError:
         '''
-
-        _verify_name(name)
-        _verify_pwd(pwd)
 
         hashpwd = _hash_pwd(pwd)
         return self._acc_doc.find_one({'name': name, 'hashpwd': hashpwd})
@@ -281,8 +250,9 @@ class AccSv(Service):
 
         result = self._acc_doc.delete_one({'_id': id})
         if result.deleted_count != 1:
-            raise AccountNotExist(id)
+            raise NonExistError({'id': id})
 
+    @verify(None, None, ACC_PWD_SCHM)
     def ch_pwd(self, id, new_pwd):
         '''
         Change password of account by identity
@@ -291,8 +261,6 @@ class AccSv(Service):
         :param str new_pwd:
         :raise TypeError:
         '''
-
-        _verify_pwd(new_pwd)
 
         upd = {
             '$set': {
@@ -304,8 +272,9 @@ class AccSv(Service):
         result = self._acc_doc.update_one({'_id': id}, upd)
 
         if result.modified_count != 1:
-            raise AccountNotExist(id)
+            raise NonExistError({'id': id})
 
+    @verify(None, EMAIL_SCHM)
     def mk_rpwd_code(self, email):
         '''
         Create reset password code from email.
@@ -316,11 +285,9 @@ class AccSv(Service):
         :raise TypeError:
         '''
 
-        _verify_email(email)
-
         acc = self._acc_doc.find_one({'email': email})
         if acc is None:
-            raise AccountNotExist(email)
+            raise NonExistError({'email': email})
         self._rpwd_doc.delete_many({'acc_id': acc['_id']})
 
         reset_code = rand_code()
@@ -334,6 +301,7 @@ class AccSv(Service):
 
         return reset_code
 
+    @verify(None, _CFCODE_SCHM, ACC_PWD_SCHM)
     def cf_rpwd_code(self, code, new_pwd):
         '''
         Reset password from code
@@ -344,13 +312,11 @@ class AccSv(Service):
         :raise TypeError:
         '''
 
-        _verify_pwd(new_pwd)
-
         code_spec = self._rpwd_doc.find_one({'code': code})
         if code_spec is None:
-            raise CodeNotExistError(code)
+            raise NonExistError({'code': code})
         if code_spec['expired_date'] < time():
-            raise CodeExpiredError()
+            raise ExpiredError({'code': time()})
 
         acc_id = code_spec['acc_id']
         self._rpwd_doc.delete_many({'acc_id': acc_id})

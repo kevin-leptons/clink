@@ -44,3 +44,16 @@ class FormatError(Exception):
 
     def __str__(self):
         return self._msg
+
+
+class ExpiredError(Exception):
+    '''
+    Specify expirision error
+    '''
+
+    def __init__(self, indexes):
+        '''
+        :param dict indexes:
+        '''
+
+        self.indexes = indexes

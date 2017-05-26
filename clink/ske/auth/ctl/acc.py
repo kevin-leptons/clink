@@ -2,7 +2,9 @@ from os import path
 from os.path import dirname, realpath
 from datetime import datetime, timedelta
 
-from clink.error.http import Http500Error, Http404Error
+from jwt.exceptions import ExpiredSignatureError
+
+from clink.error.http import *
 from clink import stamp, mapper, AppConf, AuthConf, Controller
 from clink.service import AccSv, TemplateSv, SmtpSv, OAuthSv
 
@@ -40,20 +42,23 @@ class AccountCtl(Controller):
 
     @mapper.get('me')
     def get_me(self, req, res):
-        acc_id = self._oauth_sv.authen_req(req)
-        acc = self._acc_sv.find_id(acc_id)
-        if acc is None:
-            raise Http500Error(req, 'Account identity not found')
+        try:
+            acc_id = self._oauth_sv.authen_req(req)
+            acc = self._acc_sv.find_id(acc_id)
+            if acc is None:
+                raise Http404(req, 'Identity %s invalid' % str(acc_id))
 
-        res.body = {
-            '_id': str(acc['_id']),
-            'name': acc['name'],
-            'email': acc['email'],
-            'phone': acc['phone'],
-            'created_date': int(acc['created_date'].timestamp()),
-            'modifired_date': int(acc['modified_date'].timestamp()),
-            'last_action': acc['last_action']
-        }
+            res.body = {
+                '_id': str(acc['_id']),
+                'name': acc['name'],
+                'email': acc['email'],
+                'phone': acc['phone'],
+                'created_date': int(acc['created_date'].timestamp()),
+                'modifired_date': int(acc['modified_date'].timestamp()),
+                'last_action': acc['last_action']
+            }
+        except ExpiredSignatureError as e:
+            raise Http401Error(req, 'Token was expired')
 
     @mapper.post('reg/code')
     def create_reg_code(self, req, res):
@@ -97,23 +102,26 @@ class AccountCtl(Controller):
 
     @mapper.put('me/pwd')
     def change_pwd(self, req, res):
-        new_pwd = req.body['new_pwd']
+        try:
+            new_pwd = req.body['new_pwd']
 
-        acc_id = self._oauth_sv.authen_req(req)
-        acc = self._acc_sv.find_id(acc_id)
-        if acc is None:
-            raise Http500Error(req, 'Account identity not found')
-        self._acc_sv.ch_pwd(acc_id, new_pwd)
+            acc_id = self._oauth_sv.authen_req(req)
+            acc = self._acc_sv.find_id(acc_id)
+            if acc is None:
+                raise Http404Error(req, 'Not fuond identity %s' % str(acc_id))
+            self._acc_sv.ch_pwd(acc_id, new_pwd)
 
-        values = {
-            'acc_name': acc['name'],
-            'remote_addr': req.remote_addr
-        }
-        txt_body = self._tpl_sv.build_file(_CHANGE_PWD_TMP_FILE, values)
-        subject = 'Change password'
-        self._smtp_sv.send(acc['email'], subject, txt_body)
+            values = {
+                'acc_name': acc['name'],
+                'remote_addr': req.remote_addr
+            }
+            txt_body = self._tpl_sv.build_file(_CHANGE_PWD_TMP_FILE, values)
+            subject = 'Change password'
+            self._smtp_sv.send(acc['email'], subject, txt_body)
 
-        res.status = 204
+            res.status = 204
+        except ExpiredSignatureError:
+            raise Http401Error(req, 'Token was expired')
 
     @mapper.post('pwd/code')
     def create_reset_pwd_code(self, req, res):
@@ -149,7 +157,7 @@ class AccountCtl(Controller):
 
         acc = self._acc_sv.find_id(acc_id)
         if acc is None:
-            raise Http500Error(req)
+            raise Http404Error(req, 'Not found identity %s' % str(acc_id))
 
         values = {
             'new_pwd': new_pwd,

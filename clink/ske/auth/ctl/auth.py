@@ -1,6 +1,6 @@
 from clink import stamp, mapper, Controller
 from clink.service import OAuthSv
-from clink import Http400Error
+from clink.error.http import Http406Error
 
 
 @stamp(OAuthSv)
@@ -21,4 +21,4 @@ class AuthCtl(Controller):
         elif grant_type == 'refresh_token':
             res.body = self._oauth_sv.mktoken_rtoken(info['refresh_token'])
         else:
-            raise Http400Error(req, 'Not support grant_type=' + grant_type)
+            raise Http406Error(req, 'Not support grant_type=' + grant_type)

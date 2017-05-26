@@ -161,7 +161,8 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3.4/', None),
     'pymongo': ('https://api.mongodb.com/python/current/', None),
     'click': ('http://click.pocoo.org/', None),
-    'jsonschema': ('http://python-jsonschema.readthedocs.io/en/latest/', None)
+    'jsonschema': ('http://python-jsonschema.readthedocs.io/en/latest/', None),
+    'jwt': ('https://pyjwt.readthedocs.io/en/latest/', None)
 }
 
 autodoc_member_order = 'bysource'

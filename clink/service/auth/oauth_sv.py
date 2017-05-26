@@ -1,15 +1,17 @@
 import jwt
 from time import time
 from bson import ObjectId
+from jwt.exceptions import ExpiredSignatureError
 
+from clink import AuthConf
 from clink.com import stamp
 from clink.type.com import Service
 from clink.error.http import Http400Error, Http401Error
+from clink.dflow import *
 
 from .error import PasswordError, TokenExpiredError, RTokenExpiredError
 from .authdb_sv import AuthDbSv
-from .acc_sv import AccSv
-from clink import AuthConf
+from .acc_sv import AccSv, ACC_NAME_SCHM, ACC_PWD_SCHM
 
 
 @stamp(AuthDbSv, AccSv, AuthConf)
@@ -34,6 +36,7 @@ class OAuthSv(Service):
         self._token_time = auth_conf.token_time
         self._rtoken_time = auth_conf.rtoken_time
 
+    @verify(None, ACC_NAME_SCHM, ACC_PWD_SCHM)
     def mktoken_pwd(self, name, password):
         '''
         Create an token from account name and password
@@ -46,7 +49,7 @@ class OAuthSv(Service):
 
         acc = self._acc_sv.find_pwd(name, password)
         if acc is None:
-            raise PasswordError(name, password)
+            raise NonExistError({'name': name, 'password': '***'})
 
         return self._mk_token(acc['_id'])
 
@@ -72,16 +75,13 @@ class OAuthSv(Service):
         Authenticate access token
 
         :param str access_token:
-        :rtype mongo.objectid.ObjectId:
-        :raise TokenExpiredError:
+        :rtype: bson.objectid.ObjectId
+        :raise jwt.exceptions.ExpiredSignatureError:
         '''
 
         atoken_raw = jwt.decode(
             access_token, self._jwt_key, algorithm=self._TOKEN_ALG
         )
-        exp = int(atoken_raw['exp'])
-        if exp < time():
-            raise TokenExpiredError(atoken_raw)
 
         return ObjectId(atoken_raw['sub'])
 

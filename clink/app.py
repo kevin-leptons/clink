@@ -5,7 +5,7 @@ from .routing import Router
 from .handler import RecvHandler, SendHandler
 from .handler import ReqJsonHandler, ReqUrlEncodeHandler, ReqLogHandler
 from .handler import ResJsonHandler, ResCorsHandler
-from .handler import ErrorHttpHandler, ErrorLogHandler
+from .handler import ErrorHttpHandler, ErrorLogHandler, DflowErrorHandler
 from clink.com.injector import Injector
 
 
@@ -40,6 +40,7 @@ class App(IWsgi):
         self.add_com(ResCorsHandler)
         self.add_com(SendHandler)
         self.add_com(ErrorHttpHandler)
+        self.add_com(DflowErrorHandler)
         self.add_com(ErrorLogHandler)
 
     def add_com(self, com_type):
