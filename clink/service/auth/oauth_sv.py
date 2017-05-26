@@ -1,15 +1,13 @@
 import jwt
 from time import time
 from bson import ObjectId
-from jwt.exceptions import ExpiredSignatureError
 
 from clink import AuthConf
 from clink.com import stamp
 from clink.type.com import Service
 from clink.error.http import Http400Error, Http401Error
-from clink.dflow import *
+from clink.dflow import verify, NonExistError, ExpiredError
 
-from .error import PasswordError, TokenExpiredError, RTokenExpiredError
 from .authdb_sv import AuthDbSv
 from .acc_sv import AccSv, ACC_NAME_SCHM, ACC_PWD_SCHM
 
@@ -59,14 +57,14 @@ class OAuthSv(Service):
 
         :param str rtoken:
         :rtype: dict
-        :raise RTokenExpiredError:
+        :raise ExpiredError:
         '''
 
         rtoken_raw = jwt.decode(
             rtoken, self._jwt_key, algorithm=self._TOKEN_ALG
         )
         if rtoken_raw['exp'] < time():
-            raise RTokenExpiredError(rtoken_raw)
+            raise ExpiredError({'exp': time()})
 
         return self._mk_token(rtoken_raw['sub'])
 

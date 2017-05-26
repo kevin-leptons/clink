@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from jwt.exceptions import ExpiredSignatureError
 
-from clink.error.http import *
+from clink.error.http import Http401Error, Http404Error
 from clink import stamp, mapper, AppConf, AuthConf, Controller
 from clink.service import AccSv, TemplateSv, SmtpSv, OAuthSv
 
@@ -46,7 +46,7 @@ class AccountCtl(Controller):
             acc_id = self._oauth_sv.authen_req(req)
             acc = self._acc_sv.find_id(acc_id)
             if acc is None:
-                raise Http404(req, 'Identity %s invalid' % str(acc_id))
+                raise Http404Error(req, 'Identity %s invalid' % str(acc_id))
 
             res.body = {
                 '_id': str(acc['_id']),
@@ -57,7 +57,7 @@ class AccountCtl(Controller):
                 'modifired_date': int(acc['modified_date'].timestamp()),
                 'last_action': acc['last_action']
             }
-        except ExpiredSignatureError as e:
+        except ExpiredSignatureError:
             raise Http401Error(req, 'Token was expired')
 
     @mapper.post('reg/code')

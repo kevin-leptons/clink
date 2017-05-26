@@ -1,5 +1,4 @@
 import random
-import re
 from datetime import datetime, timedelta
 from time import time
 from string import ascii_lowercase, ascii_uppercase, digits
@@ -7,9 +6,8 @@ from hashlib import sha224
 
 from clink.type import Service, AuthConf
 from clink.com import stamp
-from clink.dflow import *
-from .error import *
-from .authdb_sv import *
+from clink.dflow import verify, ExistError, NonExistError, ExpiredError
+from .authdb_sv import AuthDbSv
 
 _ACT_REGISTERED = 'REGISTERED'
 _ACT_CHANGE_PWD = 'CHANGE_PWD'
@@ -41,7 +39,7 @@ def rand_code():
 ACC_NAME_SCHM = dict(type='string', pattern='^[a-z0-9-]{2,32}$')
 ACC_PWD_SCHM = dict(type='string', pattern='^.{6,32}$')
 EMAIL_SCHM = dict(
-    type='string', 
+    type='string',
     pattern=(
         '^[a-zA-Z0-9-._]{1,64}\@'
         '[a-zA-Z0-9\[]{1}[a-zA-Z0-9.-:]{1,61}[a-zA-Z0-9\]]{1}$'
@@ -69,10 +67,10 @@ class AccSv(Service):
         :param AuthConf auth_conf:
         '''
 
-        self._acc_doc = authdb_sv.doc(ACC_DOCNAME)
-        self._grp_doc = authdb_sv.doc(GRP_DOCNAME)
-        self._rpwd_doc = authdb_sv.doc(RPWD_DOCNAME)
-        self._acctmp_doc = authdb_sv.doc(ACCTMP_DOCNAME)
+        self._acc_doc = authdb_sv.acc_doc()
+        self._grp_doc = authdb_sv.grp_doc()
+        self._rpwd_doc = authdb_sv.rpwd_doc()
+        self._acctmp_doc = authdb_sv.acctmp_doc()
 
         self.rpwd_time = 3600
         self.create_time = 3600
@@ -351,7 +349,7 @@ class AccSv(Service):
         result = self._grp_doc.delete_one({'name': group_name})
 
         if result.deleted_count != 1:
-            raise GroupNotExist(group_name)
+            raise NonExistError({'group_name': group_name})
 
     def add_to_group(self, acc_id, group_name):
         '''
@@ -363,13 +361,13 @@ class AccSv(Service):
 
         acc = self._acc_doc.find_one({'_id': acc_id})
         if acc is None:
-            raise AccountNotExist(acc_id)
+            raise NonExistError({'id': acc_id})
 
         grp = self._grp_doc.find_one({'name': group_name})
         if grp is None:
-            raise GroupNotExist(group_name)
+            raise NonExistError({'group_name': group_name})
         if group_name in acc['groups']:
-            raise GroupExist(group_name)
+            raise ExistError({'group_name': group_name})
 
         upd = {
             '$push': {'groups': group_name},
@@ -388,9 +386,9 @@ class AccSv(Service):
         acc = self._acc_doc.find_one({'_id': acc_id})
 
         if acc is None:
-            raise AccountNotExist(acc_id)
+            raise NonExistError({'id': acc_id})
         if group_name not in acc['groups']:
-            raise GroupNotExist(group_name)
+            raise NonExistError({'group_name': group_name})
 
         upd = {
             '$pull': {'groups': group_name},

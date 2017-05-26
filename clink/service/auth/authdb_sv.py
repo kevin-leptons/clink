@@ -5,7 +5,6 @@ from clink.service.mongo import MongoDocSpec
 from clink.com import stamp
 from clink.type.com import Service
 from clink.service.mongo import MongoSv
-from .error import DocDeniedError
 
 ROOT_NAME = 'root'
 ACC_DOCNAME = 'account'
@@ -42,15 +41,38 @@ class AuthDbSv(Service):
         mongo_sv.use_docspecs(_DOC_SPECS)
         self._mongo_sv = mongo_sv
 
-    def doc(self, doc_name):
+    def acc_doc(self):
         '''
-        Return document object
+        Return account collection
 
-        :param str doc_name:
-        :raise DocDeniedError:
+        :rtype: pymongo.collection.Collection
         '''
 
-        if doc_name not in DOC_NAMES:
-            raise DocDeniedError(doc_name)
+        return self._mongo_sv.doc(ACC_DOCNAME)
 
-        return self._mongo_sv.doc(doc_name)
+    def grp_doc(self):
+        '''
+        Return group collection
+
+        :rtype: pymongo.collection.Collection
+        '''
+
+        return self._mongo_sv.doc(GRP_DOCNAME)
+
+    def rpwd_doc(self):
+        '''
+        Return refresh token collection
+
+        :rtype: pymongo.collection.Collection
+        '''
+
+        return self._mongo_sv.doc(RPWD_DOCNAME)
+
+    def acctmp_doc(self):
+        '''
+        Return temporary account collection
+
+        :rtype: pymongo.collection.Collection
+        '''
+
+        return self._mongo_sv.doc(ACCTMP_DOCNAME)

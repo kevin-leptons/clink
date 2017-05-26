@@ -12,12 +12,11 @@ May, 2017 <br>
 
 # FEATURES
 
-- Process handlers likes pipe line
-- Provide components architecture
-- Routing by method, path and request content type
-- Database operations with MongoDB
-- Account managements with built-in service
-- Authentication with limited OAuth2 specifications
+- Pipe Line handlers
+- Component architecture
+- Routing by method, path and content type
+- Data flow
+- Built-in services and controllers for account management, authentication
 
 # USAGE
 

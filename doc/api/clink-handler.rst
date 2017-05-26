@@ -10,3 +10,4 @@ clink.handler
 .. automodule:: clink.handler.res_cors
 .. automodule:: clink.handler.res_json
 .. automodule:: clink.handler.send
+.. automodule:: clink.handler.dflow_err
