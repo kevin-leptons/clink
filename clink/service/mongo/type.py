@@ -1,4 +1,4 @@
-from clink.com import stamp, Component
+from clink.com import stamp, Component, Primitive
 
 
 class MongoDocSpec():
@@ -33,7 +33,7 @@ class MongoDocSpec():
 
 
 @stamp()
-class MongoConf(Component):
+class MongoConf(Primitive):
     '''
     Specify information of mongo server
 

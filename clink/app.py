@@ -30,7 +30,7 @@ class App(IWsgi):
 
         self.router = Router()
         self.injector = Injector()
-        self.injector.add_ref(conf)
+        self.injector.add_prim(conf)
 
         self.add_com(RecvHandler)
         self.add_com(ReqLogHandler)

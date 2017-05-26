@@ -1,8 +1,9 @@
 from collections import deque
 
 from .label import read_stamp, COM_DPDC_ATTR
+from .type import Primitive, Component
 from .error import CircleComError, ComExistError, ComDepedencyError, \
-                   ComCreationError, InjectorLoadingError
+                   ComCreationError, InjectorLoadingError, PrimError
 
 
 class Injector():
@@ -16,10 +17,10 @@ class Injector():
         self.com_inst = {}
         self._loaded = False
 
-    def add_ref(self, com_obj):
+    def add_prim(self, com_obj):
         '''
-        Put an instance of component under management. Instance MUST NOT
-        contains any depedencies
+        Put an instance of component under management. Instance MUST be
+        primitive
 
         :param clink.com.Component com_obj:
         :raise ComExistError:
@@ -27,6 +28,10 @@ class Injector():
         '''
 
         com_type = type(com_obj)
+        if not issubclass(com_type, Primitive):
+            raise TypeError(
+                '%s is not subclass of %s' % (com_type, Primitive)
+            )
         if com_type in self._com_dict:
             raise ComExistError(com_type)
 
@@ -113,6 +118,10 @@ class Injector():
             if com_type not in self._com_dict:
                 self._com_dict[com_type] = req_coms
             for req_com in req_coms:
+                if not issubclass(req_com, Component):
+                    raise TypeError(
+                        '%s is not component in %s' % (req_com, com_type)
+                    )
                 if req_com not in self._com_dict:
                     com_queue.append(req_com)
 
@@ -139,6 +148,8 @@ class Injector():
             for com_type in layer:
                 if com_type in self.com_inst:
                     continue
+                if issubclass(com_type, Primitive):
+                    raise PrimError(com_type, 'has not instance')
                 arg_types = tuple([t for t in self._com_dict[com_type]])
                 args = tuple([self.com_inst[t] for t in arg_types])
                 try:

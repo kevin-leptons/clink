@@ -1,8 +1,8 @@
-from clink.com import Component, stamp
+from clink.com import Primitive, stamp
 
 
 @stamp()
-class AppConf(Component):
+class AppConf(Primitive):
     def __init__(self, name, org_name=None, org_loc=None):
         self.name = name
         self.org_name = org_name
@@ -10,7 +10,7 @@ class AppConf(Component):
 
 
 @stamp()
-class AuthConf(Component):
+class AuthConf(Primitive):
     def __init__(
         self, root_pwd, root_email, root_email_pwd, root_email_server,
         jwt_key, token_time=4*3600, rtoken_time=30*24*3600

@@ -45,6 +45,8 @@ class Router(ILv2Handler):
                 self.add_route(route)
             except KeyError:
                 pass
+            except TypeError:
+                pass
 
     def add_route(self, route):
         '''

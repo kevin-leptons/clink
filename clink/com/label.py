@@ -26,7 +26,7 @@ def read_stamp(target, key):
     '''
 
     if _STAMP_KEY not in dir(target):
-        raise KeyError('%s.%s' % (_STAMP_KEY, key))
+        raise TypeError('%s was not stamped' % target)
     stamp = getattr(target, _STAMP_KEY)
     if key not in stamp:
         raise KeyError('%s.%s' % (_STAMP_KEY, key))
