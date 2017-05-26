@@ -1,4 +1,4 @@
-from clink.com import stamp, Component, Primitive
+from clink.com import stamp, Primitive
 
 
 class MongoDocSpec():

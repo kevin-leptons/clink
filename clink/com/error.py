@@ -9,6 +9,7 @@ class PrimError(Exception):
     def __str__(self):
         return self._msg
 
+
 class ComDepedencyError(Exception):
     def __init__(self, com_type, msg):
         self._msg = '%s: %s' % (com_type.__name__, msg)
