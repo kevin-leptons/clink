@@ -1,3 +1,5 @@
+from inspect import ismodule
+
 from clink.iface import IWsgi, ILv0Handler, ILv1Handler, ILv3Handler, \
                         ILv5Handler, ILv6Handler, ILv7Handler, ILv8Handler
 from .type import Request, Response, Controller
@@ -6,7 +8,7 @@ from .handler import RecvHandler, SendHandler
 from .handler import ReqJsonHandler, ReqUrlEncodeHandler, ReqLogHandler
 from .handler import ResJsonHandler, ResCorsHandler
 from .handler import ErrorHttpHandler, ErrorLogHandler, DflowErrorHandler
-from clink.com.injector import Injector
+from clink.com import find, Injector
 
 
 class App(IWsgi):
@@ -32,25 +34,43 @@ class App(IWsgi):
         self.injector = Injector()
         self.injector.add_prim(conf)
 
-        self.add_com(RecvHandler)
-        self.add_com(ReqLogHandler)
-        self.add_com(ReqJsonHandler)
-        self.add_com(ReqUrlEncodeHandler)
-        self.add_com(ResJsonHandler)
-        self.add_com(ResCorsHandler)
-        self.add_com(SendHandler)
-        self.add_com(ErrorHttpHandler)
-        self.add_com(DflowErrorHandler)
-        self.add_com(ErrorLogHandler)
+        self.injector.add_com(RecvHandler)
+        self.injector.add_com(ReqLogHandler)
+        self.injector.add_com(ReqJsonHandler)
+        self.injector.add_com(ReqUrlEncodeHandler)
+        self.injector.add_com(ResJsonHandler)
+        self.injector.add_com(ResCorsHandler)
+        self.injector.add_com(SendHandler)
+        self.injector.add_com(ErrorHttpHandler)
+        self.injector.add_com(DflowErrorHandler)
+        self.injector.add_com(ErrorLogHandler)
 
-    def add_com(self, com_type):
+    def add_prim(self, *args):
+        for prim_ref in args:
+            self.injector.add_prim(prim_ref)
+
+    def add_ctl(self, ctl_type):
         '''
-        Add a component to application
+        Add controller to application
 
-        :param class com_type:
+        :param class ctl:
         '''
 
-        self.injector.add_com(com_type)
+        if not issubclass(ctl_type, Controller):
+            raise TypeError('%s is not controller' % ctl_type)
+
+        self.injector.add_com(ctl_type)
+
+    def add_ctls(self, module):
+        '''
+        Search controllers in module and add them to application
+        '''
+
+        if not ismodule(module):
+            raise TypeError('%s is not module' % module)
+
+        ctl_types = find(module, Controller)
+        self.injector.add_coms(ctl_types)
 
     def load(self):
         '''

@@ -1,5 +1,3 @@
-from os import path
-from os.path import dirname, realpath
 from datetime import datetime, timedelta
 
 from jwt.exceptions import ExpiredSignatureError
@@ -7,27 +5,14 @@ from jwt.exceptions import ExpiredSignatureError
 from clink.error.http import Http401Error, Http404Error
 from clink import stamp, mapper, AppConf, AuthConf, Controller
 from clink.service import AccSv, TemplateSv, SmtpSv, OAuthSv
-
-_DIR = realpath(path.join(dirname(__file__), '../tpl'))
-_REG_CODE_TMP_FILE = path.join(_DIR, 'reg-code.txt')
-_REG_TMP_FILE = path.join(_DIR, 'reg-tmp.txt')
-_CHANGE_PWD_TMP_FILE = path.join(_DIR, 'change-pwd.txt')
-_RESET_PWD_TMP_FILE = path.join(_DIR, 'reset-pwd.txt')
-_RESET_PWD_CODE_TMP_FILE = path.join(_DIR, 'reset-pwd-code.txt')
+from clink.util import clink_asset_path
 
 
 @stamp(AppConf, AuthConf, AccSv, OAuthSv, SmtpSv, TemplateSv)
 @mapper.path('acc')
 class AccountCtl(Controller):
     '''
-    POST /acc/reg/code
-    POST /acc/reg
-
-    GET  /acc/me
-    PUT  /acc/me/pwd
-
-    POST /acc/pwd/code
-    POST /acc/pwd
+    Manage accounts and related concepts
     '''
 
     def __init__(
@@ -39,6 +24,8 @@ class AccountCtl(Controller):
         self._oauth_sv = oauth_sv
         self._smtp_sv = smtp_sv
         self._tpl_sv = tpl_sv
+
+        self._init_tpl_files()
 
     @mapper.get('me')
     def get_me(self, req, res):
@@ -77,7 +64,7 @@ class AccountCtl(Controller):
             'expired_date': expired_date.strftime('%Y-%m-%d %H:%M:%S'),
             'remote_addr': req.remote_addr
         }
-        txt_body = self._tpl_sv.build_file(_REG_CODE_TMP_FILE, values)
+        txt_body = self._tpl_sv.build_file(self._REG_CODE_TPL, values)
         subject = 'Registration'
         self._smtp_sv.send(info['email'], subject, txt_body)
 
@@ -94,7 +81,7 @@ class AccountCtl(Controller):
             'acc_email': acc['email'],
             'remote_addr': req.remote_addr
         }
-        txt_body = self._tpl_sv.build_file(_REG_TMP_FILE, values)
+        txt_body = self._tpl_sv.build_file(self._REG_TPL, values)
         subject = 'Registration'
         self._smtp_sv.send(acc['email'], subject, txt_body)
 
@@ -108,14 +95,14 @@ class AccountCtl(Controller):
             acc_id = self._oauth_sv.authen_req(req)
             acc = self._acc_sv.find_id(acc_id)
             if acc is None:
-                raise Http404Error(req, 'Not fuond identity %s' % str(acc_id))
+                raise Http404Error(req, 'Not found identity %s' % str(acc_id))
             self._acc_sv.ch_pwd(acc_id, new_pwd)
 
             values = {
                 'acc_name': acc['name'],
                 'remote_addr': req.remote_addr
             }
-            txt_body = self._tpl_sv.build_file(_CHANGE_PWD_TMP_FILE, values)
+            txt_body = self._tpl_sv.build_file(self._CPWD_TPL, values)
             subject = 'Change password'
             self._smtp_sv.send(acc['email'], subject, txt_body)
 
@@ -142,7 +129,7 @@ class AccountCtl(Controller):
             'remote_addr': req.remote_addr
         }
 
-        txt_body = self._tpl_sv.build_file(_RESET_PWD_CODE_TMP_FILE, values)
+        txt_body = self._tpl_sv.build_file(self._RPWD_CODE_TPL, values)
         subject = 'Reset password code'
         self._smtp_sv.send(email, subject, txt_body)
 
@@ -166,8 +153,19 @@ class AccountCtl(Controller):
             'remote_addr': req.remote_addr
         }
 
-        txt_msg = self._tpl_sv.build_file(_RESET_PWD_TMP_FILE, values)
+        txt_msg = self._tpl_sv.build_file(self._RPWD_TPL, values)
         subject = 'Reset password'
         self._smtp_sv.send(acc['email'], subject, txt_msg)
 
         res.status = 204
+
+    def _init_tpl_files(self):
+        '''
+        Detect template files
+        '''
+
+        self._REG_CODE_TPL = clink_asset_path('tpl/reg-code.txt')
+        self._REG_TPL = clink_asset_path('tpl/reg-tmp.txt')
+        self._CHPWD_TPL = clink_asset_path('tpl/change-pwd.txt')
+        self._RPWD_TPL = clink_asset_path('tpl/reset-pwd.txt')
+        self._RPWD_CODE_TPL = clink_asset_path('tpl/reset-pwd-code.txt')
