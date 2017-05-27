@@ -6,7 +6,7 @@ from clink import stamp, mapper, App, AppConf, Controller
 from wsgiref.simple_server import make_server
 
 
-# STEP 3: create application 
+# STEP 3: create application
 conf = AppConf('book-api')
 app = App(conf)
 
