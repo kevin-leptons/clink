@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/kevin-leptons/clink.svg?branch=master)](https://travis-ci.org/kevin-leptons/clink)
 
+[![Documentation Status](https://readthedocs.org/projects/clink/badge/?version=latest)](http://clink.readthedocs.io/en/latest/?badge=latest)
+
 HTTP APIs framework.
 
 ![gwisp logo](asset/logo-64.png)
