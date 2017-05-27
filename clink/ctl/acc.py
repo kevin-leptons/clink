@@ -89,6 +89,8 @@ class AccCtl(Controller):
 
     @mapper.put('me/pwd')
     def change_pwd(self, req, res):
+        if req.body is None:
+            raise Http400Error(req, 'Require old_pwd, new_pwd')
         if 'old_pwd' not in req.body:
             raise Http400Error(req, 'Require old_pwd')
         if 'new_pwd' not in req.body:
