@@ -1,14 +1,14 @@
 from inspect import ismodule
 
-from clink.iface import IWsgi, ILv0Handler, ILv1Handler, ILv3Handler, \
-                        ILv5Handler, ILv6Handler, ILv7Handler, ILv8Handler
+from .com import find, Injector
+from .iface import IWsgi, ILv0Handler, ILv1Handler, ILv3Handler
+from .iface import ILv5Handler, ILv6Handler, ILv7Handler, ILv8Handler
 from .type import Request, Response, Controller
 from .routing import Router
 from .handler import RecvHandler, SendHandler
 from .handler import ReqJsonHandler, ReqUrlEncodeHandler, ReqLogHandler
 from .handler import ResJsonHandler, ResCorsHandler
 from .handler import ErrorHttpHandler, ErrorLogHandler, DflowErrorHandler
-from clink.com import find, Injector
 
 
 class App(IWsgi):

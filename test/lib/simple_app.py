@@ -21,7 +21,7 @@ class BookCtl(Controller):
 def start(port=8080):
     app_conf = AppConf('simple-api')
     app = App(app_conf)
-    app.add_com(BookCtl)
+    app.add_ctl(BookCtl)
     app.load()
 
     httpd = make_server('localhost', port, app)

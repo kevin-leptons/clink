@@ -9,7 +9,8 @@ class AppConf(Primitive):
     '''
 
     def __init__(
-        self, name, license, version, org_name, org_addr
+        self, name, license='?', version=Version(0, 1, 0), 
+        org_name='?', org_addr='?'
     ):
         '''
         :param str name:

@@ -32,4 +32,5 @@ setup(
         'pymongo==3.4.0', 'PyJWT==1.4.0', 'jsonschema==2.6.0'
     ],
     packages=find_packages(exclude=['tool', 'test']),
+    package_data={'clink': ['asset/**/*']}
 )
