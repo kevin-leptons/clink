@@ -6,12 +6,12 @@ from clink import stamp, mapper, App, AppConf, Controller
 from wsgiref.simple_server import make_server
 
 
-# STEP 3: create application configuration and application
-conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
+# STEP 3: create application 
+conf = AppConf('book-api')
 app = App(conf)
 
 
-# STEP 4: define component - controllers
+# STEP 4: define controller
 @stamp()
 @mapper.path('book')
 class BookCtl(Controller):
@@ -23,8 +23,8 @@ class BookCtl(Controller):
         }
 
 
-# STEP 5: add components to application
-app.add_com(BookCtl)
+# STEP 5: add controller to application
+app.add_ctl(BookCtl)
 
 
 # STEP 6: load components
