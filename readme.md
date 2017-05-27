@@ -86,6 +86,7 @@ httpd.serve_forever()
 
 ```bash
 $ python server.py &> /dev/null &
+[1] 7564
 
 $ curl localhost:8080/book/item
 {"name": "How to Die", "author": "Death"}
