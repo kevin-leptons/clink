@@ -1,3 +1,3 @@
-from .acc_sv import *
-from .oauth_sv import *
-from .authdb_sv import *
+from .acc_sv import AccSv
+from .oauth_sv import OAuthSv
+from .authdb_sv import AuthDbSv

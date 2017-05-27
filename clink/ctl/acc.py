@@ -1,8 +1,4 @@
-from datetime import datetime, timedelta
-
-from jwt.exceptions import ExpiredSignatureError
-
-from clink.error.http import Http401Error, Http404Error
+from clink.error.http import Http404Error, Http400Error, Http403Error
 from clink import stamp, mapper, AppConf, AuthConf, Controller
 from clink.service import AccSv, TemplateSv, SmtpSv, OAuthSv
 from clink.util import clink_asset_path
@@ -10,7 +6,7 @@ from clink.util import clink_asset_path
 
 @stamp(AppConf, AuthConf, AccSv, OAuthSv, SmtpSv, TemplateSv)
 @mapper.path('acc')
-class AccountCtl(Controller):
+class AccCtl(Controller):
     '''
     Manage accounts and related concepts
     '''
@@ -28,50 +24,54 @@ class AccountCtl(Controller):
         self._init_tpl_files()
 
     @mapper.get('me')
-    def get_me(self, req, res):
-        try:
-            acc_id = self._oauth_sv.authen_req(req)
-            acc = self._acc_sv.find_id(acc_id)
-            if acc is None:
-                raise Http404Error(req, 'Identity %s invalid' % str(acc_id))
+    def acc_info(self, req, res):
+        acc_id = self._oauth_sv.authen_req(req)
+        acc = self._acc_sv.find_id(acc_id)
+        if acc is None:
+            raise Http404Error(req, 'Identity %s invalid' % str(acc_id))
 
-            res.body = {
-                '_id': str(acc['_id']),
-                'name': acc['name'],
-                'email': acc['email'],
-                'phone': acc['phone'],
-                'created_date': int(acc['created_date'].timestamp()),
-                'modifired_date': int(acc['modified_date'].timestamp()),
-                'last_action': acc['last_action']
-            }
-        except ExpiredSignatureError:
-            raise Http401Error(req, 'Token was expired')
+        res.body = {
+            '_id': str(acc['_id']),
+            'name': acc['name'],
+            'email': acc['email'],
+            'phone': acc['phone'],
+            'created_date': int(acc['created_date'].timestamp()),
+            'modifired_date': int(acc['modified_date'].timestamp()),
+            'last_action': acc['last_action']
+        }
 
     @mapper.post('reg/code')
-    def create_reg_code(self, req, res):
-        info = req.body
+    def mk_reg_code(self, req, res):
+        if req.body is None:
+            raise Http400Error(req, 'Require name, pwd, email')
+        if 'name' not in req.body:
+            raise Http400Error(req, 'Require name')
+        if 'pwd' not in req.body:
+            raise Http400Error(req, 'Require pwd')
+        if 'email' not in req.body:
+            raise Http400Error(req, 'Require email')
 
-        reg_code = self._acc_sv.mk_reg_code(
-            info['name'], info['pwd'], info['email']
+        result = self._acc_sv.mk_reg_code(
+            req.body['name'], req.body['pwd'], req.body['email']
         )
 
-        datetime_now = datetime.utcnow()
-        expired_date = datetime_now + timedelta(self._acc_sv.create_time)
         values = {
-            'reg_code': reg_code,
-            'acc_name': info['name'],
-            'acc_email': info['email'],
-            'expired_date': expired_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'reg_code': result.code,
+            'acc_name': req.body['name'],
+            'acc_email': req.body['email'],
+            'expired_date': result.exp_date.strftime('%Y-%m-%d %H:%M:%S'),
             'remote_addr': req.remote_addr
         }
         txt_body = self._tpl_sv.build_file(self._REG_CODE_TPL, values)
         subject = 'Registration'
-        self._smtp_sv.send(info['email'], subject, txt_body)
+        self._smtp_sv.send(req.body['email'], subject, txt_body)
 
         res.status = 204
 
     @mapper.post('reg')
     def confirm_reg_code(self, req, res):
+        if req.body is None or 'code' not in req.body:
+            raise Http400Error(req, 'Require code')
         reg_code = req.body['code']
 
         acc = self._acc_sv.cf_reg_code(reg_code)
@@ -89,43 +89,50 @@ class AccountCtl(Controller):
 
     @mapper.put('me/pwd')
     def change_pwd(self, req, res):
-        try:
-            new_pwd = req.body['new_pwd']
+        if 'old_pwd' not in req.body:
+            raise Http400Error(req, 'Require old_pwd')
+        if 'new_pwd' not in req.body:
+            raise Http400Error(req, 'Require new_pwd')
+        old_pwd = req.body['old_pwd']
+        new_pwd = req.body['new_pwd']
 
-            acc_id = self._oauth_sv.authen_req(req)
-            acc = self._acc_sv.find_id(acc_id)
-            if acc is None:
-                raise Http404Error(req, 'Not found identity %s' % str(acc_id))
-            self._acc_sv.ch_pwd(acc_id, new_pwd)
+        acc_id = self._oauth_sv.authen_req(req)
+        acc = self._acc_sv.find_id(acc_id)
+        if acc is None:
+            raise Http404Error(req, 'Not found identity %s' % str(acc_id))
+        acc = self._acc_sv.find_pwd(acc['name'], old_pwd)
+        if acc is None:
+            raise Http403Error(req, 'Old password is invalid')
 
-            values = {
-                'acc_name': acc['name'],
-                'remote_addr': req.remote_addr
-            }
-            txt_body = self._tpl_sv.build_file(self._CPWD_TPL, values)
-            subject = 'Change password'
-            self._smtp_sv.send(acc['email'], subject, txt_body)
+        self._acc_sv.ch_pwd(acc_id, new_pwd)
 
-            res.status = 204
-        except ExpiredSignatureError:
-            raise Http401Error(req, 'Token was expired')
+        values = {
+            'acc_name': acc['name'],
+            'remote_addr': req.remote_addr
+        }
+        txt_body = self._tpl_sv.build_file(self._CHPWD_TPL, values)
+        subject = 'Change password'
+        self._smtp_sv.send(acc['email'], subject, txt_body)
+
+        res.status = 204
 
     @mapper.post('pwd/code')
-    def create_reset_pwd_code(self, req, res):
+    def mk_reset_pwd_code(self, req, res):
+        if req.body is None or 'email' not in req.body:
+            raise Http400Error(req, 'Require email')
         email = req.body['email']
 
         acc = self._acc_sv.find_email(email)
         if acc is None:
             raise Http404Error(req, 'Email does not exist')
 
-        reset_code = self._acc_sv.mk_rpwd_code(email)
-        expired_date = datetime.utcnow() + timedelta(hours=1)
+        result = self._acc_sv.mk_rpwd_code(email)
 
         values = {
-            'reset_pwd_code': reset_code,
+            'reset_pwd_code': result.code,
             'app_name': self._app_conf.name,
             'acc_name': acc['name'],
-            'expired_date': expired_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'expired_date': result.exp_date.strftime('%Y-%m-%d %H:%M:%S'),
             'remote_addr': req.remote_addr
         }
 
@@ -137,6 +144,12 @@ class AccountCtl(Controller):
 
     @mapper.post('pwd')
     def confirm_reset_pwd_code(self, req, res):
+        if req.body is None:
+            raise Http400Error(req, 'Require code, new_pwd')
+        if 'code' not in req.body:
+            raise Http400Error(req, 'Require code')
+        if 'new_pwd' not in req.body:
+            raise Http400Error(req, 'Require new_pwd')
         reset_code = req.body['code']
         new_pwd = req.body['new_pwd']
 

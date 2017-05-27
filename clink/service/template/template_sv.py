@@ -1,9 +1,8 @@
 from string import Template
 from datetime import datetime
 
-from clink.type.com import Service
+from clink.type import AppConf, AuthConf, Service
 from clink.com import stamp
-from clink import AppConf, AuthConf
 
 
 @stamp(AppConf, AuthConf)

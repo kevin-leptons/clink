@@ -7,7 +7,9 @@ from hashlib import sha224
 from clink.type import Service, AuthConf
 from clink.com import stamp
 from clink.dflow import verify, ExistError, NonExistError, ExpiredError
+
 from .authdb_sv import AuthDbSv
+from .type import ConfirmCodeSpec
 
 _ACT_REGISTERED = 'REGISTERED'
 _ACT_CHANGE_PWD = 'CHANGE_PWD'
@@ -115,11 +117,9 @@ class AccSv(Service):
         :param str password:
         :param str email:
         :param str phone:
-        :rtype: str
+        :rtype: ConfirmCodeSpec
         :raise TypeError:
-        :raise AccountExistError:
-        :raise EmailExistError:
-        :raise PhoneExistError:
+        :raise ExistError:
         '''
 
         if self._acc_doc.find_one({'name': name}) is not None:
@@ -129,6 +129,14 @@ class AccSv(Service):
         if phone is not None:
             if self._acc_doc.find_one({'phone': phone}) is not None:
                 raise ExistError({'phone': phone})
+
+        if self._acctmp_doc.find_one({'name': name}) is not None:
+            raise ExistError({'name': name})
+        if self._acctmp_doc.find_one({'email': email}) is not None:
+            raise ExistError({'email': email})
+        if phone is not None:
+            if self._acctmp_doc.find_one({'phone': phone}) is not None:
+                raise ExistError({'phone': 'phone'})
 
         datetime_now = datetime.utcnow().timestamp()
         self._acctmp_doc.delete_many({'_expired_date': {'$lt': datetime_now}})
@@ -150,7 +158,7 @@ class AccSv(Service):
         }
         self._acctmp_doc.insert_one(acctmp)
 
-        return creation_code
+        return ConfirmCodeSpec(creation_code, expired_date)
 
     @verify(None, _CFCODE_SCHM)
     def cf_reg_code(self, code):
@@ -159,8 +167,8 @@ class AccSv(Service):
 
         :param str code:
         :rtype: dict
-        :raise CodeNotExistError:
-        :raise CodeExpiredError:
+        :raise ExistError:
+        :raise ExpiredError:
         '''
 
         acctmp = self._acctmp_doc.find_one({'_creation_code': code})
@@ -279,7 +287,7 @@ class AccSv(Service):
         Use returned code with cf_rpwd_code() to reset to new password
 
         :param str email:
-        :rtype: str
+        :rtype: ConfirmCodeSpec
         :raise TypeError:
         '''
 
@@ -289,15 +297,16 @@ class AccSv(Service):
         self._rpwd_doc.delete_many({'acc_id': acc['_id']})
 
         reset_code = rand_code()
+        exp_date = datetime.utcnow() + timedelta(hours=self.rpwd_time)
         code_spec = {
             'code': reset_code,
-            'expired_date': time() + self.rpwd_time,
+            'expired_date': exp_date.timestamp(),
             'acc_id': acc['_id'],
             'acc_email': acc['email']
         }
         self._rpwd_doc.insert_one(code_spec)
 
-        return reset_code
+        return ConfirmCodeSpec(reset_code, exp_date)
 
     @verify(None, _CFCODE_SCHM, ACC_PWD_SCHM)
     def cf_rpwd_code(self, code, new_pwd):

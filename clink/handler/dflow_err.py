@@ -4,7 +4,7 @@ from clink.error.http import code_to_str
 from clink.iface import ILv7Handler
 from clink.mime.type import MIME_JSON
 from clink.com import stamp
-from clink.dflow import ExistError, NonExistError, FormatError
+from clink.dflow import ExistError, NonExistError, FormatError, ExpiredError
 
 
 @stamp()
@@ -43,8 +43,18 @@ class DflowErrorHandler(ILv7Handler):
                 'status': 400,
                 'status_name': code_to_str(400),
                 'message': {
-                    'name': e.name, 'value': e.value, 'schema': e.schema
+                    'name': e.name, 'value': str(e.value), 'schema': e.schema
                 }
+            }).encode('utf-8')
+            return True
+        elif isinstance(e, ExpiredError):
+            res.status = 403
+            res.header = {}
+            res.content_type = MIME_JSON
+            res.body = json.dumps({
+                'status': 403,
+                'status_name': code_to_str(403),
+                'message': e.indexes
             }).encode('utf-8')
             return True
         else:

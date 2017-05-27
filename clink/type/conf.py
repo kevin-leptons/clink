@@ -29,10 +29,24 @@ class AppConf(Primitive):
 
 @stamp()
 class AuthConf(Primitive):
+    '''
+    Authorization configuration
+    '''
+
     def __init__(
         self, root_pwd, root_email, root_email_pwd, root_email_server,
         jwt_key, token_time=4*3600, rtoken_time=30*24*3600
     ):
+        '''
+        :param str root_pwd:
+        :param str root_email:
+        :param str root_email_pwd:
+        :param str root_email_server:
+        :param str jwt_key:
+        :param int token_time:
+        :param int rtoken_time:
+        '''
+
         self.root_pwd = root_pwd
         self.root_email = root_email
         self.root_email_pwd = root_email_pwd

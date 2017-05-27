@@ -1,12 +1,13 @@
 import jwt
 from time import time
 from bson import ObjectId
+from jwt.exceptions import ExpiredSignatureError, DecodeError
 
-from clink import AuthConf
+from clink.type import AuthConf
 from clink.com import stamp
 from clink.type.com import Service
 from clink.error.http import Http400Error, Http401Error
-from clink.dflow import verify, NonExistError, ExpiredError
+from clink.dflow import verify, NonExistError, ExpiredError, FormatError
 
 from .authdb_sv import AuthDbSv
 from .acc_sv import AccSv, ACC_NAME_SCHM, ACC_PWD_SCHM
@@ -42,7 +43,7 @@ class OAuthSv(Service):
         :param str name:
         :param str password:
         :rtype: dict
-        :raise PasswordError:
+        :raise NonExistError:
         '''
 
         acc = self._acc_sv.find_pwd(name, password)
@@ -57,16 +58,19 @@ class OAuthSv(Service):
 
         :param str rtoken:
         :rtype: dict
+        :raise TypeError:
         :raise ExpiredError:
         '''
 
-        rtoken_raw = jwt.decode(
-            rtoken, self._jwt_key, algorithm=self._TOKEN_ALG
-        )
-        if rtoken_raw['exp'] < time():
-            raise ExpiredError({'exp': time()})
-
-        return self._mk_token(rtoken_raw['sub'])
+        try:
+            rtoken_raw = jwt.decode(
+                rtoken, self._jwt_key, algorithm=self._TOKEN_ALG
+            )
+            return self._mk_token(rtoken_raw['sub'])
+        except ExpiredSignatureError:
+            raise ExpiredError({'refresh_token': None})
+        except DecodeError:
+            raise FormatError('refresh_token', None, None)
 
     def authen(self, access_token):
         '''
@@ -74,14 +78,19 @@ class OAuthSv(Service):
 
         :param str access_token:
         :rtype: bson.objectid.ObjectId
-        :raise jwt.exceptions.ExpiredSignatureError:
+        :raise FormatError:
+        :raise ExpiredError:
         '''
 
-        atoken_raw = jwt.decode(
-            access_token, self._jwt_key, algorithm=self._TOKEN_ALG
-        )
-
-        return ObjectId(atoken_raw['sub'])
+        try:
+            atoken_raw = jwt.decode(
+                access_token, self._jwt_key, algorithm=self._TOKEN_ALG
+            )
+            return ObjectId(atoken_raw['sub'])
+        except ExpiredSignatureError:
+            raise ExpiredError({'access_token': None})
+        except DecodeError:
+            raise FormatError('access_token', None, None)
 
     def authen_req(self, req):
         '''

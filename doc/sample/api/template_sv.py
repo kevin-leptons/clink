@@ -1,4 +1,5 @@
-from clink.service import TemplateSv, AppConf, AuthConf
+from clink.service import TemplateSv
+from clink.type import AppConf, AuthConf
 
 
 app_conf = AppConf('dead-book', 'Hell Corporation', '1st Hell Street')

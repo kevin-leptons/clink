@@ -37,9 +37,10 @@ def verify(*schemas):
                 try:
                     validate(arg, schema)
                 except ValidationError as e:
-                    raise FormatError(
-                        '.'.join(e.absolute_path), e.instance, e.schema
-                    )
+                    name = '.'.join(e.absolute_path)
+                    if len(name) == 0:
+                        name = argspec.args[arg_index]
+                    raise FormatError(name, e.instance, e.schema)
             return target(*args, **kargs)
         return new_fn
     return decorator

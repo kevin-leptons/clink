@@ -1,3 +1,3 @@
 from .root import RootCtl
-from .acc import AccountCtl
+from .acc import AccCtl
 from .auth import AuthCtl

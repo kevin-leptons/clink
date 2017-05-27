@@ -3,8 +3,7 @@ from email.mime.text import MIMEText
 
 from clink.com import stamp
 from clink.type.com import Service
-from clink.type import AppConf
-from clink.service.auth import AuthConf
+from clink.type import AppConf, AuthConf
 
 
 @stamp(AppConf, AuthConf)
