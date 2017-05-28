@@ -42,7 +42,7 @@ class BookCtl(Controller):
 
 
 # STEP 5: add components to application
-app.add_com(BookCtl)
+app.add_ctl(BookCtl)
 
 
 # STEP 6: load components

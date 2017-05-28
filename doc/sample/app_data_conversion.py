@@ -1,6 +1,6 @@
 # STEP 1: get clink library
 from clink import stamp, mapper, App, AppConf, Controller
-from clink import Lv3Handler, Lv5Handler
+from clink.iface import ILv3Handler, ILv5Handler
 from clink.mime.type import MIME_PLAINTEXT
 
 
@@ -16,7 +16,7 @@ app = App(conf)
 # STEP 4: define components
 # ===[BEGIN] ADD DATA CONVERSION HANDLERS ====================================
 @stamp()
-class ReqTextHandler(Lv3Handler):
+class ReqTextHandler(ILv3Handler):
     def handle(self, req, res):
         if req.content_type != MIME_PLAINTEXT:
             return
@@ -27,7 +27,7 @@ class ReqTextHandler(Lv3Handler):
 
 
 @stamp()
-class ResTextHandler(Lv5Handler):
+class ResTextHandler(ILv5Handler):
     def handle(self, req, res):
         if res.content_type != MIME_PLAINTEXT:
             return
@@ -48,9 +48,9 @@ class TextCtl(Controller):
 
 
 # STEP 5: add components to application
-app.add_com(ReqTextHandler)
-app.add_com(ResTextHandler)
-app.add_com(TextCtl)
+app.add_handler(ReqTextHandler)
+app.add_handler(ResTextHandler)
+app.add_ctl(TextCtl)
 
 # STEP 6: load components
 app.load()

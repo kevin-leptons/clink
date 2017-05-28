@@ -1,7 +1,7 @@
 from inspect import ismodule
 
 from .com import find, Injector
-from .iface import IWsgi, ILv0Handler, ILv1Handler, ILv3Handler
+from .iface import IWsgi, IPipeHandler, ILv0Handler, ILv1Handler, ILv3Handler
 from .iface import ILv5Handler, ILv6Handler, ILv7Handler, ILv8Handler
 from .type import Request, Response, Controller
 from .routing import Router
@@ -9,6 +9,7 @@ from .handler import RecvHandler, SendHandler
 from .handler import ReqJsonHandler, ReqUrlEncodeHandler, ReqLogHandler
 from .handler import ResJsonHandler, ResCorsHandler
 from .handler import ErrorHttpHandler, ErrorLogHandler, DflowErrorHandler
+from .handler import RoutingErrorHandler
 
 
 class App(IWsgi):
@@ -44,6 +45,19 @@ class App(IWsgi):
         self.injector.add_com(ErrorHttpHandler)
         self.injector.add_com(DflowErrorHandler)
         self.injector.add_com(ErrorLogHandler)
+        self.injector.add_com(RoutingErrorHandler)
+
+    def add_handler(self, handler_type):
+        '''
+        Add handler to application
+
+        :param class handler_type:
+        '''
+
+        if not issubclass(handler_type, IPipeHandler):
+            raise TypeError('%s is not handler' % handler_type)
+
+        self.injector.add_com(handler_type)
 
     def add_prim(self, *args):
         for prim_ref in args:

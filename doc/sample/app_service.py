@@ -64,8 +64,8 @@ class MagazineCtl(Controller):
 
 
 # STEP 5: add components to application
-app.add_com(NewsCtl)
-app.add_com(MagazineCtl)
+app.add_ctl(NewsCtl)
+app.add_ctl(MagazineCtl)
 
 # STEP 6: load components
 app.load()

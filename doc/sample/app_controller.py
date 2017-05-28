@@ -47,7 +47,7 @@ class RootCtl(Controller):
 
 
 # STEP 5: add components to application
-app.add_com(RootCtl)
+app.add_ctl(RootCtl)
 
 
 # STEP 6: load components

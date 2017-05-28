@@ -14,7 +14,7 @@ confirm_code = {
 
 # front models
 
-get_info = {
+get_me = {
     'type': 'object',
     'required': [
         '_id', 'name', 'email', 'phone',

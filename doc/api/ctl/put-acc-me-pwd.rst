@@ -1,5 +1,5 @@
-PUT /acc/pwd
-============
+PUT /acc/me/pwd
+===============
 
 Change password.
 

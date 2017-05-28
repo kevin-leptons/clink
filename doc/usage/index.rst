@@ -15,4 +15,3 @@ Usage
     data-conversion
     data-validation
     service
-    auth-app/index

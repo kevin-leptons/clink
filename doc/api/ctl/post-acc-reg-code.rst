@@ -15,7 +15,7 @@ Use that code to active account in :ref:`ctl-post-acc-reg`.
 
 .. text-msg::
 
-    POS /acc/reg/code
+    POST /acc/reg/code
     Content-Type: application/json
 
     .. text-msg-div::

@@ -2,7 +2,11 @@ from abc import ABC, abstractmethod
 from clink.com.type import Component
 
 
-class ILv0Handler(Component, ABC):
+class IPipeHandler(Component):
+    pass
+
+
+class ILv0Handler(IPipeHandler, ABC):
     '''
     Receive handling
     '''
@@ -18,7 +22,7 @@ class ILv0Handler(Component, ABC):
         pass
 
 
-class ILv1Handler(Component, ABC):
+class ILv1Handler(IPipeHandler, ABC):
     '''
     Pre-Routing handling
     '''
@@ -33,7 +37,7 @@ class ILv1Handler(Component, ABC):
         pass
 
 
-class ILv2Handler(Component, ABC):
+class ILv2Handler(IPipeHandler, ABC):
     '''
     Routing
     '''
@@ -48,7 +52,7 @@ class ILv2Handler(Component, ABC):
         pass
 
 
-class ILv3Handler(Component, ABC):
+class ILv3Handler(IPipeHandler, ABC):
     '''
     Pre-Main handling
     '''
@@ -63,7 +67,7 @@ class ILv3Handler(Component, ABC):
         pass
 
 
-class ILv4Handler(Component):
+class ILv4Handler(IPipeHandler):
     '''
     Main handling. It must be function, but we can't define interface
     for functions. Here are symbolic interface.
@@ -72,7 +76,7 @@ class ILv4Handler(Component):
     pass
 
 
-class ILv5Handler(Component, ABC):
+class ILv5Handler(IPipeHandler, ABC):
     '''
     Responding handling
     '''
@@ -87,7 +91,7 @@ class ILv5Handler(Component, ABC):
         pass
 
 
-class ILv6Handler(Component, ABC):
+class ILv6Handler(IPipeHandler, ABC):
     '''
     Sending handling
     '''
@@ -103,7 +107,7 @@ class ILv6Handler(Component, ABC):
         pass
 
 
-class ILv7Handler(Component, ABC):
+class ILv7Handler(IPipeHandler, ABC):
     '''
     Error handling
     '''
@@ -119,7 +123,7 @@ class ILv7Handler(Component, ABC):
         pass
 
 
-class ILv8Handler(Component, ABC):
+class ILv8Handler(IPipeHandler, ABC):
     '''
     Error logging handling
     '''

@@ -23,23 +23,6 @@ class AccCtl(Controller):
 
         self._init_tpl_files()
 
-    @mapper.get('me')
-    def acc_info(self, req, res):
-        acc_id = self._oauth_sv.authen_req(req)
-        acc = self._acc_sv.find_id(acc_id)
-        if acc is None:
-            raise Http404Error(req, 'Identity %s invalid' % str(acc_id))
-
-        res.body = {
-            '_id': str(acc['_id']),
-            'name': acc['name'],
-            'email': acc['email'],
-            'phone': acc['phone'],
-            'created_date': int(acc['created_date'].timestamp()),
-            'modifired_date': int(acc['modified_date'].timestamp()),
-            'last_action': acc['last_action']
-        }
-
     @mapper.post('reg/code')
     def mk_reg_code(self, req, res):
         if req.body is None:
@@ -86,6 +69,23 @@ class AccCtl(Controller):
         self._smtp_sv.send(acc['email'], subject, txt_body)
 
         res.status = 204
+
+    @mapper.get('me')
+    def acc_info(self, req, res):
+        acc_id = self._oauth_sv.authen_req(req)
+        acc = self._acc_sv.find_id(acc_id)
+        if acc is None:
+            raise Http404Error(req, 'Identity %s invalid' % str(acc_id))
+
+        res.body = {
+            '_id': str(acc['_id']),
+            'name': acc['name'],
+            'email': acc['email'],
+            'phone': acc['phone'],
+            'created_date': int(acc['created_date'].timestamp()),
+            'modifired_date': int(acc['modified_date'].timestamp()),
+            'last_action': acc['last_action']
+        }
 
     @mapper.put('me/pwd')
     def change_pwd(self, req, res):
