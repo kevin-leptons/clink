@@ -17,9 +17,13 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+from os import path
+import sys
+
+root = path.dirname(path.dirname(path.realpath(__file__)))
+sys.path.append(root)
+sys.path.append(path.join(root, 'venv'))
+
 from doc.text_msg import TextMsgDirective, TextMsgDivDirective
 from doc.json_dump import JsonDumpDirective
 
