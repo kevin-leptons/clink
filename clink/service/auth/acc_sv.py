@@ -7,6 +7,9 @@ from hashlib import sha224
 from clink.type import Service, AuthConf
 from clink.com import stamp
 from clink.dflow import verify, ExistError, NonExistError, ExpiredError
+from clink.model.std import acc_name as name_model, acc_pwd as pwd_model
+from clink.model.std import email as email_model, phone as phone_model
+from clink.model.acc import confirm_code as confirm_code_model
 
 from .authdb_sv import AuthDbSv
 from .type import ConfirmCodeSpec
@@ -38,25 +41,6 @@ def rand_code():
     return '-'.join([a, b, c, d])
 
 
-ACC_NAME_SCHM = dict(type='string', pattern='^[a-z0-9-]{2,32}$')
-ACC_PWD_SCHM = dict(type='string', pattern='^.{6,32}$')
-EMAIL_SCHM = dict(
-    type='string',
-    pattern=(
-        '^[a-zA-Z0-9-._]{1,64}\@'
-        '[a-zA-Z0-9\[]{1}[a-zA-Z0-9.-:]{1,61}[a-zA-Z0-9\]]{1}$'
-    )
-)
-PHONE_SCHM = dict(
-    type=['string',  'null'],
-    pattern='^\+[0-9]{2}\s[0-9]{3}\s([0-9]{3}|[0-9]{4})\s[0-9]{4}$'
-)
-_CFCODE_SCHM = dict(
-    type='string',
-    pattern='^([a-zA-Z]{4}-){3}[a-zA-Z]{4}$'
-)
-
-
 @stamp(AuthDbSv, AuthConf)
 class AccSv(Service):
     '''
@@ -81,7 +65,7 @@ class AccSv(Service):
         if root_acc is None:
             self.mk_acc('root', auth_conf.root_pwd, auth_conf.root_email)
 
-    @verify(None, ACC_NAME_SCHM, ACC_PWD_SCHM, EMAIL_SCHM, PHONE_SCHM)
+    @verify(None, name_model, pwd_model, email_model, phone_model)
     def mk_acc(self, name, password, email, phone=None):
         '''
         Create new account
@@ -107,7 +91,7 @@ class AccSv(Service):
         result = self._acc_doc.insert_one(account)
         return result.inserted_id
 
-    @verify(None, ACC_NAME_SCHM, ACC_PWD_SCHM, EMAIL_SCHM, PHONE_SCHM)
+    @verify(None, name_model, pwd_model, email_model, phone_model)
     def mk_reg_code(self, name, password, email, phone=None):
         '''
         Create a registration code. Use returned code with cf_reg_code()
@@ -160,7 +144,7 @@ class AccSv(Service):
 
         return ConfirmCodeSpec(creation_code, expired_date)
 
-    @verify(None, _CFCODE_SCHM)
+    @verify(None, confirm_code_model)
     def cf_reg_code(self, code):
         '''
         Use registration code to create account
@@ -197,7 +181,7 @@ class AccSv(Service):
 
         return self._acc_doc.find_one({'_id': id})
 
-    @verify(None, ACC_NAME_SCHM)
+    @verify(None, name_model)
     def find_name(self, name):
         '''
         Find account by name
@@ -209,7 +193,7 @@ class AccSv(Service):
 
         return self._acc_doc.find_one({'name': name})
 
-    @verify(None, EMAIL_SCHM)
+    @verify(None, email_model)
     def find_email(self, email):
         '''
         Find account by email
@@ -221,7 +205,7 @@ class AccSv(Service):
 
         return self._acc_doc.find_one({'email': email})
 
-    @verify(None, PHONE_SCHM)
+    @verify(None, phone_model)
     def find_phone(self, phone):
         '''
         Find account by phone number
@@ -233,7 +217,7 @@ class AccSv(Service):
 
         return self._acc_doc.find_one({'phone': phone})
 
-    @verify(None, ACC_NAME_SCHM, ACC_PWD_SCHM)
+    @verify(None, name_model, pwd_model)
     def find_pwd(self, name, pwd):
         '''
         Find account by name and password
@@ -258,7 +242,7 @@ class AccSv(Service):
         if result.deleted_count != 1:
             raise NonExistError({'id': id})
 
-    @verify(None, None, ACC_PWD_SCHM)
+    @verify(None, None, pwd_model)
     def ch_pwd(self, id, new_pwd):
         '''
         Change password of account by identity
@@ -280,7 +264,7 @@ class AccSv(Service):
         if result.modified_count != 1:
             raise NonExistError({'id': id})
 
-    @verify(None, EMAIL_SCHM)
+    @verify(None, email_model)
     def mk_rpwd_code(self, email):
         '''
         Create reset password code from email.
@@ -308,7 +292,7 @@ class AccSv(Service):
 
         return ConfirmCodeSpec(reset_code, exp_date)
 
-    @verify(None, _CFCODE_SCHM, ACC_PWD_SCHM)
+    @verify(None, confirm_code_model, pwd_model)
     def cf_rpwd_code(self, code, new_pwd):
         '''
         Reset password from code

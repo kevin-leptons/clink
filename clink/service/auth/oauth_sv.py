@@ -10,7 +10,8 @@ from clink.error.http import Http400Error, Http401Error
 from clink.dflow import verify, NonExistError, ExpiredError, FormatError
 
 from .authdb_sv import AuthDbSv
-from .acc_sv import AccSv, ACC_NAME_SCHM, ACC_PWD_SCHM
+from .acc_sv import AccSv
+from clink.model.std import acc_name as acc_name_model, acc_pwd as pwd_model
 
 
 @stamp(AuthDbSv, AccSv, AuthConf)
@@ -35,7 +36,7 @@ class OAuthSv(Service):
         self._token_time = auth_conf.token_time
         self._rtoken_time = auth_conf.rtoken_time
 
-    @verify(None, ACC_NAME_SCHM, ACC_PWD_SCHM)
+    @verify(None, acc_name_model, pwd_model)
     def mktoken_pwd(self, name, password):
         '''
         Create an token from account name and password

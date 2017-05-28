@@ -20,6 +20,8 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+from doc.text_msg import TextMsgDirective, TextMsgDivDirective
+from doc.json_dump import JsonDumpDirective
 
 
 # -- General configuration ------------------------------------------------
@@ -168,3 +170,15 @@ intersphinx_mapping = {
 autodoc_member_order = 'bysource'
 autodoc_default_flags = ['members', 'undoc-members', 'inherited-members']
 autoclass_content = 'both'
+
+# def visit_math_html(self, node):
+#     pass
+# def depart_math_html(self, node):
+#     pass
+
+def setup(app):
+    # app.add_node(text_msg, html=(visit_math_html, depart_math_html))
+
+    app.add_directive('text-msg', TextMsgDirective)
+    app.add_directive('text-msg-div', TextMsgDivDirective)
+    app.add_directive('jsondump', JsonDumpDirective)

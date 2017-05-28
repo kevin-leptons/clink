@@ -13,4 +13,5 @@ APIs
     clink-dflow
     clink-mime
     clink-service
-    clink-ctl
+    ctl/index
+    clink-model
