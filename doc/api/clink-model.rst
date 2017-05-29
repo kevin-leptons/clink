@@ -5,3 +5,4 @@ clink.model
     :maxdepth: 1
 
     clink-model-std
+    clink-model-auth

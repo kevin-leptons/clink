@@ -1,6 +1,6 @@
 # STEP 1: get clink library
-from clink import stamp, mapper, App, AppConf, Controller
-from clink.validator import reqv
+from clink import stamp, mapper, App, AppConf, Controller, Service
+from clink.dflow import verify
 
 
 # STEP 2: get an WSGI server
@@ -12,7 +12,7 @@ conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
 
-# STEP 4: define component - controllers
+# STEP 4: define component - service, controllers
 # ===[BEGIN] TRY DATA VALIDATION =============================================
 POST_BOOK_SCHEMA = {
     'type': 'object',
@@ -20,20 +20,31 @@ POST_BOOK_SCHEMA = {
     'required': ['name', 'author'],
     'properties': {
         'name': {'type': 'string', 'pattern': '^[a-zA-Z0-9 ]{2,32}$'},
-        'author': {'type': 'string', 'pattern': '^[a-zA-Z0-9 ]{2,16}$'},
-        'notes': {'type': 'string', 'pattern': '^.{0,1024}$'}
+        'author': {'type': 'string', 'pattern': '^[a-zA-Z0-9 ]{2,16}$'}
     }
 }
 
 
 @stamp()
+class BookSv(Service):
+    @verify(None, POST_BOOK_SCHEMA)
+    def create_one(self, book):
+        # if data is invalid, clink.dflow.FormatError will be raise
+        # then application catch and handle it
+
+        pass
+
+
+@stamp(BookSv)
 @mapper.path('book')
 class BookCtl(Controller):
+    def __init__(self, book_sv):
+        self._book_sv = book_sv
+
     @mapper.post('item')
-    @reqv.body(POST_BOOK_SCHEMA)
-    @reqv.max_content_size(50)
-    def get_item(self, req, res):
-        res.body = {'msg': 'created'}
+    def create_one_book(self, req, res):
+        self._book_sv.create_one(req.body)
+        res.body = {'message': 'created'}
 # ===[END] TRY DATA VALIDATION ===============================================
 
 

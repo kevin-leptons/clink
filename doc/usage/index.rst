@@ -12,6 +12,6 @@ Usage
     routing
     logging
     controller
+    service
     data-conversion
     data-validation
-    service

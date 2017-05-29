@@ -1,3 +1,5 @@
+.. _api-dflow:
+
 clink.dflow
 ===========
 
