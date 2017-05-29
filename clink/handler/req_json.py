@@ -2,7 +2,6 @@ import json
 
 from clink.error.http import Http400Error
 from clink.iface import ILv3Handler
-from clink.etc import UTF_8
 from clink.mime.type import MIME_JSON
 from clink.com import stamp
 
@@ -19,6 +18,6 @@ class ReqJsonHandler(ILv3Handler):
         if req.body is None:
             return
         try:
-            req.body = json.loads(req.body.decode(UTF_8))
+            req.body = json.loads(req.body.decode('utf-8'))
         except ValueError:
             raise Http400Error(req, 'body is invalid json format')

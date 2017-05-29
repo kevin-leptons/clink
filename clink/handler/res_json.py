@@ -2,7 +2,6 @@ from bson import json_util
 
 from clink.iface import ILv5Handler
 from clink.mime.type import MIME_JSON
-from clink.etc import UTF_8
 from clink.com import stamp
 
 
@@ -17,4 +16,4 @@ class ResJsonHandler(ILv5Handler):
             return
         if res.body is None:
             return
-        res.body = json_util.dumps(res.body).encode(UTF_8)
+        res.body = json_util.dumps(res.body).encode('utf-8')

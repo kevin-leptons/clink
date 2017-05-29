@@ -1,12 +1,14 @@
 import logging
 from os import path
 from os.path import isfile
+from stat import S_IRUSR, S_IWUSR, S_IRGRP, S_IWGRP, S_IROTH
 
 from clink.iface import ILv8Handler
-from clink.etc import LOGFILE_MODE
 from clink.util.shell import touch
 from clink.com import stamp
 from clink.type import AppConf
+
+LOGFILE_MODE = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH
 
 
 @stamp(AppConf)

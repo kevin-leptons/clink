@@ -1,5 +1,4 @@
 import os
-from clink.etc import URL_SLASH
 from clink.com import read_stamp
 from clink.iface import ILv2Handler
 
@@ -58,8 +57,8 @@ class Router(ILv2Handler):
 
         # search and add nodes
         node = self._root_node
-        if route.path != URL_SLASH:
-            node_names = route.path.split(URL_SLASH)
+        if route.path != '/':
+            node_names = route.path.split('/')
             node_names = list(filter(''.__ne__, node_names))
             for node_name in node_names:
                 if node_name not in node.child:
@@ -108,8 +107,8 @@ class Router(ILv2Handler):
         notes: algorithm can be improve here
         '''
         node = self._root_node
-        if path != URL_SLASH:
-            node_names = path.split(URL_SLASH)
+        if path != '/':
+            node_names = path.split('/')
             node_names = list(filter(''.__ne__, node_names))
             for node_name in node_names:
                 if node_name not in node.child:

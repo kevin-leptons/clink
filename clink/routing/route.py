@@ -1,4 +1,3 @@
-from ..etc import URL_SLASH
 from .error import RouteMethodError, RoutePathError, RouteHandleError
 
 _ALLOWED_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'option', 'head']
@@ -28,7 +27,7 @@ class Route():
     def _verify_path(self, path):
         if len(path) == 0:
             return
-        if path[0] == URL_SLASH or path[-1:] == URL_SLASH:
+        if path[0] == '/' or path[-1:] == '/':
             raise RoutePathError(path)
 
     def _verify_method(self, method):
