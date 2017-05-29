@@ -4,7 +4,7 @@ from os.path import isfile
 
 from clink.iface import ILv8Handler
 from clink.etc import LOGFILE_MODE
-from clink.shell import touch
+from clink.util.shell import touch
 from clink.com import stamp
 from clink.type import AppConf
 
