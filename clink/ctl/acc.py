@@ -162,8 +162,6 @@ class AccCtl(Controller):
             raise Http404Error(req, 'Not found identity %s' % str(acc_id))
 
         values = {
-            'new_pwd': new_pwd,
-            'reset_pwd_code': reset_code,
             'acc_name': acc['name'],
             'remote_addr': req.remote_addr
         }

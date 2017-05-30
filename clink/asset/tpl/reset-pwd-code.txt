@@ -1,40 +1,25 @@
-SYNOPSIS
-========
+RESET PASSWORD CODE
+===================
 
-    Invoke reset password code.
+We received request to reset password and perform successfully.
+Here are code to reset your password:
 
-DESCRIPTION
-===========
+    $reset_pwd_code
 
-    We reveived request to reset password and peform successfully.
-    Here are code to reset your password:
+You have 1 hour to use that code. After that, code is invalid.
+Your code is valid before:
 
-        $reset_pwd_code
+    $expired_date
 
-    You have 1 hour to use that code. After that, code is invaild.
-    Your code is valid before:
+All of codes which granted before this message was deleted. You can't
+use them.
 
-        $expired_date
+If you didn't perform this action, report to us. May be your account are
+under attacking.
 
-    All of codes which grants before this code was deleted. You can't
-    use them.
+Account: $acc_name
+Remote: $remote_addr
+Date: $datetime_now
 
-WARNING
-=======
-
-    If you didn't perform this action, report to us. May be your account are
-    under attacking.
-
-
-METADATA
-========
-
-    Account             : $acc_name
-    Remote              : $remote_addr
-    Date                : $datetime_now
-
-AUTHOR
-======
-
-    $root_name <root_email>
-    $app_name
+$root_name <$root_email>
+$app_name

@@ -1,34 +1,23 @@
-SYNOPSIS
-========
+REGISTRATION CODE
+=================
 
-    Invoke registration.
+We received request to register your account and accepted it.
+Here are code to confirm registration:
 
-DESCRIPTION
-===========
+    $reg_code
 
-    We reveived request to register your account and accepted it.
-    Here are code to register:
+You have 1 hour to use that code. After that, code is invalid.
+Your code is valid before:
 
-        $reg_code
+    $expired_date
 
-    You have 1 hour to use that code. After that, code is invaild.
-    Your code is valid before:
+If you don't confirm code with us before expired date, then account's
+name or email may be register by other users.
 
-        $expired_date
+Account: $acc_name
+Email: $acc_email
+Remote: $remote_addr
+Date: $datetime_now
 
-    If you don't confirm code with us before expired date, then this account
-    with name or email may be register by other users.
-
-METADATA
-========
-
-    Account             : $acc_name
-    Email               : $acc_email
-    Remote              : $remote_addr
-    Date                : $datetime_now
-
-AUTHOR
-======
-
-    $root_name <$root_email>
-    $app_name
+$root_name <$root_email>
+$app_name

@@ -1,27 +1,16 @@
-SYNOPSIS
-========
+CONFIRM REGISTRATION
+====================
 
-    Registration.
+We received your registration code and active your account successfully.
+Here are essential information of your account:
 
-DESCRIPTION
-===========
+    Name: $acc_name
+    Email: $acc_email
 
-    We received your registration code and active your account successfully.
-    Here are essential information of your account:
+Good luck with our services.
 
-        Name    : $acc_name
-        Email   : $acc_email
+Remote: $remote_addr
+Date: $datetime_now
 
-    Good luck with our services.
-
-METADATA
-========
-
-    Remote              : $remote_addr
-    Date                : $datetime_now
-
-AUTHOR
-======
-
-    $root_name <$root_email>
-    $app_name
+$root_name <$root_email>
+$app_name

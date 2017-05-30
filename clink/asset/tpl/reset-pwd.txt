@@ -1,38 +1,14 @@
-SYNOPSIS
-========
+RESET PASSWORD
+==============
 
-    Reset password.
+We received valid code and change password as invoke.
 
-DESCRIPTION
-===========
+If you didn't perform this action, report to us. May be your account are
+under attacking.
 
-    We received valid code and change password as invoke. Here is
-    new password:
+Account: $acc_name
+Remote: $remote_addr
+Date: $datetime_now
 
-        $new_pwd
-
-    And here is accepted code:
-
-        $reset_pwd_code
-
-    That code and all of codes which grants before this actions was deteleted.
-    You can't use them.
-
-WARNING
-=======
-
-    If you didn't perform this action, report to us. May be your account are
-    under attacking.
-
-METADATA
-========
-
-    Account             : $acc_name
-    Remote              : $remote_addr
-    Date                : $datetime_now
-
-AUTHOR
-======
-
-    $root_name <root_email>
-    $app_name
+$root_name <$root_email>
+$app_name

@@ -1,25 +1,14 @@
-SYNOPSIS
-========
+NEW LOGIN
+=========
 
-    Account logged in
+Your account logged in:
 
-DESCRIPTION
-===========
+    Account: $acc_name
+    Remote: $remote_addr
+    Date: $datetime_now
 
-    Your account logged in, here are information:
+If you didn't perform this action, report to us. May be your account are
+under attacking.
 
-        Account             : $acc_name
-        Remote              : $remote_addr
-        Date                : $datetime_now
-
-WARNING
-=======
-
-    If you didn't perform this action, report to us. May be your account are
-    under attacking.
-
-AUTHOR
-======
-
-    $root_name <root_email>
-    $app_name
+$root_name <$root_email>
+$app_name

@@ -1,28 +1,14 @@
-SYNOPSIS
-========
+CHANGE PASSWORD
+===============
 
-    Change password.
+We changed your password successfully.
 
-DESCRIPTION
-===========
+If you didn't perform this action, report to us. May be your account are
+under attacking.
 
-    We changed your password successfully.
+Account: $acc_name
+Remote: $remote_addr
+Date: $datetime_now
 
-WARNING
-=======
-
-    If you didn't perform this action, report to us. May be your account are
-    under attacking.
-
-METADATA
-========
-
-    Account             : $acc_name
-    Remote              : $remote_addr
-    Date                : $datetime_now
-
-AUTHOR
-======
-
-    $root_name <root_email>
-    $app_name
+$root_name <$root_email>
+$app_name
