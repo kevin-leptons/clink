@@ -6,7 +6,7 @@ _ROOT = realpath(dirname(dirname(__file__)))
 _EXCLUDES = [
     'venv', 'dest', 'build', 'dist', 'tsrc', 'dsrc', 'tmp',
     '__init__.py', '__pycache__', 'conf.py', 'conftest.py',
-    '.*', '*.pyc'
+    'auth_app.py', '.*', '*.pyc'
 ]
 
 

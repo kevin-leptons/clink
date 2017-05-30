@@ -8,7 +8,7 @@ mongo_sv = MongoSv(mongo_conf)
 root_pwd = 'root-pwd'
 root_email = 'root@email.com'
 root_email_pwd = 'root-email-pwd'
-root_email_server = 'smtp.email.com:578'
+root_email_server = 'smtp.email.com:587'
 auth_conf = AuthConf(
     root_pwd, root_email, root_email_pwd, root_email_server,
     'jwt-key'
