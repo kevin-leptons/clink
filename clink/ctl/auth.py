@@ -41,7 +41,7 @@ class AuthCtl(Controller):
             txt_body = self._tpl_sv.build_file(self._LOGIN_TPL, values)
 
             subject = 'New login'
-            self._smtp_sv.send(acc['email'], subject, txt_body)
+            # self._smtp_sv.send(acc['email'], subject, txt_body)
         elif grant_type == 'refresh_token':
             if 'refresh_token' not in info:
                 raise Http400Error(req, 'Require refresh_token')
