@@ -28,5 +28,12 @@ It doesn't meant that you can custom any things in Clink. For example,
 clink.service.auth.AuthConf defines 4 hours for token life, 30 days for
 refresh token life in default, but you still can use your values.
 
+Clink written in Python and Python runs on cross platform but Clink run
+on Unix-like platform. Because Clink is server side library, it need to 
+work as well as possible on server side, when Unix-like is best choice for
+server side. Most popular Unix-like platform for server side is 
+operating system base on Linux kernel such as Debian, CentOS, etc...
+
 Now, if you agreed with our terms: **HTTP API**, **Backend Programming**,
-**Extensibility instead of Customizable** then inspect Clink.
+**Extensibility instead of Customizable**, **Unix-like Platform**, 
+then inspect Clink.

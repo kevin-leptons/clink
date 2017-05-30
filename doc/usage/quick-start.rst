@@ -1,11 +1,6 @@
 Quickstart
 ==========
 
-Platform
---------
-
-Only on Unix-like platform. Fore example: Linux distro, MacOS.
-
 Installation
 ------------
 
