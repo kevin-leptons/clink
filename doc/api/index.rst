@@ -5,13 +5,13 @@ APIs
     :maxdepth: 1
 
     clink
-    clink-com
-    clink-iface
-    clink-routing
-    clink-handler
-    clink-dflow
-    clink-mime
-    clink-service
+    com
+    iface
+    routing
+    handler
+    dflow
+    mime
+    service
     ctl/index
-    clink-model
-    clink-util
+    model
+    util
