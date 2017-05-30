@@ -11,7 +11,7 @@ DB_URL = 'mongodb://localhost'
 DB_NAME = APP_NAME
 ROOT_PWD = '123456'
 JWT_KEY = 'jwt-secret-words'
-ADDRESS = '0'
+ADDRESS = 'localhost'
 
 
 def start(root_email, root_email_pwd, root_email_sever, port=8080):
