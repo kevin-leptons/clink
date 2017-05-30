@@ -10,6 +10,10 @@ if 'TRAVIS' in environ:
 
 @pytest.mark.skipif('_IS_TRAVIS == True')
 def test_login(auth_server):
+    '''
+    Can not send email inside sandbox of travis-ci
+    '''
+
     req_body = {
         'grant_type': 'password',
         'username': 'root',
