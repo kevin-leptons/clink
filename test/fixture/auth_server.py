@@ -17,7 +17,7 @@ def auth_server(request):
     args = (ROOT_EMAIL, ROOT_EMAIL_PWD, ROOT_EMAIL_SERVER, port)
     p = Process(target=auth_app.start, args=args)
     p.start()
-    sleep(30)
+    sleep(3)
 
     def free():
         p.terminate()

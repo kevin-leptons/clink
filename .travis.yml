@@ -2,6 +2,12 @@ language: python
 python:
     - '3.4'
 sudo: required
+addons:
+  apt:
+    packages:
+    - mongodb-org-server
+before_install:
+- sudo service mongod start
 install:
     - ./env install
 script:
