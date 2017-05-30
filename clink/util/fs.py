@@ -4,7 +4,7 @@ from os.path import realpath, dirname
 _ASSET_DIR = realpath(path.join(dirname(__file__), '../asset'))
 
 
-def clink_asset_path(rel_path):
+def asset_path(rel_path):
     '''
     Return absolute path to Clink's asset directory
 

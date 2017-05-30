@@ -1,7 +1,7 @@
 from clink import stamp, mapper, Controller
 from clink.service import OAuthSv, AccSv, SmtpSv, TemplateSv
 from clink.error.http import Http406Error, Http400Error, Http401Error
-from clink.util import clink_asset_path
+from clink.util import fs
 
 
 @stamp(OAuthSv, AccSv, SmtpSv, TemplateSv)
@@ -54,4 +54,4 @@ class AuthCtl(Controller):
         Detect template files
         '''
 
-        self._LOGIN_TPL = clink_asset_path('tpl/login.txt')
+        self._LOGIN_TPL = fs.asset_path('tpl/login.txt')

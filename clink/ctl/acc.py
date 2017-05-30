@@ -1,7 +1,7 @@
 from clink.error.http import Http404Error, Http400Error, Http403Error
 from clink import stamp, mapper, AppConf, AuthConf, Controller
 from clink.service import AccSv, TemplateSv, SmtpSv, OAuthSv
-from clink.util import clink_asset_path
+from clink.util import fs
 
 
 @stamp(AppConf, AuthConf, AccSv, OAuthSv, SmtpSv, TemplateSv)
@@ -179,8 +179,8 @@ class AccCtl(Controller):
         Detect template files
         '''
 
-        self._REG_CODE_TPL = clink_asset_path('tpl/reg-code.txt')
-        self._REG_TPL = clink_asset_path('tpl/reg-tmp.txt')
-        self._CHPWD_TPL = clink_asset_path('tpl/change-pwd.txt')
-        self._RPWD_TPL = clink_asset_path('tpl/reset-pwd.txt')
-        self._RPWD_CODE_TPL = clink_asset_path('tpl/reset-pwd-code.txt')
+        self._REG_CODE_TPL = fs.asset_path('tpl/reg-code.txt')
+        self._REG_TPL = fs.asset_path('tpl/reg-tmp.txt')
+        self._CHPWD_TPL = fs.asset_path('tpl/change-pwd.txt')
+        self._RPWD_TPL = fs.asset_path('tpl/reset-pwd.txt')
+        self._RPWD_CODE_TPL = fs.asset_path('tpl/reset-pwd-code.txt')

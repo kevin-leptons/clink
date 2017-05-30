@@ -14,3 +14,4 @@ APIs
     clink-service
     ctl/index
     clink-model
+    clink-util

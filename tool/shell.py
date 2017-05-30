@@ -1,18 +1,3 @@
-'''
-SYNOPSIS
-
-    call(args, cwd=None)
-    cp(src, dest)
-    rm(path)
-    mkdir(path)
-    chmod(path, mode)
-
-DESCRIPTION
-
-    Run shell with args, wait for complete. If it error, raise
-    CalledProcessError
-'''
-
 import os
 from os import path, makedirs, remove
 from os.path import isdir, isfile, exists, basename
@@ -24,9 +9,49 @@ FMOD_EXE = S_IXUSR | S_IXGRP | S_IXOTH | S_IRUSR | S_IRGRP | S_IROTH
 
 
 def call(args, cwd=None):
+    '''
+    Perform new process
+
+    :param list args:
+    :param str cwd:
+    '''
+
     exit_code = Popen(args, cwd=cwd).wait()
     if exit_code != 0:
         raise CalledProcessError(exit_code, args)
+
+
+def cp(src, dest, exist_ignore=True):
+    '''
+    Copy files, directories
+
+    :param str src:
+    :param str dest:
+    :param bool exist_ignore
+    '''
+
+    if isdir(src):
+        return _cp_dir(src, dest, exist_ignore)
+    else:
+        return _cp_file(src, dest, exist_ignore)
+
+
+def rm(path, exist_ignore=True):
+    if (not exists(path)) and exist_ignore:
+        return
+    if isdir(path):
+        rmtree(path)
+    else:
+        remove(path)
+
+
+def mkdir(path):
+    if not isdir(path):
+        makedirs(path)
+
+
+def chmod(path, mode):
+    os.chmod(path, mode)
 
 
 def _cp_dir(src, dest, exist_ignore):
@@ -51,28 +76,3 @@ def _cp_file(src, dest, exist_ignore):
     else:
         copyfile(src, dest)
         return dest
-
-
-def cp(src, dest, exist_ignore=True):
-    if isdir(src):
-        return _cp_dir(src, dest, exist_ignore)
-    else:
-        return _cp_file(src, dest, exist_ignore)
-
-
-def rm(path, exist_ignore=True):
-    if (not exists(path)) and exist_ignore:
-        return
-    if isdir(path):
-        rmtree(path)
-    else:
-        remove(path)
-
-
-def mkdir(path):
-    if not isdir(path):
-        makedirs(path)
-
-
-def chmod(path, mode):
-    os.chmod(path, mode)

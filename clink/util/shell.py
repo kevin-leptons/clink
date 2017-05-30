@@ -1,20 +1,3 @@
-'''
-SYNOPSIS
-
-    call(args, cwd=None)
-    cp(src, dest)
-    rm(path)
-    chmod(path, mod)
-
-DESCRIPTION
-
-    Bash interface functions.
-
-AUTHORS
-
-    Kevin Leptons <kevin.leptons@gmail.com>
-'''
-
 import os
 from subprocess import Popen, CalledProcessError
 from os import makedirs, remove
@@ -23,9 +6,83 @@ from shutil import copyfile, copytree, rmtree
 
 
 def call(args, cwd=None):
+    '''
+    Perform new processing
+
+    :param list[str] args:
+    :param str cwd:
+    '''
+
     exit_code = Popen(args, cwd=cwd).wait()
     if exit_code != 0:
         raise CalledProcessError(exit_code, args)
+
+
+def cp(src, dest, exist_ignore=True):
+    '''
+    Copy file or directory
+
+    :param str src:
+    :param str dest:
+    :param bool exist_ignore:
+    '''
+
+    if isdir(src):
+        return _cp_dir(src, dest, exist_ignore)
+    else:
+        return _cp_file(src, dest, exist_ignore)
+
+
+def rm(path, exist_ignore=True):
+    '''
+    Remove files
+
+    :param str path:
+    :param bool exist_ignore:
+    '''
+
+    if (not exists(path)) and exist_ignore:
+        return
+    if isdir(path):
+        rmtree(path)
+    else:
+        remove(path)
+
+
+def mkdir(path):
+    '''
+    Create new directory
+
+    :param str path:
+    '''
+
+    if not isdir(path):
+        makedirs(path)
+
+
+def chmod(path, mode):
+    '''
+    Change mode of file
+
+    :param str path:
+    :param int mode:
+    '''
+
+    os.chmod(path, mode)
+
+
+def touch(path, mode):
+    '''
+    Create new empty file
+
+    :param str path:
+    :param int mode:
+    '''
+
+    mkdir(dirname(path))
+    f = open(path, 'w+')
+    f.close()
+    os.chmod(path, mode)
 
 
 def _cp_dir(src, dest, exist_ignore):
@@ -50,35 +107,3 @@ def _cp_file(src, dest, exist_ignore):
     else:
         copyfile(src, dest)
         return dest
-
-
-def cp(src, dest, exist_ignore=True):
-    if isdir(src):
-        return _cp_dir(src, dest, exist_ignore)
-    else:
-        return _cp_file(src, dest, exist_ignore)
-
-
-def rm(path, exist_ignore=True):
-    if (not exists(path)) and exist_ignore:
-        return
-    if isdir(path):
-        rmtree(path)
-    else:
-        remove(path)
-
-
-def mkdir(path):
-    if not isdir(path):
-        makedirs(path)
-
-
-def chmod(path, mode):
-    os.chmod(path, mode)
-
-
-def touch(path, mode):
-    mkdir(dirname(path))
-    f = open(path, 'w+')
-    f.close()
-    os.chmod(path, mode)

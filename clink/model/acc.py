@@ -7,6 +7,7 @@ from .std import acc_name, acc_pwd, email, phone, objectid, unix_time
 
 # database model
 
+#:
 confirm_code = {
     'type': 'string',
     'pattern': '^([a-zA-Z]{4}-){3}[a-zA-Z]{4}$'
@@ -14,6 +15,7 @@ confirm_code = {
 
 # front models
 
+#:
 get_me = {
     'type': 'object',
     'required': [
@@ -31,6 +33,7 @@ get_me = {
     }
 }
 
+#:
 post_reg_code = {
     'type': 'object',
     'required': ['name', 'email', 'pwd'],
@@ -42,6 +45,7 @@ post_reg_code = {
     }
 }
 
+#:
 post_reg = {
     'type': 'object',
     'required': ['code'],
@@ -50,6 +54,7 @@ post_reg = {
     }
 }
 
+#:
 put_pwd = {
     'type': 'object',
     'required': ['old_pwd', 'new_pwd'],
@@ -59,6 +64,7 @@ put_pwd = {
     }
 }
 
+#:
 post_rpwd_code = {
     'type': 'object',
     'required': ['email'],
@@ -67,6 +73,7 @@ post_rpwd_code = {
     }
 }
 
+#:
 post_rpwd = {
     'type': 'object',
     'required': ['code', 'new_pwd'],
