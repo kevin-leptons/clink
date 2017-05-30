@@ -4,7 +4,7 @@ from clink import stamp, mapper, App, AppConf, Controller
 
 @stamp()
 @mapper.path('api')
-class BookCtl(Controller):
+class ApiCtl(Controller):
     @mapper.get('info')
     def get_book_item(self, req, res):
         res.body = {
@@ -17,11 +17,15 @@ class BookCtl(Controller):
             'content_length': req.content_length
         }
 
+    @mapper.get('http500')
+    def cause_http500(self, req, res):
+        raise RuntimeError()
+
 
 def start(port=8080):
     app_conf = AppConf('simple-api')
     app = App(app_conf)
-    app.add_ctl(BookCtl)
+    app.add_ctl(ApiCtl)
     app.load()
 
     httpd = make_server('localhost', port, app)

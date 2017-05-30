@@ -1,4 +1,4 @@
-def test_simple_server(simple_server):
+def test_api_info(simple_server):
     res_schema = {
         'body': {
             'type': 'object',
@@ -18,3 +18,15 @@ def test_simple_server(simple_server):
         }
     }
     simple_server.test_get('/api/info', res_schema=res_schema)
+
+
+def test_http404(simple_server):
+    simple_server.test_get('/not/exist/path', res_status=404)
+
+
+def test_http405(simple_server):
+    simple_server.test_post('/api/info', res_status=405)
+
+
+def test_http500(simple_server):
+    simple_server.test_get('/api/http500', res_status=500)
