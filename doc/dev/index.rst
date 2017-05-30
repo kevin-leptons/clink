@@ -21,12 +21,9 @@ Installation
     $ ./env install
 
     # create test configuration
-    $ cat > tmp/test_conf.py 
-    ROOT_EMAIL = 'test-mail@gmail.com'
-    ROOT_EMAIL_PWD = 'test-mail-pwd'
-    ROOT_EMAIL_SERVER = 'smtp.gmail.com:587'
-
-    # Press Ctrl + C to terminal 'cat' and save test_conf file
+    export CLINK_TEST_ROOT_EMAIL = 'test-mail@gmail.com'
+    export CLINK_TEST_ROOT_EMAIL_PWD = 'test-mail-pwd'
+    export CLINK_TEST_ROOT_EMAIL_SERVER = 'smtp.gmail.com:587'
 
 Develop
 -------
