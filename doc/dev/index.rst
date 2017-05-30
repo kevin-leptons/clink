@@ -4,6 +4,10 @@ Development
 Installation
 ------------
 
+Clink depends on mongodb but it is not in stadard package repository of
+Linux distros, install it by hand here 
+https://docs.mongodb.com/manual/administration/install-on-linux/.
+
 .. code-block:: shell-session
 
     # essential tools
