@@ -7,8 +7,9 @@ write_stamp(), read_stamp()
 Example
 -------
 
-.. literalinclude:: ../sample/api/com_rw_stamp.py
+.. literalinclude:: ../example/api/com_rw_stamp.py
     :language: python
+    :caption: com_rw_stamp.py
 
 Testing
 -------

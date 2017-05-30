@@ -10,8 +10,9 @@ App
 Example
 -------
 
-.. literalinclude:: ../sample/api/app.py
+.. literalinclude:: ../example/api/app.py
     :language: python
+    :caption: app.py
 
 Testing
 -------

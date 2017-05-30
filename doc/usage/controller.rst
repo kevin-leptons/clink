@@ -11,15 +11,16 @@ Built-in controllers in :ref:`api-ctl`
 Example
 -------
 
-.. literalinclude:: ../sample/app_controller.py
+.. literalinclude:: ../example/usage/controller.py
     :language: python
+    :caption: controller.py
 
 Testing
 -------
 
 .. code-block:: shell-session
 
-    $ python app_controller.py &> /dev/null &
+    $ python controller.py &> /dev/null &
     [1] 6556
 
     $ curl -X GET localhost:8080/req/info; echo

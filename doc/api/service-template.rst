@@ -6,8 +6,9 @@ TemplateSv
 Example
 -------
 
-.. literalinclude:: ../sample/api/template_sv.py
+.. literalinclude:: ../example/api/template_sv.py
     :language: python
+    :caption: template_sv.py
 
 Testing
 -------

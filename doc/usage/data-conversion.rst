@@ -25,15 +25,16 @@ And we create main handler to converts list of words to uppercase:
 Example
 -------
 
-.. literalinclude:: ../sample/app_data_conversion.py
+.. literalinclude:: ../example/usage/data_conversion.py
     :language: python
+    :caption: data_conversion.py
 
 Testing
 -------
 
 .. code-block:: shell-session
 
-    $ python app_data_conversion.py &> /dev/null &
+    $ python data_conversion.py &> /dev/null &
     [1] 6456
 
     $ curl -X POST -H "Content-Type: text/plain" \

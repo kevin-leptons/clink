@@ -7,8 +7,9 @@ Injector
 Example
 -------
 
-.. literalinclude:: ../sample/api/injector.py
+.. literalinclude:: ../example/api/injector.py
     :language: python
+    :caption: injector.py
 
 Testing
 -------

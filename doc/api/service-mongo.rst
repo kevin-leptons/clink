@@ -6,8 +6,9 @@ MongoSv
 Example
 -------
 
-.. literalinclude:: ../sample/api/mongo_sv.py
+.. literalinclude:: ../example/api/mongo_sv.py
     :language: python
+    :caption: mongo_sv.py
 
 Testing
 -------

@@ -7,8 +7,9 @@ verify()
 Example
 -------
 
-.. literalinclude:: ../sample/api/dflow_verify.py
+.. literalinclude:: ../example/api/dflow_verify.py
     :language: python
+    :caption: dflow_verify.py
 
 Testing
 -------

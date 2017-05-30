@@ -6,8 +6,9 @@ AuthDbSv
 Example
 -------
 
-.. literalinclude:: ../sample/api/authdb_sv.py
+.. literalinclude:: ../example/api/authdb_sv.py
     :language: python
+    :caption: authdb_sv.py
 
 Testing
 -------

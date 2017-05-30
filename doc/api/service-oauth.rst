@@ -27,8 +27,9 @@ query database, not by information in access_token.
 Example
 -------
 
-.. literalinclude:: ../sample/api/oauth_sv.py
+.. literalinclude:: ../example/api/oauth_sv.py
     :language: python
+    :caption: oauth_sv.py
 
 .. code-block:: shell-session
 

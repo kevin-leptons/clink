@@ -9,15 +9,16 @@ service.
 Example
 -------
 
-.. literalinclude:: ../sample/app_data_validation.py
+.. literalinclude:: ../example/usage/data_validation.py
     :language: python
+    :caption: data_validation.py
 
 Testing
 -------
 
 .. code-block:: shell-session
 
-    $ python app_data_validation.py &> /dev/null &
+    $ python data_validation.py &> /dev/null &
     [1] 9977
 
     $ curl -X POST -H "Content-Type: application/json" \

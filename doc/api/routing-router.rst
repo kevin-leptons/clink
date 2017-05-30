@@ -6,8 +6,9 @@ Router
 Example
 -------
 
-.. literalinclude:: ../sample/api/router.py
+.. literalinclude:: ../example/api/router.py
     :language: python
+    :caption: router.py
 
 Testing
 -------

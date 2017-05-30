@@ -6,8 +6,9 @@ SmtpSv
 Example
 -------
 
-.. literalinclude:: ../sample/api/smtp_sv.py
+.. literalinclude:: ../example/api/smtp_sv.py
     :language: python
+    :caption: smtp_sv.py
 
 Testing
 -------

@@ -9,7 +9,7 @@ class AccountService(Component):
         print('created:', info)
 
 
-# this component
+# this other component
 @com(AccountService)
 class AccountCtl(Component):
     def __init__(self, account_service):

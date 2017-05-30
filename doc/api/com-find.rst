@@ -6,8 +6,9 @@ find()
 Example
 -------
 
-.. literalinclude:: ../sample/api/com_find.py
+.. literalinclude:: ../example/api/com_find.py
     :language: python
+    :caption: com_find.py
 
 Testing
 -------

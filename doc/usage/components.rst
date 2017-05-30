@@ -19,8 +19,9 @@ Awesome solution is **Components**. **Components** is concept includes
 component, auto creation, depedency solving, and get instances. All of
 that concept be perform by **Injector**. For example:
 
-.. literalinclude:: ../sample/components.py
+.. literalinclude:: ../example/usage/components.py
     :language: python
+    :caption: components.py:
 
 Test it
 -------

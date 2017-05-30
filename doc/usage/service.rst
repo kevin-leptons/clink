@@ -26,15 +26,16 @@ It accepts type and content of newsparer, magazine then generate string
 includes information of application with type and content. Two controllers
 use this service though injector.
 
-.. literalinclude:: ../sample/app_service.py
+.. literalinclude:: ../example/usage/service.py
     :language: python
+    :caption: service.py
 
 Testing
 -------
 
 .. code-block:: shell-session
 
-    $ python app_service.py &> /dev/null &
+    $ python service.py &> /dev/null &
     [1] 5864
 
     $ curl -X POST -H "Content-Type: text/plain" \

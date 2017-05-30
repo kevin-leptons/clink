@@ -4,33 +4,32 @@ Quickstart
 Installation
 ------------
 
-.. code-block:: bash
+.. code-block:: shell-session
 
     # python3 is use as interpreter for python language
     # curl use to test api
-    apt-get install python3 wget curl
+    $ apt-get install python3 wget curl
 
     # pip is python package manager
-    wget https://bootstrap.pypa.io/get-pip.py
-    python get-pip.py
+    $ wget https://bootstrap.pypa.io/get-pip.py
+    $ python get-pip.py
 
     # install clink through pip
-    pip install clink
+    $ pip install clink
 
 Writting
 --------
 
-Create an file named **server.py** below:
-
-.. literalinclude:: ../sample/app_creation.py
+.. literalinclude:: ../example/usage/app.py
     :language: python
+    :caption: app.py
 
 Testing
 -------
 
 .. code-block:: shell-session
 
-    $ python server.py &> /dev/null &
+    $ python app.py &> /dev/null &
     [1] 10297
 
     $ curl localhost:8080/book/item

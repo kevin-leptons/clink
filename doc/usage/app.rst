@@ -73,16 +73,16 @@ available on network.
 Example
 -------
 
-.. literalinclude:: ../sample/app_creation.py
+.. literalinclude:: ../example/usage/app.py
     :language: python
-    :caption:
+    :caption: app.py
 
 Testing
 -------
 
 .. code-block:: shell-session
 
-    $ python app_creation.py &> /dev/null &
+    $ python app.py &> /dev/null &
     [1] 5946
 
     $ curl localhost:8080/book/item

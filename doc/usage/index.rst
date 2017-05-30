@@ -8,7 +8,7 @@ Usage
     quick-start
     pipe-line
     components
-    application
+    app
     routing
     logging
     controller

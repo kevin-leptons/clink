@@ -6,8 +6,9 @@ stamp()
 Example
 -------
 
-.. literalinclude:: ../sample/api/com_stamp.py
+.. literalinclude:: ../example/api/com_stamp.py
     :language: python
+    :caption: com_stamp.py
 
 Testing
 -------

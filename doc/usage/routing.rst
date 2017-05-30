@@ -34,16 +34,16 @@ You can access shortcut name for MIME type in **clink.mime.type**.
 Example
 -------
 
-.. literalinclude:: ../sample/app_routing.py    
+.. literalinclude:: ../example/usage/routing.py    
     :language: python
-    :caption:
+    :caption: routing.py
 
 Testing
 -------
 
 .. code-block:: shell-session
 
-    $ python app_routing.py &> /dev/null &
+    $ python routing.py &> /dev/null &
     [1] 7071
 
     $ curl -X GET localhost:8080/book/item; echo

@@ -6,8 +6,9 @@ AccSv
 Example
 -------
 
-.. literalinclude:: ../sample/api/acc_sv.py
+.. literalinclude:: ../example/api/acc_sv.py
     :language: python
+    :caption: acc_sv.py
 
 Testing
 -------
