@@ -20,7 +20,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='clink',
-    version='0.19.0',
+    version='0.20.0',
     description='HTTP APIs Framework',
     keywords='http api framework',
     author='Kevin Leptons',
