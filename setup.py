@@ -27,10 +27,14 @@ setup(
     author_email='kevin.leptons@gmail.com',
     url='https://github.com/kevin-leptons/clink',
     download_url='https://github.com/kevin-leptons/clink',
-    python_requires=">=3.4",
     install_requires=[
         'pymongo==3.4.0', 'PyJWT==1.4.0', 'jsonschema==2.6.0'
     ],
     packages=find_packages(exclude=['tool', 'test']),
-    package_data={'clink': ['asset/**/*']}
+    package_data={'clink': ['asset/**/*']},
+    classifiers=[
+        'Programming Language :: Python :: 3.3'
+        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.5'
+    ],
 )
