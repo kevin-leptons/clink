@@ -33,8 +33,8 @@ setup(
     packages=find_packages(exclude=['tool', 'test']),
     package_data={'clink': ['asset/**/*']},
     classifiers=[
-        'Programming Language :: Python :: 3.3'
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5'
     ],
 )
