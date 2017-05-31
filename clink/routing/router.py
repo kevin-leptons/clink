@@ -103,9 +103,6 @@ class Router(ILv2Handler):
         raise HandleNotFoundError(req.method, req.content_type, req.path)
 
     def _find_node(self, path):
-        '''
-        notes: algorithm can be improve here
-        '''
         node = self._root_node
         if path != '/':
             node_names = path.split('/')
