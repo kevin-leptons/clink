@@ -3,6 +3,7 @@ SYNOPSIS
 
     build_doc(spec)
     open_doc(spec, port)
+    clean_doc(spec)
 
 DESCRIPTION
 
