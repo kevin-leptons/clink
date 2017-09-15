@@ -22,10 +22,6 @@ class BookCtl(Controller):
             'author': 'Death'
         }
 
-    @mapper.get('itemx')
-    def get_itemx(self, req, res):
-        raise RuntimeError()
-
 
 # STEP 5: add controller to application
 app.add_ctl(BookCtl)
