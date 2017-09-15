@@ -15,15 +15,18 @@ class RecvHandler(ILv0Handler):
         res.content_type = MIME_JSON
         res.header = {}
 
-        req.method = env['REQUEST_METHOD']
+        req.method = env['REQUEST_METHOD'].lower()
         req.path = env['PATH_INFO']
         req.header = self._parse_header(env)
         req.server_name = env['SERVER_NAME']
         req.server_port = int(env['SERVER_PORT'])
         req.server_protocol = env['SERVER_PROTOCOL']
         req.remote_addr = env['REMOTE_ADDR']
-        if req.method.lower() not in ['get', 'delete', 'head', 'option']:
-            req.content_type = env['CONTENT_TYPE']
+        req.content_type = None
+        if req.method in ['post', 'put', 'patch']:
+            if 'CONTENT_TYPE' in env:
+                req.content_type = env['CONTENT_TYPE'].lower()
+
         try:
             req.args = self._parse_args(env['QUERY_STRING'])
         except HttpArgumentError:

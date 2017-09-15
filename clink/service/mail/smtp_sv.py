@@ -46,7 +46,10 @@ class SmtpSv(Service):
         )
 
     def _connect(self):
-        smtp = SMTP(self._auth_conf.root_email_server)
+        port = self._auth_conf.root_email_server_port
+        if port == 0:
+            port = 587
+        smtp = SMTP(self._auth_conf.root_email_server, port)
         smtp.ehlo()
         smtp.starttls()
         smtp.login(self._auth_conf.root_email, self._auth_conf.root_email_pwd)

@@ -19,7 +19,7 @@ def start(root_email, root_email_pwd, root_email_sever, port=8080):
     app_conf = AppConf(APP_NAME, 'MIT', app_ver, 'clink', 'Ha Noi, Viet Nam')
     mongo_conf = MongoConf(DB_URL, DB_NAME)
     auth_conf = AuthConf(
-        ROOT_PWD, root_email, root_email_pwd, root_email_sever, JWT_KEY
+        ROOT_PWD, root_email, root_email_pwd, root_email_sever, 0, JWT_KEY
     )
     app = App(app_conf)
     app.add_prim(mongo_conf, auth_conf)

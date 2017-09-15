@@ -1,9 +1,10 @@
 import os
 from clink.com import read_stamp
 from clink.iface import ILv2Handler
+from clink.error.http import Http404Error, Http405Error, Http406Error
+from clink.mime import MIME_JSON
 
-from .error import RouteExistError, PathNotFoundError, HandleNotFoundError
-from .type import MapNode, NodeAction
+from .error import RouteExistError
 from .route import Route
 from .mapper import CTL_PATH_ATTR, CTL_METHOD_ATTR
 
@@ -18,7 +19,7 @@ class Router(ILv2Handler):
         :param list<Router> routes:
         '''
 
-        self._root_node = MapNode('/')
+        self._map = {}
         self.add_routes(routes)
 
     def add_ctl(self, ctl):
@@ -37,6 +38,9 @@ class Router(ILv2Handler):
                 abs_path = ctl_path
                 if len(ctl_method.path) > 0:
                     abs_path = os.path.join(ctl_path, ctl_method.path)
+                if ctl_method.method in ['post', 'put', 'patch']:
+                    if ctl_method.content_type is None:
+                        ctl_method.content_type = MIME_JSON
                 route = Route(
                     ctl_method.method, ctl_method.content_type,
                     abs_path, getattr(ctl, attr_name)
@@ -55,21 +59,13 @@ class Router(ILv2Handler):
         :raise RouteExistError:
         '''
 
-        # search and add nodes
-        node = self._root_node
-        if route.path != '/':
-            node_names = route.path.split('/')
-            node_names = list(filter(''.__ne__, node_names))
-            for node_name in node_names:
-                if node_name not in node.child:
-                    node.child[node_name] = MapNode(node_name)
-                node = node.child[node_name]
-
-        # add action to node
-        action = NodeAction(route.method, route.content_type, route.handle)
-        if self._action_is_exist(node, action):
+        if route.path not in self._map:
+            self._map[route.path] = {}
+        if route.method not in self._map:
+            self._map[route.path][route.method] = {}
+        if route.content_type in self._map[route.path][route.method]:
             raise RouteExistError(route)
-        node.actions.append(action)
+        self._map[route.path][route.method][route.content_type] = route
 
     def add_routes(self, routes):
         '''
@@ -91,33 +87,21 @@ class Router(ILv2Handler):
         :raise HandleNotFoundError:
         '''
 
-        node = self._find_node(req.path)
-        if node is None or len(node.actions) == 0:
-            raise PathNotFoundError(req.path)
-        for action in node.actions:
-            if action.method != req.method.lower():
-                continue
-            if action.content_type != req.content_type:
-                continue
-            return action.handle
-        raise HandleNotFoundError(req.method, req.content_type, req.path)
+        path = self._clear_path(req.path)
+        method = req.method
+        content_type = req.content_type
 
-    def _find_node(self, path):
-        node = self._root_node
-        if path != '/':
-            node_names = path.split('/')
-            node_names = list(filter(''.__ne__, node_names))
-            for node_name in node_names:
-                if node_name not in node.child:
-                    return None
-                node = node.child[node_name]
-        return node
+        if path not in self._map:
+            raise Http404Error(req)
+        if method not in self._map[path]:
+            raise Http405Error(req)
+        if content_type not in self._map[path][method]:
+            raise Http406Error(req)
+        return self._map[path][method][content_type].handle
 
-    def _action_is_exist(self, node, action):
-        for node_action in node.actions:
-            if node_action.method != action.method:
-                continue
-            if node_action.content_type != action.method:
-                continue
-            return True
-        return False
+    def _clear_path(self, path):
+        if len(path) > 1 and path[0] == '/':
+            path = path[1:]
+        if len(path) > 1 and path[-1] == '/':
+            path = path[:len(path) - 1]
+        return path
