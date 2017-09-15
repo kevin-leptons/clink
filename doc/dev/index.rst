@@ -28,9 +28,10 @@ Then follow instructions:
     $ ./env install
 
     # create test configuration
-    export CLINK_TEST_ROOT_EMAIL = 'test-mail@gmail.com'
-    export CLINK_TEST_ROOT_EMAIL_PWD = 'test-mail-pwd'
-    export CLINK_TEST_ROOT_EMAIL_SERVER = 'smtp.gmail.com:587'
+    export CLINK_TEST_ROOT_EMAIL='test-mail@gmail.com'
+    export CLINK_TEST_ROOT_EMAIL_PWD='test-mail-pwd'
+    export CLINK_TEST_ROOT_EMAIL_SERVER='smtp.gmail.com'
+    export CLINK_TEST_ROOT_EMAIL_SERVER_PORT='587'
 
 Develop
 -------

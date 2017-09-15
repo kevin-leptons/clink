@@ -9,12 +9,14 @@ from lib.invoker import Invoker
 ROOT_EMAIL = environ['CLINK_TEST_ROOT_EMAIL']
 ROOT_EMAIL_PWD = environ['CLINK_TEST_ROOT_EMAIL_PWD']
 ROOT_EMAIL_SERVER = environ['CLINK_TEST_ROOT_EMAIL_SERVER']
+ROOT_EMAIL_SERVER_PORT = int(environ['CLINK_TEST_ROOT_EMAIL_SERVER_PORT'])
 
 
 @fixture(scope='module')
 def auth_server(request):
     port = 8080
-    args = (ROOT_EMAIL, ROOT_EMAIL_PWD, ROOT_EMAIL_SERVER, port)
+    args = (ROOT_EMAIL, ROOT_EMAIL_PWD,
+            ROOT_EMAIL_SERVER, ROOT_EMAIL_SERVER, port)
     p = Process(target=auth_app.start, args=args)
     p.start()
     sleep(3)
