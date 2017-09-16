@@ -1,13 +1,17 @@
 from clink.error.http import HttpArgumentError, Http400Error
-from clink.mime.type import MIME_JSON
 from clink.iface import ILv0Handler
 from clink.com import stamp
+from clink.mime import MIME_JSON
 
 
 @stamp()
 class RecvHandler(ILv0Handler):
     '''
     Receive HTTP message, construct an isinstance of Request
+
+    :param clink.Request req:
+    :param clink.Response res:
+    :param dict env:
     '''
 
     def handle(self, req, res, env):
@@ -17,13 +21,14 @@ class RecvHandler(ILv0Handler):
 
         req.method = env['REQUEST_METHOD'].lower()
         req.path = env['PATH_INFO']
+        if len(req.path) > 1 and req.path[-1] == '/':
+            req.path = req.path[:len(req.path) - 1]
         req.header = self._parse_header(env)
         req.server_name = env['SERVER_NAME']
         req.server_port = int(env['SERVER_PORT'])
         req.server_protocol = env['SERVER_PROTOCOL']
         req.remote_addr = env['REMOTE_ADDR']
-        req.content_type = None
-        if req.method in ['post', 'put', 'patch']:
+        if req.method in ['post', 'put', 'patch', 'delete']:
             if 'CONTENT_TYPE' in env:
                 req.content_type = env['CONTENT_TYPE'].lower()
 

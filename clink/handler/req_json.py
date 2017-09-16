@@ -2,7 +2,7 @@ import json
 
 from clink.error.http import Http400Error
 from clink.iface import ILv3Handler
-from clink.mime.type import MIME_JSON
+from clink.mime import MIME_JSON
 from clink.com import stamp
 
 

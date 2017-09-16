@@ -13,9 +13,9 @@ app = App(conf)
 
 # STEP 4: define controller
 @stamp()
-@mapper.path('book')
+@mapper.path('/book')
 class BookCtl(Controller):
-    @mapper.get('item')
+    @mapper.get('/item')
     def get_item(self, req, res):
         res.body = {
             'name': 'How to Die',

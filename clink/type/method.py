@@ -1,0 +1,7 @@
+HTTP_GET = 'get'
+HTTP_POST = 'post'
+HTTP_PUT = 'put'
+HTTP_PATCH = 'patch'
+HTTP_DELETE = 'delete'
+HTTP_OPTION = 'option'
+HTTP_HEAD = 'head'

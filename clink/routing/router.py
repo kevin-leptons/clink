@@ -1,8 +1,6 @@
-import os
 from clink.com import read_stamp
 from clink.iface import ILv2Handler
-from clink.error.http import Http404Error, Http405Error, Http406Error
-from clink.mime import MIME_JSON
+from clink.error.http import Http400Error, Http404Error, Http405Error
 
 from .error import RouteExistError
 from .route import Route
@@ -35,15 +33,13 @@ class Router(ILv2Handler):
             ctl_attr = getattr(ctl_type, attr_name)
             try:
                 ctl_method = read_stamp(ctl_attr, CTL_METHOD_ATTR)
-                abs_path = ctl_path
-                if len(ctl_method.path) > 0:
-                    abs_path = os.path.join(ctl_path, ctl_method.path)
-                if ctl_method.method in ['post', 'put', 'patch']:
-                    if ctl_method.content_type is None:
-                        ctl_method.content_type = MIME_JSON
+                abs_path = ctl_path + ctl_method.path
+                abs_path = abs_path.replace('//', '/')
+                if len(abs_path) > 1 and abs_path[-1] == '/':
+                    abs_path = abs_path[:len(abs_path) - 1]
                 route = Route(
-                    ctl_method.method, ctl_method.content_type,
-                    abs_path, getattr(ctl, attr_name)
+                    abs_path, ctl_method.method, ctl_method.req_type,
+                    getattr(ctl, attr_name)
                 )
                 self.add_route(route)
             except KeyError:
@@ -63,9 +59,9 @@ class Router(ILv2Handler):
             self._map[route.path] = {}
         if route.method not in self._map:
             self._map[route.path][route.method] = {}
-        if route.content_type in self._map[route.path][route.method]:
+        if route.req_type in self._map[route.path][route.method]:
             raise RouteExistError(route)
-        self._map[route.path][route.method][route.content_type] = route
+        self._map[route.path][route.method][route.req_type] = route
 
     def add_routes(self, routes):
         '''
@@ -83,25 +79,18 @@ class Router(ILv2Handler):
 
         :param Request req:
         :rtype: function
-        :raise PathNotFoundError:
-        :raise HandleNotFoundError:
+        :raise Http400Error:
+        :raise Http404Error:
+        :raise Http405Error:
         '''
 
-        path = self._clear_path(req.path)
+        path = req.path
         method = req.method
-        content_type = req.content_type
 
         if path not in self._map:
             raise Http404Error(req)
         if method not in self._map[path]:
             raise Http405Error(req)
-        if content_type not in self._map[path][method]:
-            raise Http406Error(req)
-        return self._map[path][method][content_type].handle
-
-    def _clear_path(self, path):
-        if len(path) > 1 and path[0] == '/':
-            path = path[1:]
-        if len(path) > 1 and path[-1] == '/':
-            path = path[:len(path) - 1]
-        return path
+        if req.content_type not in self._map[path][method]:
+            raise Http400Error(req)
+        return self._map[path][method][req.content_type].handle

@@ -2,7 +2,7 @@ from urllib.parse import parse_qsl
 
 from clink.error.http import Http400Error
 from clink.iface import ILv3Handler
-from clink.mime.type import MIME_URLENCODE
+from clink.mime import MIME_URLENCODE
 from clink.com import stamp
 
 

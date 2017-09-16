@@ -2,7 +2,7 @@ from clink import stamp, mapper, Controller, AppConf
 
 
 @stamp(AppConf)
-@mapper.path('')
+@mapper.path('/')
 class RootCtl(Controller):
     '''
     APIs information
@@ -17,6 +17,6 @@ class RootCtl(Controller):
             'headquater': app_conf.org_addr
         }
 
-    @mapper.get('')
+    @mapper.get('/')
     def api_info(self, req, res):
         res.body = self._info

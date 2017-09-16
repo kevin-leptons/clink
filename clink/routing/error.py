@@ -41,8 +41,8 @@ class RouteMethodError(Exception):
 
 
 class RoutePathError(Exception):
-    def __init__(self, path):
-        self._msg = '%s must not contains slash at begin and end' % path
+    def __init__(self, path, regex):
+        self._msg = '"{}" not meet regex: "{}"'.format(path, regex.pattern)
 
     def __str__(self):
         return self._msg

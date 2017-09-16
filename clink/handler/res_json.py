@@ -1,7 +1,7 @@
 from bson import json_util
 
 from clink.iface import ILv5Handler
-from clink.mime.type import MIME_JSON
+from clink.mime import MIME_JSON
 from clink.com import stamp
 
 

@@ -5,7 +5,7 @@ from clink.util import fs
 
 
 @stamp(AppConf, AuthConf, AccSv, OAuthSv, SmtpSv, TemplateSv)
-@mapper.path('acc')
+@mapper.path('/acc')
 class AccCtl(Controller):
     '''
     Manage accounts and related concepts
@@ -23,7 +23,7 @@ class AccCtl(Controller):
 
         self._init_tpl_files()
 
-    @mapper.post('reg/code')
+    @mapper.post('/reg/code')
     def mk_reg_code(self, req, res):
         if req.body is None:
             raise Http400Error(req, 'Require name, pwd, email')
@@ -51,7 +51,7 @@ class AccCtl(Controller):
 
         res.status = 204
 
-    @mapper.post('reg')
+    @mapper.post('/reg')
     def confirm_reg_code(self, req, res):
         if req.body is None or 'code' not in req.body:
             raise Http400Error(req, 'Require code')
@@ -70,7 +70,7 @@ class AccCtl(Controller):
 
         res.status = 204
 
-    @mapper.get('me')
+    @mapper.get('/me')
     def acc_info(self, req, res):
         acc_id = self._oauth_sv.authen_req(req)
         acc = self._acc_sv.find_id(acc_id)
@@ -87,7 +87,7 @@ class AccCtl(Controller):
             'last_action': acc['last_action']
         }
 
-    @mapper.put('me/pwd')
+    @mapper.put('/me/pwd')
     def change_pwd(self, req, res):
         if req.body is None:
             raise Http400Error(req, 'Require old_pwd, new_pwd')
@@ -118,7 +118,7 @@ class AccCtl(Controller):
 
         res.status = 204
 
-    @mapper.post('pwd/code')
+    @mapper.post('/pwd/code')
     def mk_reset_pwd_code(self, req, res):
         if req.body is None or 'email' not in req.body:
             raise Http400Error(req, 'Require email')
@@ -144,7 +144,7 @@ class AccCtl(Controller):
 
         res.status = 204
 
-    @mapper.post('pwd')
+    @mapper.post('/pwd')
     def confirm_reset_pwd_code(self, req, res):
         if req.body is None:
             raise Http400Error(req, 'Require code, new_pwd')

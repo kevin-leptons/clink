@@ -3,13 +3,13 @@ class CtlMethod():
     Specify controller method
     '''
 
-    def __init__(self, method, path, content_type):
+    def __init__(self, path, method, req_type):
         '''
-        :param str method:
         :param str path:
-        :param str content_type:
+        :param clink.type.HttpMethod method:
+        :param str req_type:
         '''
 
-        self.method = method
         self.path = path
-        self.content_type = content_type
+        self.method = method
+        self.req_type = req_type

@@ -5,7 +5,7 @@ from clink.util import fs
 
 
 @stamp(OAuthSv, AccSv, SmtpSv, TemplateSv)
-@mapper.path('auth')
+@mapper.path('/auth')
 class AuthCtl(Controller):
     def __init__(self, oauth_sv, acc_sv, smtp_sv, tpl_sv):
         self._oauth_sv = oauth_sv
@@ -15,7 +15,7 @@ class AuthCtl(Controller):
 
         self._init_tpl_files()
 
-    @mapper.post('token')
+    @mapper.post('/token')
     def get_token(self, req, res):
         info = req.body
         if info is None or 'grant_type' not in info:

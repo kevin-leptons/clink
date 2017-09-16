@@ -2,7 +2,7 @@ import json
 
 from clink.error.http import HttpError, code_to_str
 from clink.iface import ILv7Handler
-from clink.mime.type import MIME_JSON
+from clink.mime import MIME_JSON
 from clink.com import stamp
 
 
