@@ -15,7 +15,7 @@ class Component(ABC):
 class Primitive(Component):
     '''
     Primitive components, it isn't create directly by injector. It must be
-    add to injector by add_ref(). If other components depend on it, injector
+    add to injector by add_prim(). If other components depend on it, injector
     look up for it's instance, if not founds instance, raise error instead
     of create new one
     '''

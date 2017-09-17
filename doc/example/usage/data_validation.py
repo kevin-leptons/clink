@@ -36,12 +36,12 @@ class BookSv(Service):
 
 
 @stamp(BookSv)
-@mapper.path('book')
+@mapper.path('/book')
 class BookCtl(Controller):
     def __init__(self, book_sv):
         self._book_sv = book_sv
 
-    @mapper.post('item')
+    @mapper.post('/item')
     def create_one_book(self, req, res):
         self._book_sv.create_one(req.body)
         res.body = {'message': 'created'}

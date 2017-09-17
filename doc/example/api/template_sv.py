@@ -7,10 +7,11 @@ app_conf = AppConf('dead-book', 'Hell Corporation', '1st Hell Street')
 root_pwd = 'root-pwd'
 root_email = 'root@email.com'
 root_email_pwd = 'root-email-pwd'
-root_email_server = 'smtp.email.com:587'
+root_email_server = 'smtp.email.com'
+root_email_server_port = 587
 auth_conf = AuthConf(
     root_pwd, root_email, root_email_pwd, root_email_server,
-    'jwt-key'
+    root_email_server_port, 'jwt-key'
 )
 
 template_sv = TemplateSv(app_conf, auth_conf)

@@ -13,9 +13,9 @@ app = App(conf)
 
 # STEP 4: define component - controllers
 @stamp()
-@mapper.path('book')
+@mapper.path('/book')
 class BookCtl(Controller):
-    @mapper.get('item')
+    @mapper.get('/item')
     def get_item(self, req, res):
         res.body = {
             'name': 'How to Die',
@@ -23,19 +23,19 @@ class BookCtl(Controller):
         }
 
 # ===[BEGIN] ADD MORE ROUTES HERE ============================================
-    @mapper.post('item', 'text/plain')
+    @mapper.post('/item', 'text/plain')
     def create_item(self, req, res):
         res.body = {'msg': 'created'}
 
-    @mapper.patch('item')
+    @mapper.patch('/item')
     def patch_item(self, req, res):
         res.body = {'msg': 'patched'}
 
-    @mapper.put('item')
+    @mapper.put('/item')
     def put_item(self, req, res):
         res.body = {'msg': 'putted'}
 
-    @mapper.delete('item')
+    @mapper.delete('/item')
     def delete_item(self, req, res):
         res.body = {'msg': 'deleted'}
 # ===[END] ADD MORE ROUTES HERE ==============================================

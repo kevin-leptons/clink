@@ -1,13 +1,13 @@
-from clink.com import Injector, Component, com
+from clink.com import Injector, Component, Primitive, stamp
 
 
-@com()
-class Engine(Component):
+@stamp()
+class Engine(Primitive):
     def __init__(self, name):
         self.name = name
 
 
-@com(Engine)
+@stamp(Engine)
 class Car(Component):
     def __init__(self, engine):
         self.engine = engine
@@ -16,7 +16,7 @@ class Car(Component):
         return 'A car with %s engine' % self.engine.name
 
 
-@com(Car)
+@stamp(Car)
 class Human(Component):
     def __init__(self, car):
         self.car = car
@@ -28,7 +28,7 @@ class Human(Component):
 engine = Engine('Turbo v8')
 injector = Injector()
 
-injector.add_ref(engine)
+injector.add_prim(engine)
 injector.add_com(Human)
 injector.load()
 

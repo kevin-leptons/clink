@@ -38,9 +38,9 @@ class ResTextHandler(ILv5Handler):
 
 
 @stamp()
-@mapper.path('text')
+@mapper.path('/text')
 class TextCtl(Controller):
-    @mapper.post('', MIME_PLAINTEXT)
+    @mapper.post('/', MIME_PLAINTEXT)
     def process_text(self, req, res):
         res.body = [w.upper() for w in req.body]
         res.content_type = MIME_PLAINTEXT

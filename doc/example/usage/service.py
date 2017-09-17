@@ -1,5 +1,5 @@
 # STEP 1: get clink library
-from clink import stamp, mapper, App, AppConf, Controller, Service
+from clink import stamp, mapper, App, AppConf, Controller, Service, Version
 from clink.mime.type import MIME_PLAINTEXT
 from bson import ObjectId
 
@@ -9,7 +9,8 @@ from wsgiref.simple_server import make_server
 
 
 # STEP 3: create application configuration and application
-conf = AppConf('book-api', 'Hell Corporation', '1st, Hell street')
+conf = AppConf('book-api', 'MIT License', Version(0, 1, 0),
+               'Hell Corporation', '1st, Hell street')
 app = App(conf)
 
 
@@ -26,20 +27,21 @@ class PubService(Service):
             'Id: ', str(id), '\n',
             'Type: ', type, '\n',
             'Content:\n\n', content, '\n\n',
-            self._app_conf.name, '\n',
+            self._app_conf.name,
+            ' v', str(self._app_conf.version), '\n',
             self._app_conf.org_name, '\n',
-            self._app_conf.org_loc,
+            self._app_conf.org_addr,
         )
         return ''.join(parts)
 
 
 @stamp(PubService)
-@mapper.path('newsparer')
+@mapper.path('/newsparer')
 class NewsCtl(Controller):
     def __init__(self, pub_sv):
         self._pub_sv = pub_sv
 
-    @mapper.post('', MIME_PLAINTEXT)
+    @mapper.post('/', MIME_PLAINTEXT)
     def publish(self, req, res):
         content = req.body.decode('utf-8')
         pub = self._pub_sv.publish('NEWSPAPER', content)
@@ -48,12 +50,12 @@ class NewsCtl(Controller):
 
 
 @stamp(PubService)
-@mapper.path('magazine')
+@mapper.path('/magazine')
 class MagazineCtl(Controller):
     def __init__(self, pub_sv):
         self._pub_sv = pub_sv
 
-    @mapper.post('', MIME_PLAINTEXT)
+    @mapper.post('/', MIME_PLAINTEXT)
     def publish(self, req, res):
         content = req.body.decode('utf-8')
         pub = self._pub_sv.publish('MAGAZINE', content)

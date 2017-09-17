@@ -52,13 +52,13 @@ Testing
 
     $ curl -X POST -H "Content-Type: text/plain" \
       -d "This is awesome magazine" localhost:8080/magazine; echo
-    Id: 592050fae7798916e88e93f9
-    Type: MAGAZINE
+    Id: 59be3309e779894758b26f86
+    Type: NEWSPAPER
     Content:
 
-    This is awesome magazine
+    This is awesome newsparer
 
-    book-api
+    book-api v0.1.0
     Hell Corporation
     1st, Hell street
 

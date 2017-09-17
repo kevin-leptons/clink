@@ -15,9 +15,9 @@ app = App(conf)
 # STEP 4: define component - controllers
 # ===[BEGIN] REMOVE BOOKCTL AND ADD ROOTCTL ==================================
 @stamp()
-@mapper.path('req')
+@mapper.path('/req')
 class RootCtl(Controller):
-    @mapper.get('info')
+    @mapper.get('/info')
     def get_info(self, req, res):
         res.body = {
             'path': req.path,
@@ -32,15 +32,15 @@ class RootCtl(Controller):
             'body': req.body,
         }
 
-    @mapper.get('no-content')
+    @mapper.get('/no-content')
     def no_content(self, req, res):
         res.status = 204
 
-    @mapper.get('not-found')
+    @mapper.get('/not-found')
     def not_found(self, req, res):
         raise Http404Error(req, 'Nothing here')
 
-    @mapper.get('no-auth')
+    @mapper.get('/no-auth')
     def no_auth(self, req, res):
         raise Http401Error(req, 'Go back. You are alien')
 # ===[END] REMOVE BOOKCTL AND ADD ROOTCTL ====================================

@@ -1,16 +1,16 @@
-from clink.com import com, Component, Injector
+from clink.com import Component, Injector, stamp
 from clink.type import Request, Response
 
 
 # this is component
-@com()
+@stamp()
 class AccountService(Component):
     def create(self, info):
         print('created:', info)
 
 
 # this other component
-@com(AccountService)
+@stamp(AccountService)
 class AccountCtl(Component):
     def __init__(self, account_service):
         # this is dependency
@@ -35,7 +35,7 @@ i.load()
 
 
 # this is getting instances
-acc_ctl = i.instance(AccountCtl)
+acc_ctl = i.ref(AccountCtl)
 
 
 # try call function
@@ -46,5 +46,5 @@ acc_ctl.create(req, res)
 
 
 # get other instace
-acc_sv = i.instance(AccountService)
+acc_sv = i.ref(AccountService)
 print(acc_sv)
