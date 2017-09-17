@@ -83,7 +83,7 @@ class AccCtl(Controller):
             'email': acc['email'],
             'phone': acc['phone'],
             'created_date': int(acc['created_date'].timestamp()),
-            'modifired_date': int(acc['modified_date'].timestamp()),
+            'modified_date': int(acc['modified_date'].timestamp()),
             'last_action': acc['last_action']
         }
 
@@ -126,7 +126,7 @@ class AccCtl(Controller):
 
         acc = self._acc_sv.find_email(email)
         if acc is None:
-            raise Http404Error(req, 'Email does not exist')
+            raise Http400Error(req, 'Email does not exist')
 
         result = self._acc_sv.mk_rpwd_code(email)
 

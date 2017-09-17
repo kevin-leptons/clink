@@ -3,7 +3,7 @@ SYNOPSIS
 
     dist_pip(spec)
     release_pip(spec)
-    clean_dist(spec)
+    clear_dist(spec)
 
 DESCRIPTION
 
@@ -21,12 +21,12 @@ def dist_pip(spec):
 
 
 def release_pip(spec):
-    clean_dist(spec)
+    clear_dist(spec)
     build_pip(spec)
     call(['twine', 'upload', path.join(spec.dist, '**')])
 
 
-def clean_dist(spec):
+def clear_dist(spec):
     rm(spec.dist)
     rm(path.join(spec.root, 'build'))
     rm(path.join(spec.root, spec.name + '.egg-info'))

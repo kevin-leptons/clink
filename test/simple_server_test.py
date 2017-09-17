@@ -3,6 +3,9 @@ from clink.mime import MIME_ICO
 
 def test_get_root(simple_server):
     res_schema = {
+        'header': {
+            'content-type': {'type': 'string', 'pattern': 'application/json'}
+        },
         'body': {
             'type': 'object',
             'required': [

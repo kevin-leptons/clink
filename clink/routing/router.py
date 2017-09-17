@@ -54,7 +54,6 @@ class Router(ILv2Handler):
         :param Route route:
         :raise RouteExistError:
         '''
-
         if route.path not in self._map:
             self._map[route.path] = {}
         if route.method not in self._map:

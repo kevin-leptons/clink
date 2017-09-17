@@ -16,25 +16,25 @@ confirm_code = {
 # front models
 
 #:
-get_me = {
+get_me_body = {
     'type': 'object',
     'required': [
         '_id', 'name', 'email', 'phone',
         'created_date', 'modified_date', 'last_action'
     ],
     'properties': {
-        '_id': {'type': 'string', 'pattern': objectid},
+        '_id': objectid,
         'name': acc_name,
         'email': email,
         'phone': phone,
         'created_date': unix_time,
         'modified_date': unix_time,
-        'last_action': unix_time
+        'last_action': {'type': 'string'}
     }
 }
 
 #:
-post_reg_code = {
+post_reg_code_body = {
     'type': 'object',
     'required': ['name', 'email', 'pwd'],
     'properties': {

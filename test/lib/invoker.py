@@ -1,11 +1,12 @@
 import json
+import requests
 from time import time
 from requests import post, Request, Session
 from urllib.parse import urljoin, urlencode
 from jsonschema import validate
 
 
-class Invoker(object):
+class Invoker():
     '''
     Provide shortcut way to test http api
 
@@ -17,12 +18,13 @@ class Invoker(object):
 
     def __init__(
         self, host,
-        oauth_endpoint=None, username=None, password=None
+        oauth_endpoint=None, username=None, password=None, email=None
     ):
         self._host = host
         self._oauth_endpoint = oauth_endpoint
         self._username = username
-        self._password = password
+        self.password = password
+        self._email = email
 
         # mark access_token never is retrieve
         self._token = None
@@ -36,8 +38,23 @@ class Invoker(object):
         return self._username
 
     @property
-    def password(self):
-        return self._password
+    def email(self):
+        return self._email
+
+    def raw_get(self, path, header=None):
+        return requests.get(self.url(path), headers=header)
+
+    def raw_post(self, path, header=None, body=None):
+        return requests.post(self.url(path), headers=header, data=body)
+
+    def raw_put(self, path, header=None, body=None):
+        return requests.put(self.url(path), headers=header, data=body)
+
+    def raw_patch(self, path, header=None, body=None):
+        return requests.patch(self.url(path), headers=header, data=body)
+
+    def raw_delete(self, path, header=None, body=None):
+        return requests.patch(self.url(path), headers=header, data=body)
 
     def test_get(
         self, path,

@@ -8,7 +8,7 @@ action.
 
 .. text-msg::
 
-    PUT /acc/pwd
+    PUT /acc/me/pwd
     Authorization: <bearer-token>
     Content-Type: application/json
 

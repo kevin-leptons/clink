@@ -20,7 +20,7 @@ Use that code to active account in :ref:`ctl-post-acc-reg`.
 
     .. text-msg-div::
 
-    .. jsondump:: clink.model.acc.post_reg_code
+    .. jsondump:: clink.model.acc.post_reg_code_body
 
     .. text-msg-div::
 

@@ -14,4 +14,4 @@ Retrieve account information.
 
     .. text-msg-div::
 
-    .. jsondump:: clink.model.acc.get_me
+    .. jsondump:: clink.model.acc.get_me_body

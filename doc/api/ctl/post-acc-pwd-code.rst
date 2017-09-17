@@ -1,7 +1,7 @@
 .. _ctl-post-acc-rpwd-code:
 
-POST /acc/rpwd/code
-===================
+POST /acc/pwd/code
+==================
 
 Invoke reset password code. 
 
@@ -14,7 +14,7 @@ Use that code to reset password in :ref:`ctl-post-acc-rpwd`.
 
 .. text-msg::
 
-    POST /acc/rpwd/code
+    POST /acc/pwd/code
     Content-Type: application/json
 
     .. text-msg-div::

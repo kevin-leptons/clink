@@ -22,7 +22,7 @@ from sys import executable
 
 from tool.type import Version, PkgSpec, DepPkgSpec
 from tool.builder import pkg_doc, pkg_test, pkg_dist, pkg_release, \
-                         pkg_doc_clean, pkg_dist_clean
+                         pkg_doc_clear, pkg_dist_clear
 from tool.doc_builder import open_doc
 
 ROOT = realpath(dirname(__file__))
@@ -38,10 +38,10 @@ def cli():
     pass
 
 @cli.command(help='Build pip package')
-@click.option('--clean', is_flag=True, help='Clean dist files')
-def dist(clean):
-    if clean:
-        pkg_dist_clean(pkg_spec)
+@click.option('--clear', is_flag=True, help='Clear dist files')
+def dist(clear):
+    if clear:
+        pkg_dist_clear(pkg_spec)
     else:
         pkg_dist(pkg_spec)
 
@@ -52,12 +52,12 @@ def release():
 
 
 @cli.command(help='Build document')
-@click.option('--clean', is_flag=True, help='Clean dest/doc/ directory')
+@click.option('--clear', is_flag=True, help='Clear dest/doc/ directory')
 @click.option('--view', is_flag=True, help='Open HTML document')
 @click.option('--force', is_flag=True, help='Force rebuild anythings')
-def doc(clean, view, force):
-    if clean:
-        pkg_doc_clean(pkg_spec)
+def doc(clear, view, force):
+    if clear:
+        pkg_doc_clear(pkg_spec)
     elif view:
         open_doc(pkg_spec, 8081)
     else:

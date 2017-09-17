@@ -3,7 +3,7 @@ SYNOPSIS
 
     build_doc(spec)
     open_doc(spec, port)
-    clean_doc(spec)
+    clear_doc(spec)
 
 DESCRIPTION
 
@@ -26,7 +26,7 @@ def build_doc(spec, force=False):
     call(cmd)
 
 
-def clean_doc(spec):
+def clear_doc(spec):
     rm(path.join(spec.dest, 'doc'))
 
 

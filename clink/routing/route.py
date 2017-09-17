@@ -9,7 +9,7 @@ class Route():
     def __init__(self, path, method, req_type, handle):
         '''
         :param str path:
-        :param clink.type.HttpMethod method
+        :param str method:
         :param str req_type:
         :param function handle:
         '''

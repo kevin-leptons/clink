@@ -11,5 +11,5 @@ AccCtl
     post-acc-reg
     get-acc-me
     put-acc-me-pwd
-    post-acc-rpwd-code
-    post-acc-rpwd
+    post-acc-pwd-code
+    post-acc-pwd
