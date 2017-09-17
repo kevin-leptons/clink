@@ -27,7 +27,7 @@ from tool.doc_builder import open_doc
 
 ROOT = realpath(dirname(__file__))
 
-pkg_ver = Version(0, 1, 0)
+pkg_ver = Version(0, 23, 0)
 pkg_spec = PkgSpec('clink', pkg_ver, ROOT, path.join(ROOT, 'src'),
                     path.join(ROOT, 'dest'), path.join(ROOT, 'doc'),
                     path.join(ROOT, 'dist'), path.join(ROOT, 'test'))

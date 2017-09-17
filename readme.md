@@ -9,7 +9,7 @@ HTTP APIs framework.
 
 Kevin Leptons <Kevin.leptons@gmail.com> <br>
 CC by 4.0 license <br>
-May, 2017 <br>
+Sept, 2017 <br>
 
 # FEATURES
 
